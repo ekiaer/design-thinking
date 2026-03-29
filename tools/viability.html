@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENDURE · Unit Economics Workshop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .header {
+      border-bottom: 1px solid rgba(212,168,83,0.18);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-mark {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: #D4A853;
+      letter-spacing: -1px;
+    }
+    .header-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(232,227,216,0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .main {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 56px 40px 80px;
+    }
+
+    /* ── INTRO ── */
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #D4A853;
+      margin-bottom: 18px;
+    }
+    .intro-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 46px;
+      line-height: 1.1;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 22px;
+    }
+    .intro-body {
+      font-size: 15px;
+      color: rgba(232,227,216,0.55);
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 48px;
+    }
+
+    /* ── FORM ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .form-group { margin-bottom: 24px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.75);
+      margin-bottom: 8px;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 4px;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .form-input:focus { border-color: rgba(212,168,83,0.45); }
+    .form-input::placeholder { color: rgba(232,227,216,0.2); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      background: #D4A853;
+      color: #0D1117;
+      border: none;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 13px 28px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+
+    /* ── INTERVIEW ── */
+    .progress-track {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 52px;
+    }
+    .progress-seg {
+      height: 3px;
+      flex: 1;
+      border-radius: 2px;
+      background: rgba(232,227,216,0.08);
+      transition: background 0.3s;
+    }
+    .progress-seg.active { background: #D4A853; }
+    .progress-seg.done { background: rgba(212,168,83,0.35); }
+
+    .focus-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #D4A853;
+      border: 1px solid rgba(212,168,83,0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 18px;
+    }
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      line-height: 1.3;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .q-hint {
+      font-size: 13px;
+      color: rgba(232,227,216,0.38);
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+    .q-counter {
+      font-size: 12px;
+      color: rgba(232,227,216,0.28);
+      align-self: center;
+    }
+
+    /* ── LOADING ── */
+    .loading-wrap {
+      padding: 100px 0;
+      text-align: center;
+    }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 2px solid rgba(212,168,83,0.12);
+      border-top-color: #D4A853;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+    }
+
+    /* ── RESULTS ── */
+    .results-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 4px;
+    }
+    .results-sub {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 40px;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .ratio-card {
+      background: rgba(212,168,83,0.05);
+      border: 1px solid rgba(212,168,83,0.18);
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .ratio-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.65);
+      margin-bottom: 14px;
+    }
+    .ratio-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 72px;
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .ratio-interp {
+      font-size: 14px;
+      color: rgba(232,227,216,0.55);
+      max-width: 400px;
+      margin: 0 auto 6px;
+    }
+    .ratio-bench {
+      font-size: 12px;
+      color: rgba(232,227,216,0.28);
+      font-style: italic;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+    .metric-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 26px;
+    }
+    .metric-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .type-cac { color: #E07558; }
+    .type-ltv { color: #5CB88A; }
+    .metric-range {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 26px;
+      font-weight: 500;
+      color: #E8E3D8;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+    .assumptions { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .assumption {
+      font-size: 12px;
+      color: rgba(232,227,216,0.38);
+      display: flex;
+      gap: 8px;
+    }
+    .assumption::before { content: '\2014'; color: rgba(232,227,216,0.18); flex-shrink: 0; }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 16px;
+    }
+
+    .endure-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
+    .endure-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(232,227,216,0.06);
+      border-left: 3px solid rgba(212,168,83,0.5);
+      border-radius: 0 6px 6px 0;
+      padding: 18px 22px;
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 18px;
+      align-items: start;
+    }
+    .e-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #D4A853;
+      opacity: 0.55;
+      line-height: 1;
+      padding-top: 2px;
+    }
+    .e-dim {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+      margin-bottom: 6px;
+    }
+    .e-insight {
+      font-size: 13px;
+      color: rgba(232,227,216,0.68);
+      line-height: 1.55;
+    }
+    .impact-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      background: rgba(212,168,83,0.08);
+      color: rgba(212,168,83,0.6);
+      white-space: nowrap;
+    }
+
+    .brief-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 36px;
+    }
+    .brief-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.62);
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+
+    .actions { display: flex; gap: 12px; align-items: center; }
+
+    .error-msg {
+      color: #E07558;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* ── COPY BUTTON ── */
+    .btn-copy {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-copy:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+    .btn-copy.copied { color: #5CB88A; border-color: rgba(92,184,138,0.3); }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; color: #111; }
+      .header { border-color: #ddd; background: #fff; }
+      .logo-mark { color: #222; }
+      .eyebrow, .section-label, .ratio-label, .metric-type, .e-dim { color: #555; }
+      .no-print { display: none !important; }
+      .ratio-card { background: #f8f6f0; border-color: #ddd; }
+      .metric-card, .endure-card, .brief-card { background: #f8f6f0; border-color: #ddd; }
+      .ratio-value, .metric-range { color: #111; }
+      .ratio-interp, .e-insight, .brief-text, .assumption { color: #333; }
+      .endure-card { border-left-color: #666; }
+      .intro-heading, .results-title { color: #111; }
+    }
+
+    @media (max-width: 600px) {
+      .main { padding: 32px 20px 60px; }
+      .intro-heading { font-size: 32px; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .ratio-value { font-size: 48px; }
+      .endure-card { grid-template-columns: 28px 1fr; }
+      .impact-pill { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <script>
+    // ── CONFIG ──
+    // Cloudflare Worker proxy URL — replace with your deployed worker URL
+    const API_PROXY_URL = "PROXY_URL_PLACEHOLDER";
+
+    const SYSTEM_QUESTIONS = `You help design thinking students analyze unit economics for early-stage startup ideas.
+Generate exactly 5 interview questions to estimate CAC (Customer Acquisition Cost) and LTV (Lifetime Value) for the student's specific project.
+Be concrete and specific to their idea — reference the actual product, customer, channel.
+Questions should be answerable without real data yet (educated estimates are fine).
+Alternate between CAC and LTV focus. Keep each question to one sentence.
+Return ONLY valid JSON with no markdown, no explanation:
+{"questions":[{"id":1,"text":"question","focus":"CAC","hint":"short guidance for student"}]}`;
+
+    const SYSTEM_ANALYSIS = `You analyze startup unit economics through the ENDURE framework for a design thinking class.
+ENDURE dimensions: Environmental Scanning (E), Network Orchestration (N), Disruptive Experimentation (D), Unmet Needs Research (U), Resilience Building (R), Evolution Enablement (E).
+Based on the project and interview, estimate realistic CAC and LTV ranges for an early-stage startup.
+Pick 2–3 ENDURE dimensions most relevant to economics risks or opportunities — be specific to their project.
+Return ONLY valid JSON with no markdown, no explanation:
+{
+  "cac":{"low":number,"high":number,"assumptions":["...","...","..."]},
+  "ltv":{"low":number,"high":number,"assumptions":["...","...","..."]},
+  "ratio":{"value":number,"interpretation":"one sentence on viability","benchmark":"industry context"},
+  "endure":[{"dimension":"full name","letter":"single letter","insight":"2-3 sentences connecting this dimension to their CAC or LTV","impact":"CAC|LTV|Both"}],
+  "brief":"2-3 paragraph written brief covering the numbers, assumptions, and strategic risks for class discussion."
+}`;
+
+    const fmt = (n) => n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n;
+    const ratioColor = (r) => r >= 3 ? "#5CB88A" : r >= 2 ? "#D4A853" : "#E07558";
+
+    const e = React.createElement;
+    const { useState } = React;
+
+    async function callClaude(userMsg, sys) {
+      const res = await fetch(API_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: sys,
+          messages: [{ role: "user", content: userMsg }],
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error("API error: " + res.status + " " + errBody);
+      }
+      const data = await res.json();
+      return data.content[0].text;
+    }
+
+    function App() {
+      const [step, setStep] = useState("intro");
+      const [name, setName] = useState("");
+      const [desc, setDesc] = useState("");
+      const [questions, setQuestions] = useState([]);
+      const [qIndex, setQIndex] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [currentAns, setCurrentAns] = useState("");
+      const [results, setResults] = useState(null);
+      const [error, setError] = useState("");
+      const [copied, setCopied] = useState(false);
+
+      async function startInterview() {
+        setError("");
+        setStep("loading");
+        try {
+          const raw = await callClaude("Project: " + name + "\n\nDescription: " + desc, SYSTEM_QUESTIONS);
+          const parsed = JSON.parse(raw.trim());
+          setQuestions(parsed.questions);
+          setStep("interview");
+        } catch (err) {
+          setError("Something went wrong. Please try again. (" + err.message + ")");
+          setStep("intro");
+        }
+      }
+
+      async function submitAnswer() {
+        const newAnswers = answers.concat([{
+          q: questions[qIndex].text,
+          a: currentAns,
+          focus: questions[qIndex].focus
+        }]);
+        setAnswers(newAnswers);
+        setCurrentAns("");
+        if (qIndex + 1 < questions.length) {
+          setQIndex(qIndex + 1);
+        } else {
+          setStep("loading");
+          try {
+            const qa = newAnswers.map(function(x, i) {
+              return "Q" + (i + 1) + " [" + x.focus + "]: " + x.q + "\nA: " + x.a;
+            }).join("\n\n");
+            const raw = await callClaude(
+              "Project: " + name + "\nDescription: " + desc + "\n\nInterview:\n" + qa,
+              SYSTEM_ANALYSIS
+            );
+            const parsed = JSON.parse(raw.trim());
+            setResults(parsed);
+            setStep("results");
+          } catch (err) {
+            setError("Something went wrong generating results. Please try again. (" + err.message + ")");
+            setStep("interview");
+          }
+        }
+      }
+
+      function reset() {
+        setStep("intro");
+        setName("");
+        setDesc("");
+        setQuestions([]);
+        setQIndex(0);
+        setAnswers([]);
+        setCurrentAns("");
+        setResults(null);
+        setError("");
+        setCopied(false);
+      }
+
+      function buildPlainText() {
+        if (!results) return "";
+        var r = results;
+        var lines = [];
+        lines.push("UNIT ECONOMICS ANALYSIS — " + name.toUpperCase());
+        lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        lines.push("LTV : CAC RATIO — " + Number(r.ratio.value).toFixed(1) + "x");
+        lines.push(r.ratio.interpretation);
+        lines.push(r.ratio.benchmark);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("CUSTOMER ACQUISITION COST: " + fmt(r.cac.low) + " – " + fmt(r.cac.high));
+        r.cac.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("LIFETIME VALUE: " + fmt(r.ltv.low) + " – " + fmt(r.ltv.high));
+        r.ltv.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("ENDURE FRAMEWORK COMMENTARY");
+        lines.push("");
+        r.endure.forEach(function(dim) {
+          lines.push("[" + dim.letter + "] " + dim.dimension + " (" + dim.impact + ")");
+          lines.push(dim.insight);
+          lines.push("");
+        });
+        lines.push("───────────────────────────────────────");
+        lines.push("STRATEGIC BRIEF");
+        lines.push("");
+        lines.push(r.brief);
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        return lines.join("\n");
+      }
+
+      function copyToClipboard() {
+        navigator.clipboard.writeText(buildPlainText()).then(function() {
+          setCopied(true);
+          setTimeout(function() { setCopied(false); }, 2000);
+        });
+      }
+
+      // ── RENDER ──
+
+      if (step === "loading") {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "loading-wrap" },
+              e("div", { className: "spinner" }),
+              e("div", { className: "loading-text" }, "Building your model\u2026")
+            )
+          )
+        );
+      }
+
+      if (step === "interview" && questions[qIndex]) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "progress-track no-print" },
+              questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < qIndex) cls += " done";
+                else if (i === qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, questions[qIndex].focus + " Driver"),
+            e("div", { className: "q-text" }, questions[qIndex].text),
+            e("div", { className: "q-hint" }, questions[qIndex].hint),
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: currentAns,
+              onChange: function(ev) { setCurrentAns(ev.target.value); },
+              placeholder: "Your answer \u2014 estimates and ranges are fine\u2026",
+              style: { marginBottom: 22 }
+            }),
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitAnswer,
+                disabled: !currentAns.trim()
+              }, qIndex + 1 < questions.length ? "Next \u2192" : "Generate Model \u2192"),
+              e("span", { className: "q-counter" }, (qIndex + 1) + " of " + questions.length)
+            )
+          )
+        );
+      }
+
+      if (step === "results" && results) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "eyebrow" }, name),
+            e("div", { className: "results-title" }, "Unit Economics Analysis"),
+            e("div", { className: "results-sub" },
+              "Generated for class discussion \u00B7 " +
+              new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+            ),
+
+            // Ratio card
+            e("div", { className: "ratio-card" },
+              e("div", { className: "ratio-label" }, "LTV : CAC Ratio"),
+              e("div", { className: "ratio-value", style: { color: ratioColor(results.ratio.value) } },
+                Number(results.ratio.value).toFixed(1) + "\u00D7"
+              ),
+              e("div", { className: "ratio-interp" }, results.ratio.interpretation),
+              e("div", { className: "ratio-bench" }, results.ratio.benchmark)
+            ),
+
+            // Metrics grid
+            e("div", { className: "metrics-grid" },
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type type-cac" }, "Customer Acquisition Cost"),
+                e("div", { className: "metric-range" }, fmt(results.cac.low) + " \u2013 " + fmt(results.cac.high)),
+                e("ul", { className: "assumptions" },
+                  results.cac.assumptions.map(function(a, i) {
+                    return e("li", { key: i, className: "assumption" }, a);
+                  })
+                )
+              ),
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type type-ltv" }, "Lifetime Value"),
+                e("div", { className: "metric-range" }, fmt(results.ltv.low) + " \u2013 " + fmt(results.ltv.high)),
+                e("ul", { className: "assumptions" },
+                  results.ltv.assumptions.map(function(a, i) {
+                    return e("li", { key: i, className: "assumption" }, a);
+                  })
+                )
+              )
+            ),
+
+            // ENDURE
+            e("div", { className: "section-label" }, "ENDURE Framework Commentary"),
+            e("div", { className: "endure-list" },
+              results.endure.map(function(dim, i) {
+                return e("div", { key: i, className: "endure-card" },
+                  e("div", { className: "e-letter" }, dim.letter),
+                  e("div", null,
+                    e("div", { className: "e-dim" }, dim.dimension),
+                    e("div", { className: "e-insight" }, dim.insight)
+                  ),
+                  e("div", { className: "impact-pill" }, dim.impact)
+                );
+              })
+            ),
+
+            // Brief
+            e("div", { className: "section-label" }, "Strategic Brief"),
+            e("div", { className: "brief-card" },
+              e("div", { className: "brief-text" }, results.brief)
+            ),
+
+            // Actions
+            e("div", { className: "actions no-print" },
+              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (copied ? " copied" : ""),
+                onClick: copyToClipboard
+              }, copied ? "Copied!" : "Copy for Google Classroom"),
+              e("button", { className: "btn btn-ghost", onClick: reset }, "New Analysis")
+            )
+          )
+        );
+      }
+
+      // ── INTRO (default) ──
+      return e("div", null,
+        renderHeader(),
+        e("main", { className: "main" },
+          e("div", { className: "eyebrow" }, "Design Thinking \u00B7 Unit Economics"),
+          e("h1", { className: "intro-heading" },
+            "What does one customer", e("br"), e("em", null, "actually"), " cost \u2014 and earn?"
+          ),
+          e("p", { className: "intro-body" },
+            "This tool guides you through estimating CAC (Customer Acquisition Cost) " +
+            "and LTV (Lifetime Value) for your startup idea. Your model will be reviewed " +
+            "through the ENDURE framework \u2014 showing how strategic choices shape your economics."
+          ),
+          e("div", { className: "card" },
+            e("div", { className: "form-group" },
+              e("label", { className: "form-label" }, "Project Name"),
+              e("input", {
+                className: "form-input",
+                value: name,
+                onChange: function(ev) { setName(ev.target.value); },
+                placeholder: "e.g. GreenDelivery, TutorLink\u2026"
+              })
+            ),
+            e("div", { className: "form-group" },
+              e("label", { className: "form-label" }, "Describe your startup idea"),
+              e("div", { className: "form-hint" }, "Who is your customer? What do you sell? How do they find you?"),
+              e("textarea", {
+                className: "form-input",
+                rows: 5,
+                value: desc,
+                onChange: function(ev) { setDesc(ev.target.value); },
+                placeholder: "We help [who] do [what] by [how]. Our customers find us through [channel] and pay [roughly how much] for [what]\u2026"
+              })
+            )
+          ),
+          error ? e("div", { className: "error-msg" }, error) : null,
+          e("button", {
+            className: "btn",
+            onClick: startInterview,
+            disabled: !name.trim() || !desc.trim()
+          }, "Begin Analysis \u2192")
+        )
+      );
+    }
+
+    function renderHeader() {
+      return e("header", { className: "header" },
+        e("span", { className: "logo-mark" }, "ENDURE"),
+        e("span", { className: "header-sub" }, "Unit Economics Workshop")
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(e(App));
+  </script>
+</body>
+</html>
