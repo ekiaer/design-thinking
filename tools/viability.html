@@ -307,7 +307,59 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+      margin-bottom: 24px;
+    }
+    .margin-card {
+      background: rgba(212,168,83,0.04);
+      border: 1px solid rgba(212,168,83,0.12);
+      border-radius: 8px;
+      padding: 26px;
       margin-bottom: 40px;
+    }
+    .margin-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(232,227,216,0.06);
+      margin: 14px 0 10px;
+      overflow: hidden;
+    }
+    .margin-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #D4A853;
+      transition: width 0.6s ease;
+    }
+    .margin-interp {
+      font-size: 13px;
+      color: rgba(232,227,216,0.45);
+      font-style: italic;
+    }
+    .cogs-breakdown {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .cogs-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+      color: rgba(232,227,216,0.5);
+    }
+    .cogs-item-name { flex: 1; }
+    .cogs-item-cost {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 500;
+      color: rgba(232,227,216,0.7);
+      margin-left: 12px;
+    }
+    .cogs-item-note {
+      font-size: 11px;
+      color: rgba(232,227,216,0.3);
+      display: block;
+      margin-top: 1px;
     }
     .metric-card {
       background: rgba(255,255,255,0.025);
@@ -322,8 +374,10 @@
       text-transform: uppercase;
       margin-bottom: 14px;
     }
+    .type-cogs { color: #7B93DB; }
     .type-cac { color: #E07558; }
     .type-ltv { color: #5CB88A; }
+    .type-margin { color: #D4A853; }
     .metric-range {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 26px;
@@ -435,7 +489,12 @@
       .eyebrow, .section-label, .ratio-label, .metric-type, .e-dim { color: #555; }
       .no-print { display: none !important; }
       .ratio-card { background: #f8f6f0; border-color: #ddd; }
-      .metric-card, .endure-card, .brief-card { background: #f8f6f0; border-color: #ddd; }
+      .metric-card, .endure-card, .brief-card, .margin-card { background: #f8f6f0; border-color: #ddd; }
+      .margin-bar { background: #ddd; }
+      .margin-bar-fill { background: #666; }
+      .cogs-item, .cogs-item-cost { color: #333; }
+      .cogs-item-note { color: #666; }
+      .margin-interp { color: #444; }
       .ratio-value, .metric-range { color: #111; }
       .ratio-interp, .e-insight, .brief-text, .assumption { color: #333; }
       .endure-card { border-left-color: #666; }
@@ -463,31 +522,61 @@
     // Cloudflare Worker proxy URL — replace with your deployed worker URL
     const API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
 
-    const SYSTEM_QUESTIONS = `You help design thinking students analyze unit economics for early-stage startup ideas.
-Generate exactly 5 interview questions to estimate CAC (Customer Acquisition Cost) and LTV (Lifetime Value) for the student's specific project.
+    const SYSTEM_QUESTIONS = `You help design thinking students analyze unit economics for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.
+Generate exactly 7 interview questions covering three areas:
+- COGS (Cost of Goods Sold): 2-3 questions about production costs, materials, packaging, shipping, supplier pricing, and per-unit manufacturing
+- CAC (Customer Acquisition Cost): 2 questions about how they find and convert customers
+- LTV (Lifetime Value): 2 questions about revenue per customer, repeat purchases, retention
 Be concrete and specific to their idea — reference the actual product, customer, channel.
 Questions should be answerable without real data yet (educated estimates are fine).
-Alternate between CAC and LTV focus. Keep each question to one sentence.
+Start with COGS questions, then CAC, then LTV. Keep each question to one sentence.
 Return ONLY valid JSON with no markdown, no explanation:
-{"questions":[{"id":1,"text":"question","focus":"CAC","hint":"short guidance for student"}]}`;
+{"questions":[{"id":1,"text":"question","focus":"COGS","hint":"short guidance for student"}]}`;
 
     const SYSTEM_ANALYSIS = `You analyze startup unit economics through the ENDURE framework for a design thinking class.
+These students are building physical products (bottles, sensors, supplements), so production and distribution costs are critical.
 ENDURE dimensions: Environmental Scanning (E), Network Orchestration (N), Disruptive Experimentation (D), Unmet Needs Research (U), Resilience Building (R), Evolution Enablement (E).
-Based on the project and interview, estimate realistic CAC and LTV ranges for an early-stage startup.
-Pick 2–3 ENDURE dimensions most relevant to economics risks or opportunities — be specific to their project.
+
+Based on the project and interview:
+1. Estimate COGS (Cost of Goods Sold) per unit — materials, manufacturing, packaging, shipping/fulfillment
+2. Calculate gross margin per unit (revenue minus COGS)
+3. Build LTV on GROSS MARGIN, not raw revenue — this is the real value of a customer
+4. Estimate CAC range
+5. Calculate the LTV:CAC ratio using margin-based LTV
+6. Pick 2–3 ENDURE dimensions most relevant to their economics
+
 Return ONLY valid JSON with no markdown, no explanation:
 {
+  "cogs":{"per_unit":number,"breakdown":[{"item":"materials/manufacturing/packaging/shipping/other","cost":number,"note":"brief explanation"}],"assumptions":["...","..."]},
+  "gross_margin":{"revenue_per_unit":number,"cogs_per_unit":number,"margin_per_unit":number,"margin_percent":number,"interpretation":"one sentence on whether this margin is healthy for their category"},
   "cac":{"low":number,"high":number,"assumptions":["...","...","..."]},
-  "ltv":{"low":number,"high":number,"assumptions":["...","...","..."]},
-  "ratio":{"value":number,"interpretation":"one sentence on viability","benchmark":"industry context"},
-  "endure":[{"dimension":"full name","letter":"single letter","insight":"2-3 sentences connecting this dimension to their CAC or LTV","impact":"CAC|LTV|Both"}],
-  "brief":"2-3 paragraph written brief covering the numbers, assumptions, and strategic risks for class discussion."
+  "ltv":{"low":number,"high":number,"basis":"margin-based — built on gross profit, not revenue","assumptions":["...","...","..."]},
+  "ratio":{"value":number,"interpretation":"one sentence on viability — note this uses margin-based LTV","benchmark":"industry context"},
+  "endure":[{"dimension":"full name","letter":"single letter","insight":"2-3 sentences connecting this dimension to their unit economics","impact":"COGS|CAC|LTV|Margin|Both"}],
+  "brief":"2-3 paragraph written brief covering production costs, margins, acquisition costs, and strategic risks. Highlight where margin pressure or scale effects could change the picture."
 }`;
 
     const fmt = (n) => n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n;
     const ratioColor = (r) => r >= 3 ? "#5CB88A" : r >= 2 ? "#D4A853" : "#E07558";
 
     const RESOURCES = {
+      COGS: [
+        {
+          title: "How to Calculate Cost of Goods Sold",
+          url: "https://www.investopedia.com/terms/c/cogs.asp",
+          desc: "What goes into COGS and why it matters for pricing"
+        },
+        {
+          title: "Understanding Unit Economics for Physical Products",
+          url: "https://www.shopify.com/blog/unit-economics",
+          desc: "Shopify\u2019s guide to per-unit costs for product businesses"
+        },
+        {
+          title: "Gross Margin Explained",
+          url: "https://www.investopedia.com/terms/g/grossmargin.asp",
+          desc: "Why the gap between revenue and production cost is everything"
+        }
+      ],
       CAC: [
         {
           title: "How to Calculate Customer Acquisition Cost",
@@ -545,7 +634,7 @@ Return ONLY valid JSON with no markdown, no explanation:
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 1500,
           system: sys,
           messages: [{ role: "user", content: userMsg }],
         }),
@@ -643,12 +732,32 @@ Return ONLY valid JSON with no markdown, no explanation:
         lines.push("LTV : CAC RATIO — " + Number(r.ratio.value).toFixed(1) + "x");
         lines.push(r.ratio.interpretation);
         lines.push(r.ratio.benchmark);
+        if (r.cogs) {
+          lines.push("");
+          lines.push("───────────────────────────────────────");
+          lines.push("COST OF GOODS SOLD: " + fmt(r.cogs.per_unit) + " per unit");
+          if (r.cogs.breakdown) {
+            r.cogs.breakdown.forEach(function(b) {
+              lines.push("  — " + b.item + ": " + fmt(b.cost) + (b.note ? " (" + b.note + ")" : ""));
+            });
+          }
+          if (r.cogs.assumptions) {
+            r.cogs.assumptions.forEach(function(a) { lines.push("  — " + a); });
+          }
+        }
+        if (r.gross_margin) {
+          lines.push("");
+          lines.push("GROSS MARGIN: " + fmt(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)");
+          lines.push("  Revenue " + fmt(r.gross_margin.revenue_per_unit) + " – COGS " + fmt(r.gross_margin.cogs_per_unit));
+          lines.push(r.gross_margin.interpretation);
+        }
         lines.push("");
         lines.push("───────────────────────────────────────");
         lines.push("CUSTOMER ACQUISITION COST: " + fmt(r.cac.low) + " – " + fmt(r.cac.high));
         r.cac.assumptions.forEach(function(a) { lines.push("  — " + a); });
         lines.push("");
         lines.push("LIFETIME VALUE: " + fmt(r.ltv.low) + " – " + fmt(r.ltv.high));
+        if (r.ltv.basis) { lines.push("  (" + r.ltv.basis + ")"); }
         r.ltv.assumptions.forEach(function(a) { lines.push("  — " + a); });
         lines.push("");
         lines.push("───────────────────────────────────────");
@@ -760,7 +869,51 @@ Return ONLY valid JSON with no markdown, no explanation:
               e("div", { className: "ratio-bench" }, results.ratio.benchmark)
             ),
 
-            // Metrics grid
+            // COGS + Gross Margin
+            results.cogs ? e("div", null,
+              e("div", { className: "section-label" }, "Production & Distribution Costs"),
+              e("div", { className: "metrics-grid" },
+                e("div", { className: "metric-card" },
+                  e("div", { className: "metric-type type-cogs" }, "Cost of Goods Sold (per unit)"),
+                  e("div", { className: "metric-range" }, fmt(results.cogs.per_unit)),
+                  e("ul", { className: "cogs-breakdown" },
+                    (results.cogs.breakdown || []).map(function(b, i) {
+                      return e("li", { key: i, className: "cogs-item" },
+                        e("span", null,
+                          e("span", { className: "cogs-item-name" }, b.item),
+                          b.note ? e("span", { className: "cogs-item-note" }, b.note) : null
+                        ),
+                        e("span", { className: "cogs-item-cost" }, fmt(b.cost))
+                      );
+                    })
+                  ),
+                  results.cogs.assumptions ? e("ul", { className: "assumptions", style: { marginTop: 12 } },
+                    results.cogs.assumptions.map(function(a, i) {
+                      return e("li", { key: i, className: "assumption" }, a);
+                    })
+                  ) : null
+                ),
+                results.gross_margin ? e("div", { className: "metric-card" },
+                  e("div", { className: "metric-type type-margin" }, "Gross Margin"),
+                  e("div", { className: "metric-range" },
+                    fmt(results.gross_margin.margin_per_unit) + " / unit (" + Math.round(results.gross_margin.margin_percent) + "%)"
+                  ),
+                  e("div", { style: { fontSize: 12, color: "rgba(232,227,216,0.38)", marginBottom: 4 } },
+                    "Revenue " + fmt(results.gross_margin.revenue_per_unit) + " \u2013 COGS " + fmt(results.gross_margin.cogs_per_unit)
+                  ),
+                  e("div", { className: "margin-bar" },
+                    e("div", {
+                      className: "margin-bar-fill",
+                      style: { width: Math.min(100, Math.max(5, results.gross_margin.margin_percent)) + "%" }
+                    })
+                  ),
+                  e("div", { className: "margin-interp" }, results.gross_margin.interpretation)
+                ) : null
+              )
+            ) : null,
+
+            // CAC + LTV
+            e("div", { className: "section-label" }, "Customer Acquisition & Lifetime Value"),
             e("div", { className: "metrics-grid" },
               e("div", { className: "metric-card" },
                 e("div", { className: "metric-type type-cac" }, "Customer Acquisition Cost"),
@@ -774,6 +927,9 @@ Return ONLY valid JSON with no markdown, no explanation:
               e("div", { className: "metric-card" },
                 e("div", { className: "metric-type type-ltv" }, "Lifetime Value"),
                 e("div", { className: "metric-range" }, fmt(results.ltv.low) + " \u2013 " + fmt(results.ltv.high)),
+                results.ltv.basis ? e("div", { style: { fontSize: 11, color: "rgba(212,168,83,0.5)", marginBottom: 10, fontStyle: "italic" } },
+                  results.ltv.basis
+                ) : null,
                 e("ul", { className: "assumptions" },
                   results.ltv.assumptions.map(function(a, i) {
                     return e("li", { key: i, className: "assumption" }, a);
@@ -825,9 +981,10 @@ Return ONLY valid JSON with no markdown, no explanation:
             "What does one customer", e("br"), e("em", null, "actually"), " cost \u2014 and earn?"
           ),
           e("p", { className: "intro-body" },
-            "This tool guides you through estimating CAC (Customer Acquisition Cost) " +
-            "and LTV (Lifetime Value) for your startup idea. Your model will be reviewed " +
-            "through the ENDURE framework \u2014 showing how strategic choices shape your economics."
+            "This tool walks you through the full unit economics of your venture \u2014 " +
+            "from production and distribution costs (COGS) to gross margin, customer acquisition (CAC), " +
+            "and lifetime value (LTV). Your model will be reviewed through the ENDURE framework, " +
+            "showing how strategic choices shape whether the math actually works."
           ),
           e("div", { className: "card" },
             e("div", { className: "form-group" },
