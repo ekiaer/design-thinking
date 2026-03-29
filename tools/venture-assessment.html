@@ -668,6 +668,8 @@
 
     var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\"}";
+
     var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
 
     // ═══════════════════════════════════════
@@ -699,6 +701,11 @@
       projectName: "",
       teamMembers: "",
       projectDesc: "",
+      journal: {
+        raw: "",
+        parsed: null,
+        provided: false
+      },
       dimensions: {
         desirability: makeDimState(),
         feasibility: makeDimState(),
@@ -810,6 +817,34 @@
       function startFresh() {
         sessionStorage.removeItem("va-state");
         setS(INITIAL_STATE);
+      }
+
+      // ── Journal parsing ──
+      async function beginAssessment() {
+        var journalText = S.journal.raw.trim();
+        if (journalText) {
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Reading your journal\u2026" });
+          try {
+            var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nFull Journal:\n" + journalText;
+            var raw = await callClaude(context, SYSTEM_JOURNAL_PARSE, 2000);
+            var parsed = JSON.parse(raw.trim());
+            // Pre-populate paste-in fields
+            updateDim("desirability", { pasteIn: parsed.desirability.material || "" });
+            updateDim("feasibility", { pasteIn: parsed.feasibility.material || "" });
+            updateDim("viability", { pasteIn: parsed.viability.material || "" });
+            update({
+              journal: { raw: journalText, parsed: parsed, provided: true },
+              phase: "desirability",
+              subPhase: "paste",
+              error: ""
+            });
+          } catch (err) {
+            update({ phase: "setup", error: "Had trouble parsing your journal. You can try again or skip it and paste notes manually in each section. (" + err.message + ")" });
+          }
+        } else {
+          navigate("desirability", "paste");
+        }
       }
 
       // ── Dimension question prompts lookup ──
@@ -1275,13 +1310,24 @@
                   onChange: function(ev) { update({ projectDesc: ev.target.value }); },
                   placeholder: "We\u2019re building a [product/service] that helps [who] with [what]\u2026"
                 })
+              ),
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Full Journal (Optional)"),
+                e("div", { className: "form-hint" }, "Paste your full journal here \u2014 all weeks, raw notes, everything. The tool will organize your work across Desirability, Feasibility, and Viability. Skip this if you prefer to paste notes manually in each section."),
+                e("textarea", {
+                  className: "form-input",
+                  rows: 12,
+                  value: S.journal.raw,
+                  onChange: function(ev) { update({ journal: Object.assign({}, S.journal, { raw: ev.target.value }) }); },
+                  placeholder: "Week 1: We started by researching\u2026\nWeek 2: Talked to three people about\u2026\nWeek 3: Built a prototype that\u2026"
+                })
               )
             ),
             S.error ? e("div", { className: "error-msg" }, S.error) : null,
             e("button", {
               className: "btn",
               disabled: !S.projectName.trim() || !S.projectDesc.trim(),
-              onClick: function() { navigate("desirability", "paste"); }
+              onClick: beginAssessment
             }, "Begin Assessment \u2192")
           )
         );
@@ -1322,6 +1368,10 @@
 
       // ── Paste-in ──
       function renderPaste(dim, cfg, d) {
+        var jp = S.journal.provided && S.journal.parsed && S.journal.parsed[dim];
+        var journalSummary = jp ? jp.summary : null;
+        var hasContent = d.pasteIn.trim().length > 0;
+
         return e("div", null,
           renderHeader(),
           e("main", { className: "main" },
@@ -1330,13 +1380,23 @@
             e("div", { className: "eyebrow" }, cfg.label),
             e("div", { className: "dim-heading" }, cfg.heading),
             e("div", { className: "dim-body" }, cfg.body),
+            journalSummary ? e("div", { className: "synthesis-card", style: { marginBottom: 24 } },
+              e("div", { className: "synthesis-label" }, "From Your Journal \u2014 " + cfg.label),
+              e("div", { className: "synthesis-text", style: { fontSize: 13 } }, journalSummary),
+              dim === "desirability" && S.journal.parsed.cross_cutting ? e("div", { className: "gaps-text", style: { marginTop: 10 } },
+                "Across all dimensions: " + S.journal.parsed.cross_cutting
+              ) : null
+            ) : null,
             e("div", { className: "card" },
               e("div", { className: "form-group" },
-                e("label", { className: "form-label" }, cfg.pasteLabel),
-                e("div", { className: "form-hint" }, cfg.pasteHint),
+                e("label", { className: "form-label" },
+                  hasContent && S.journal.provided ? "Your " + cfg.label.toLowerCase() + " notes (from journal \u2014 edit or add below)" : cfg.pasteLabel
+                ),
+                !hasContent && !S.journal.provided ? e("div", { className: "form-hint" }, cfg.pasteHint) : null,
+                hasContent && S.journal.provided ? e("div", { className: "form-hint" }, "Edit or add anything the tool missed before continuing.") : null,
                 e("textarea", {
                   className: "form-input",
-                  rows: 6,
+                  rows: hasContent ? 10 : 6,
                   value: d.pasteIn,
                   onChange: function(ev) { updateDim(dim, { pasteIn: ev.target.value }); },
                   placeholder: "Paste your notes here (optional but recommended)\u2026"
