@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENDURE · Venture Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      border-bottom: 1px solid rgba(212,168,83,0.18);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-mark {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: #D4A853;
+      letter-spacing: -1px;
+    }
+    .header-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(232,227,216,0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .main {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 32px 40px 80px;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .step-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(232,227,216,0.08);
+      color: rgba(232,227,216,0.25);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .step-pill.active {
+      border-color: rgba(212,168,83,0.5);
+      color: #D4A853;
+      background: rgba(212,168,83,0.08);
+    }
+    .step-pill.done {
+      border-color: rgba(92,184,138,0.3);
+      color: rgba(92,184,138,0.6);
+    }
+    .step-connector {
+      align-self: center;
+      color: rgba(232,227,216,0.12);
+      font-size: 10px;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #D4A853;
+      margin-bottom: 18px;
+    }
+    .intro-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      line-height: 1.1;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 22px;
+    }
+    .intro-body {
+      font-size: 15px;
+      color: rgba(232,227,216,0.55);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 16px;
+    }
+    .dim-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      line-height: 1.2;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .dim-body {
+      font-size: 14px;
+      color: rgba(232,227,216,0.45);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 560px;
+    }
+
+    /* ── CARDS & FORMS ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .form-group { margin-bottom: 24px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.75);
+      margin-bottom: 8px;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 4px;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .form-input:focus { border-color: rgba(212,168,83,0.45); }
+    .form-input::placeholder { color: rgba(232,227,216,0.2); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      background: #D4A853;
+      color: #0D1117;
+      border: none;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 13px 28px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+    .btn-back {
+      background: transparent;
+      color: rgba(232,227,216,0.35);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 20px;
+      transition: color 0.15s;
+    }
+    .btn-back:hover { color: rgba(232,227,216,0.6); }
+    .btn-copy {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-copy:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+    .btn-copy.copied { color: #5CB88A; border-color: rgba(92,184,138,0.3); }
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    /* ── PROGRESS BAR (questions) ── */
+    .progress-track {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 40px;
+    }
+    .progress-seg {
+      height: 3px;
+      flex: 1;
+      border-radius: 2px;
+      background: rgba(232,227,216,0.08);
+      transition: background 0.3s;
+    }
+    .progress-seg.active { background: #D4A853; }
+    .progress-seg.done { background: rgba(212,168,83,0.35); }
+
+    /* ── INTERVIEW QUESTIONS ── */
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .q-hint {
+      font-size: 13px;
+      color: rgba(232,227,216,0.38);
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+    .q-counter {
+      font-size: 12px;
+      color: rgba(232,227,216,0.28);
+      align-self: center;
+    }
+
+    /* ── SYNTHESIS DISPLAY ── */
+    .synthesis-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-left: 3px solid rgba(212,168,83,0.4);
+      border-radius: 0 8px 8px 0;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .synthesis-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+      margin-bottom: 10px;
+    }
+    .synthesis-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.65);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+    .unmet-need {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: rgba(212,168,83,0.7);
+      line-height: 1.5;
+      padding: 18px 0;
+      border-top: 1px solid rgba(232,227,216,0.06);
+      border-bottom: 1px solid rgba(232,227,216,0.06);
+      margin: 16px 0;
+    }
+    .gaps-text {
+      font-size: 13px;
+      color: rgba(232,227,216,0.38);
+      font-style: italic;
+      line-height: 1.7;
+      margin-top: 14px;
+    }
+    .maturity-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 12px;
+    }
+    .maturity-concept { border: 1px solid rgba(224,117,88,0.35); color: #E07558; }
+    .maturity-early { border: 1px solid rgba(212,168,83,0.35); color: #D4A853; }
+    .maturity-validated { border: 1px solid rgba(92,184,138,0.35); color: #5CB88A; }
+
+    /* ── ASSUMPTION CERTAINTY ── */
+    .assumption-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .assumption-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .assumption-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.6);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .certainty-pills {
+      display: flex;
+      gap: 8px;
+    }
+    .certainty-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(232,227,216,0.1);
+      background: transparent;
+      color: rgba(232,227,216,0.35);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .certainty-pill:hover {
+      border-color: rgba(212,168,83,0.3);
+      color: rgba(232,227,216,0.6);
+    }
+    .certainty-pill.selected {
+      background: #D4A853;
+      border-color: #D4A853;
+      color: #0D1117;
+    }
+
+    /* ── RATING CARDS ── */
+    .rating-cards {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .rating-card {
+      flex: 1;
+      cursor: pointer;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 24px 20px;
+      transition: border-color 0.2s, background 0.2s;
+      text-align: center;
+    }
+    .rating-card:hover { border-color: rgba(212,168,83,0.3); }
+    .rating-card.selected {
+      border-color: rgba(212,168,83,0.6);
+      background: rgba(212,168,83,0.06);
+    }
+    .rating-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: rgba(232,227,216,0.2);
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .rating-card.selected .rating-number { color: #D4A853; }
+    .rating-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.5);
+      margin-bottom: 8px;
+    }
+    .rating-desc {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      line-height: 1.5;
+    }
+
+    /* ── LOADING ── */
+    .loading-wrap {
+      padding: 100px 0;
+      text-align: center;
+    }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 2px solid rgba(212,168,83,0.12);
+      border-top-color: #D4A853;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+    }
+
+    /* ── BRIEF OUTPUT ── */
+    .brief-header {
+      margin-bottom: 40px;
+    }
+    .brief-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 4px;
+    }
+    .brief-meta {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .brief-section {
+      margin-bottom: 40px;
+    }
+    .brief-section-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(232,227,216,0.06);
+    }
+    .brief-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .brief-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.62);
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+    .rating-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+    .rating-badge-1 { background: rgba(224,117,88,0.12); color: #E07558; }
+    .rating-badge-2 { background: rgba(212,168,83,0.12); color: #D4A853; }
+    .rating-badge-3 { background: rgba(92,184,138,0.12); color: #5CB88A; }
+
+    /* Uncertainty map */
+    .uncertainty-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(232,227,216,0.04);
+      gap: 16px;
+    }
+    .uncertainty-item:last-child { border-bottom: none; }
+    .uncertainty-text {
+      font-size: 13px;
+      color: rgba(232,227,216,0.55);
+      flex: 1;
+    }
+    .uncertainty-dim {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.25);
+      white-space: nowrap;
+    }
+    .uncertainty-cert {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .cert-low { color: #E07558; }
+    .cert-mid { color: #D4A853; }
+    .cert-high { color: #5CB88A; }
+    .avg-confidence {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 28px;
+      font-weight: 600;
+      color: #D4A853;
+      margin-bottom: 6px;
+    }
+    .avg-label {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 16px;
+    }
+
+    /* ── ERROR ── */
+    .error-msg {
+      color: #E07558;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* ── RESUME BANNER ── */
+    .resume-banner {
+      background: rgba(212,168,83,0.06);
+      border: 1px solid rgba(212,168,83,0.2);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .resume-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.6);
+    }
+    .resume-actions { display: flex; gap: 10px; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; color: #111; }
+      .header { border-color: #ddd; background: #fff; }
+      .logo-mark { color: #222; }
+      .no-print { display: none !important; }
+      .step-bar { display: none !important; }
+      .eyebrow, .section-label, .brief-section-title, .synthesis-label { color: #555; }
+      .brief-card, .synthesis-card { background: #f8f6f0; border-color: #ddd; }
+      .brief-text, .synthesis-text { color: #333; }
+      .intro-heading, .brief-title, .dim-heading { color: #111; }
+      .q-text { color: #111; }
+      .rating-badge-1 { background: #fef0ec; color: #c0523a; }
+      .rating-badge-2 { background: #fdf6e8; color: #9a7a2a; }
+      .rating-badge-3 { background: #edf7f1; color: #3a8a5c; }
+      .uncertainty-text { color: #333; }
+      .uncertainty-cert { color: #111; }
+      .cert-low { color: #c0523a; }
+      .cert-mid { color: #9a7a2a; }
+      .cert-high { color: #3a8a5c; }
+      .unmet-need { color: #555; border-color: #ddd; }
+      .synthesis-card { border-left-color: #999; }
+      .brief-section { page-break-inside: avoid; }
+      .brief-section + .brief-section { page-break-before: auto; }
+      .page-break { page-break-before: always; }
+    }
+
+    @media (max-width: 600px) {
+      .main { padding: 24px 20px 60px; }
+      .intro-heading { font-size: 30px; }
+      .dim-heading { font-size: 24px; }
+      .q-text { font-size: 20px; }
+      .rating-cards { flex-direction: column; }
+      .certainty-pills { flex-wrap: wrap; }
+      .step-bar { gap: 4px; }
+      .step-pill { font-size: 9px; padding: 4px 8px; }
+      .step-connector { display: none; }
+      .resume-banner { flex-direction: column; align-items: stretch; }
+      .brief-title { font-size: 26px; }
+      .avg-confidence { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <script>
+    // ═══════════════════════════════════════
+    // CONFIG
+    // ═══════════════════════════════════════
+    var API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
+    var e = React.createElement;
+    var useState = React.useState;
+    var useEffect = React.useEffect;
+
+    // ═══════════════════════════════════════
+    // DIMENSION CONFIG
+    // ═══════════════════════════════════════
+    var DIMS = {
+      desirability: {
+        label: "Desirability",
+        pasteLabel: "Field Notes & Interview Excerpts",
+        pasteHint: "Paste any observations, interview quotes, or field notes from your customer research. Raw notes are fine.",
+        heading: "Who is this really for?",
+        body: "Let\u2019s get specific about your customer \u2014 not a demographic segment, but a real person. We\u2019ll work from your field observations to a clear insight about what they need and why.",
+        ratings: [
+          { n: 1, label: "Significant limitations", desc: "You have real concerns about whether customers want this enough to change behavior." },
+          { n: 2, label: "Manageable limitations", desc: "There\u2019s evidence of interest, but open questions remain about depth of need or willingness to switch." },
+          { n: 3, label: "Unique advantage", desc: "You have specific, validated evidence that a real customer segment has an unmet need your solution addresses better than alternatives." }
+        ]
+      },
+      feasibility: {
+        label: "Feasibility",
+        pasteLabel: "Experiment Results & Prototype Feedback",
+        pasteHint: "Paste results from any experiments, user tests, or prototype feedback sessions you\u2019ve done.",
+        heading: "Can you actually build and deliver this?",
+        body: "Let\u2019s look at what your experiments have taught you \u2014 what you predicted, what happened, and what you learned. Honest failure is more useful than untested confidence.",
+        ratings: [
+          { n: 1, label: "Significant limitations", desc: "Major unknowns about whether this can be built or delivered at the quality and cost required." },
+          { n: 2, label: "Manageable limitations", desc: "Core feasibility looks plausible, but key assumptions haven\u2019t been tested yet." },
+          { n: 3, label: "Unique advantage", desc: "You\u2019ve tested the hardest parts and have evidence that execution is achievable \u2014 or you have a capability edge competitors lack." }
+        ]
+      },
+      viability: {
+        label: "Viability",
+        pasteLabel: "Unit Economics Output",
+        pasteHint: "Paste the output from the Unit Economics tool if you have it. Otherwise, describe your revenue model and cost structure in your own words.",
+        heading: "Does the math actually work?",
+        body: "Let\u2019s examine whether this venture can sustain itself economically \u2014 your unit economics, market size, retention logic, and what\u2019s hard for competitors to copy.",
+        ratings: [
+          { n: 1, label: "Significant limitations", desc: "The economics are unclear, retention logic is unproven, or competitors could easily replicate this." },
+          { n: 2, label: "Manageable limitations", desc: "The model shows potential but rests on assumptions you haven\u2019t validated. Some competitive exposure." },
+          { n: 3, label: "Unique advantage", desc: "Unit economics look promising with tested assumptions, clear retention logic, and an evolutionary advantage that compounds over time." }
+        ]
+      }
+    };
+    var DIM_ORDER = ["desirability", "feasibility", "viability"];
+    var STEP_LABELS = ["Desirability", "Feasibility", "Viability", "Synthesis", "Brief"];
+
+    // ═══════════════════════════════════════
+    // SYSTEM PROMPTS
+    // ═══════════════════════════════════════
+
+    var SYSTEM_DESIRABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the desirability of their hydration venture.\n\nBased on the student's project description and any field notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe one specific real person who would use this (not a segment)\n2. Ask what that person currently does to solve the problem (workarounds, habits, coping)\n3. Ask what that behavior reveals about what they actually value\n4. Ask what one thing they'd change about that person's experience and why\n\nBe concrete and reference their specific project. Questions should be answerable from observation and reflection.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+
+    var SYSTEM_FEASIBILITY_QUESTIONS = "You are a design thinking coach helping college students assess the feasibility of their hydration venture.\n\nBased on the student's project description and any experiment notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe the most important experiment or prototype test they ran and what they were trying to learn\n2. Ask what they predicted would happen and how confident they were (1\u201310)\n3. Ask what actually happened and where reality diverged from their prediction\n4. Ask what they'd do differently and what's the next experiment they'd run with another month\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+
+    var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their hydration venture.\n\nBased on the student's project description and any unit economics data they've shared, generate exactly 4 interview questions.\n\nThe questions should cover:\n1. Which assumption in their unit economics they're most and least confident in, and why\n2. Market sizing: how many people in their target geography/segment could realistically use this in year one, and what year three looks like if things go well (TAM/SAM thinking in plain language)\n3. What would make a customer come back a second time and a tenth time \u2014 their repeat-use logic\n4. If a well-funded competitor entered tomorrow, what would be hardest for them to replicate\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+
+    var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their hydration venture.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized customer insight (specific, not generic)\n2. An unmet need framing: \"[Customer] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the venture\n4. Honest gaps: what the student still doesn't know about this customer\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of customer insight\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+
+    var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their hydration venture.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to business feasibility\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+
+    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics data, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided)\n2. TAM/SAM analysis in plain language based on their market sizing answers\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+
+    var SYSTEM_FOLLOWUP = "You are a design thinking coach. A student just rated their venture's performance on one dimension and you need to ask two follow-up questions.\n\nIMPORTANT RULES:\n- Never tell the student what rating to give or suggest they should change it\n- If they rated high (3), probe for evidence they might be overlooking. Be respectfully skeptical.\n- If they rated low (1), explore what specifically they're uncertain about. Affirm that recognizing limitations is strong thinking.\n- If they rated medium (2), ask what would move them to a 1 or a 3.\n- Reference their specific answers and assumptions from the interview.\n- Keep questions to one sentence each.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
+
+    var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
+
+    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
+
+    // ═══════════════════════════════════════
+    // INITIAL STATE
+    // ═══════════════════════════════════════
+    function makeDimState() {
+      return {
+        pasteIn: "",
+        questions: [],
+        answers: [],
+        currentAnswer: "",
+        qIndex: 0,
+        synthesis: null,
+        assumptions: [],
+        rating: 0,
+        followUpQuestions: [],
+        followUpAnswers: [],
+        followUpIndex: 0,
+        currentFollowUp: ""
+      };
+    }
+
+    var INITIAL_STATE = {
+      phase: "setup",
+      subPhase: "paste",
+      loadingMsg: "Thinking\u2026",
+      error: "",
+      history: [],
+      projectName: "",
+      teamMembers: "",
+      projectDesc: "",
+      dimensions: {
+        desirability: makeDimState(),
+        feasibility: makeDimState(),
+        viability: makeDimState()
+      },
+      synthesisQuestions: [],
+      synthesisAnswers: [],
+      synthesisIndex: 0,
+      currentSynthesisAnswer: "",
+      brief: null,
+      copied: false,
+      showResume: false
+    };
+
+    // ═══════════════════════════════════════
+    // API HELPER
+    // ═══════════════════════════════════════
+    async function callClaude(userMsg, sys, maxTokens) {
+      maxTokens = maxTokens || 1500;
+      var res = await fetch(API_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: maxTokens,
+          system: sys,
+          messages: [{ role: "user", content: userMsg }]
+        })
+      });
+      if (!res.ok) {
+        var errBody = await res.text();
+        throw new Error("API error: " + res.status + " " + errBody);
+      }
+      var data = await res.json();
+      var text = data.content[0].text;
+      text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+      return text;
+    }
+
+    // ═══════════════════════════════════════
+    // APP
+    // ═══════════════════════════════════════
+    function App() {
+      var stateHook = useState(function() {
+        var saved = sessionStorage.getItem("va-state");
+        if (saved) {
+          try {
+            var parsed = JSON.parse(saved);
+            if (parsed.phase !== "setup") {
+              parsed.showResume = true;
+              parsed._savedPhase = parsed.phase;
+              parsed._savedSubPhase = parsed.subPhase;
+              parsed.phase = "setup";
+            }
+            return parsed;
+          } catch (err) { /* ignore */ }
+        }
+        return INITIAL_STATE;
+      });
+      var S = stateHook[0];
+      var setS = stateHook[1];
+
+      function update(partial) {
+        setS(function(prev) {
+          var next = Object.assign({}, prev, partial);
+          sessionStorage.setItem("va-state", JSON.stringify(next));
+          return next;
+        });
+      }
+
+      function updateDim(dim, partial) {
+        setS(function(prev) {
+          var dims = Object.assign({}, prev.dimensions);
+          dims[dim] = Object.assign({}, dims[dim], partial);
+          var next = Object.assign({}, prev, { dimensions: dims });
+          sessionStorage.setItem("va-state", JSON.stringify(next));
+          return next;
+        });
+      }
+
+      function pushHistory() {
+        setS(function(prev) {
+          var h = prev.history.slice();
+          h.push({ phase: prev.phase, subPhase: prev.subPhase });
+          return Object.assign({}, prev, { history: h });
+        });
+      }
+
+      function goBack() {
+        setS(function(prev) {
+          if (prev.history.length === 0) return prev;
+          var h = prev.history.slice();
+          var last = h.pop();
+          var next = Object.assign({}, prev, { history: h, phase: last.phase, subPhase: last.subPhase, error: "" });
+          sessionStorage.setItem("va-state", JSON.stringify(next));
+          return next;
+        });
+      }
+
+      function navigate(phase, subPhase) {
+        pushHistory();
+        update({ phase: phase, subPhase: subPhase || "paste", error: "" });
+      }
+
+      function resumeSaved() {
+        update({ phase: S._savedPhase, subPhase: S._savedSubPhase, showResume: false, _savedPhase: undefined, _savedSubPhase: undefined });
+      }
+
+      function startFresh() {
+        sessionStorage.removeItem("va-state");
+        setS(INITIAL_STATE);
+      }
+
+      // ── Dimension question prompts lookup ──
+      var questionPrompts = {
+        desirability: SYSTEM_DESIRABILITY_QUESTIONS,
+        feasibility: SYSTEM_FEASIBILITY_QUESTIONS,
+        viability: SYSTEM_VIABILITY_QUESTIONS
+      };
+      var synthesisPrompts = {
+        desirability: SYSTEM_DESIRABILITY_SYNTHESIS,
+        feasibility: SYSTEM_FEASIBILITY_SYNTHESIS,
+        viability: SYSTEM_VIABILITY_SYNTHESIS
+      };
+
+      // ── Start a dimension ──
+      async function startDimension(dim) {
+        var d = S.dimensions[dim];
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Generating " + DIMS[dim].label.toLowerCase() + " questions\u2026" });
+        try {
+          var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
+          if (d.pasteIn.trim()) context += "\n\nStudent's notes:\n" + d.pasteIn;
+          var raw = await callClaude(context, questionPrompts[dim], 800);
+          var parsed = JSON.parse(raw.trim());
+          updateDim(dim, { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "" });
+          update({ phase: dim, subPhase: "questions", error: "" });
+        } catch (err) {
+          update({ phase: dim, subPhase: "paste", error: "Something went wrong generating questions. Please try again. (" + err.message + ")" });
+        }
+      }
+
+      // ── Submit interview answer ──
+      async function submitAnswer(dim) {
+        var d = S.dimensions[dim];
+        var newAnswers = d.answers.concat([d.currentAnswer]);
+        updateDim(dim, { answers: newAnswers, currentAnswer: "" });
+
+        if (d.qIndex + 1 < d.questions.length) {
+          updateDim(dim, { answers: newAnswers, currentAnswer: "", qIndex: d.qIndex + 1 });
+        } else {
+          // All questions answered — generate synthesis
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Synthesizing your " + DIMS[dim].label.toLowerCase() + " assessment\u2026" });
+          try {
+            var qa = d.questions.map(function(q, i) {
+              return "Q" + (i + 1) + ": " + q.text + "\nA: " + newAnswers[i];
+            }).join("\n\n");
+            var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
+            if (d.pasteIn.trim()) context += "\n\nStudent's notes:\n" + d.pasteIn;
+            context += "\n\nInterview:\n" + qa;
+            var raw = await callClaude(context, synthesisPrompts[dim], 1500);
+            var parsed = JSON.parse(raw.trim());
+            var assumptions = (parsed.assumptions || []).map(function(a) {
+              return { id: a.id, text: a.text, certainty: null };
+            });
+            updateDim(dim, { answers: newAnswers, synthesis: parsed, assumptions: assumptions });
+            update({ phase: dim, subPhase: "ai-synthesis", error: "" });
+          } catch (err) {
+            update({ phase: dim, subPhase: "questions", error: "Something went wrong. (" + err.message + ")" });
+          }
+        }
+      }
+
+      // ── Submit certainty and move to rating ──
+      function setCertainty(dim, assumptionId, value) {
+        var d = S.dimensions[dim];
+        var updated = d.assumptions.map(function(a) {
+          if (a.id === assumptionId) return Object.assign({}, a, { certainty: value });
+          return a;
+        });
+        updateDim(dim, { assumptions: updated });
+      }
+
+      function allCertaintiesSet(dim) {
+        return S.dimensions[dim].assumptions.every(function(a) { return a.certainty !== null; });
+      }
+
+      // ── Select rating ──
+      function selectRating(dim, rating) {
+        updateDim(dim, { rating: rating });
+      }
+
+      // ── Generate follow-ups after rating ──
+      async function submitRating(dim) {
+        var d = S.dimensions[dim];
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing follow-up questions\u2026" });
+        try {
+          var ratingInfo = DIMS[dim].ratings[d.rating - 1];
+          var assumptionSummary = d.assumptions.map(function(a) {
+            return "- \"" + a.text + "\" \u2014 " + a.certainty + "% confident";
+          }).join("\n");
+          var context = "Dimension: " + DIMS[dim].label;
+          context += "\nProject: " + S.projectName;
+          context += "\n\nThe student rated their " + DIMS[dim].label.toLowerCase() + " as " + d.rating + " out of 3 (" + ratingInfo.label + ").";
+          context += "\nRating description: " + ratingInfo.desc;
+          context += "\n\nTheir assumption certainty ratings:\n" + assumptionSummary;
+          context += "\n\nKey points from their interview:\n";
+          d.questions.forEach(function(q, i) {
+            context += "Q: " + q.text + "\nA: " + d.answers[i] + "\n\n";
+          });
+          var raw = await callClaude(context, SYSTEM_FOLLOWUP, 600);
+          var parsed = JSON.parse(raw.trim());
+          updateDim(dim, { followUpQuestions: parsed.questions, followUpIndex: 0, followUpAnswers: [], currentFollowUp: "" });
+          update({ phase: dim, subPhase: "followups", error: "" });
+        } catch (err) {
+          update({ phase: dim, subPhase: "rating", error: "Something went wrong. (" + err.message + ")" });
+        }
+      }
+
+      // ── Submit follow-up answer ──
+      function submitFollowUp(dim) {
+        var d = S.dimensions[dim];
+        var newAnswers = d.followUpAnswers.concat([d.currentFollowUp]);
+        updateDim(dim, { followUpAnswers: newAnswers, currentFollowUp: "" });
+
+        if (d.followUpIndex + 1 < d.followUpQuestions.length) {
+          updateDim(dim, { followUpAnswers: newAnswers, currentFollowUp: "", followUpIndex: d.followUpIndex + 1 });
+        } else {
+          // Dimension complete — move to next
+          updateDim(dim, { followUpAnswers: newAnswers, currentFollowUp: "" });
+          var idx = DIM_ORDER.indexOf(dim);
+          if (idx + 1 < DIM_ORDER.length) {
+            navigate(DIM_ORDER[idx + 1], "paste");
+          } else {
+            startSynthesis();
+          }
+        }
+      }
+
+      // ── Synthesis step ──
+      async function startSynthesis() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing synthesis questions\u2026" });
+        try {
+          var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\n";
+          DIM_ORDER.forEach(function(dim) {
+            var d = S.dimensions[dim];
+            var ratingInfo = DIMS[dim].ratings[d.rating - 1];
+            context += "=== " + DIMS[dim].label.toUpperCase() + " ===\n";
+            context += "Rating: " + d.rating + "/3 (" + ratingInfo.label + ")\n";
+            if (d.synthesis) {
+              context += "Key insight: " + (d.synthesis.synthesis || d.synthesis.unmet_need || "") + "\n";
+            }
+            context += "Assumptions:\n";
+            d.assumptions.forEach(function(a) {
+              context += "- \"" + a.text + "\" \u2014 " + a.certainty + "%\n";
+            });
+            context += "\n";
+          });
+          var raw = await callClaude(context, SYSTEM_SYNTHESIS_QUESTIONS, 800);
+          var parsed = JSON.parse(raw.trim());
+          update({ synthesisQuestions: parsed.questions, synthesisIndex: 0, synthesisAnswers: [], currentSynthesisAnswer: "", phase: "synthesis", subPhase: "questions", error: "" });
+        } catch (err) {
+          update({ phase: "viability", subPhase: "followups", error: "Something went wrong. (" + err.message + ")" });
+        }
+      }
+
+      function submitSynthesisAnswer() {
+        var newAnswers = S.synthesisAnswers.concat([S.currentSynthesisAnswer]);
+        if (S.synthesisIndex + 1 < S.synthesisQuestions.length) {
+          update({ synthesisAnswers: newAnswers, currentSynthesisAnswer: "", synthesisIndex: S.synthesisIndex + 1 });
+        } else {
+          update({ synthesisAnswers: newAnswers, currentSynthesisAnswer: "" });
+          generateBrief(newAnswers);
+        }
+      }
+
+      // ── Brief generation ──
+      async function generateBrief(synthAnswers) {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Building your Venture Assessment Brief\u2026" });
+        try {
+          var context = buildBriefContext(synthAnswers || S.synthesisAnswers);
+          var raw = await callClaude(context, SYSTEM_FINAL_BRIEF, 3500);
+          var parsed = JSON.parse(raw.trim());
+          update({ brief: parsed, phase: "brief", subPhase: "", error: "" });
+        } catch (err) {
+          update({ phase: "synthesis", subPhase: "questions", error: "Something went wrong generating the brief. (" + err.message + ")" });
+        }
+      }
+
+      function buildBriefContext(synthAnswers) {
+        var lines = [];
+        lines.push("Project: " + S.projectName);
+        if (S.teamMembers.trim()) lines.push("Team: " + S.teamMembers);
+        lines.push("Description: " + S.projectDesc);
+        lines.push("");
+
+        DIM_ORDER.forEach(function(dim) {
+          var d = S.dimensions[dim];
+          var ratingInfo = DIMS[dim].ratings[d.rating - 1];
+          lines.push("=== " + DIMS[dim].label.toUpperCase() + " ===");
+          if (d.pasteIn.trim()) {
+            lines.push("Student's notes: " + d.pasteIn.substring(0, 500));
+          }
+          lines.push("");
+          lines.push("Interview:");
+          d.questions.forEach(function(q, i) {
+            lines.push("Q: " + q.text);
+            lines.push("A: " + d.answers[i]);
+            lines.push("");
+          });
+          lines.push("AI Synthesis: " + JSON.stringify(d.synthesis));
+          lines.push("");
+          lines.push("Assumptions with certainty:");
+          d.assumptions.forEach(function(a) {
+            lines.push("- \"" + a.text + "\" \u2014 " + a.certainty + "% confident");
+          });
+          lines.push("");
+          lines.push("Self-rating: " + d.rating + "/3 (" + ratingInfo.label + ")");
+          lines.push("");
+          lines.push("Follow-up responses:");
+          d.followUpQuestions.forEach(function(q, i) {
+            lines.push("Q: " + q.text);
+            lines.push("A: " + (d.followUpAnswers[i] || "(no answer)"));
+            lines.push("");
+          });
+          lines.push("");
+        });
+
+        lines.push("=== CROSS-CUTTING SYNTHESIS ===");
+        (S.synthesisQuestions || []).forEach(function(q, i) {
+          lines.push("Q: " + q.text);
+          lines.push("A: " + (synthAnswers[i] || "(no answer)"));
+          lines.push("");
+        });
+
+        return lines.join("\n");
+      }
+
+      // ── Plain text for clipboard ──
+      function buildPlainText() {
+        if (!S.brief) return "";
+        var b = S.brief;
+        var L = [];
+        L.push("VENTURE ASSESSMENT BRIEF \u2014 " + S.projectName.toUpperCase());
+        if (S.teamMembers.trim()) L.push("Team: " + S.teamMembers);
+        L.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        L.push("");
+
+        // Desirability
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        var dr = S.dimensions.desirability.rating;
+        L.push("DESIRABILITY    [" + ratingDots(dr) + " " + DIMS.desirability.ratings[dr - 1].label + "]");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        L.push("Customer Insight:");
+        L.push(b.desirability.insight);
+        L.push("");
+        L.push("Unmet Need:");
+        L.push(b.desirability.unmet_need);
+        L.push("");
+        L.push("Design Implications:");
+        L.push(b.desirability.implications);
+        L.push("");
+        L.push("Gaps: " + b.desirability.gaps);
+        L.push("Top Uncertainty: " + b.desirability.top_uncertainty);
+        L.push("");
+
+        // Feasibility
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        var fr = S.dimensions.feasibility.rating;
+        L.push("FEASIBILITY     [" + ratingDots(fr) + " " + DIMS.feasibility.ratings[fr - 1].label + "]");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        L.push("Learning Synthesis:");
+        L.push(b.feasibility.learning);
+        L.push("");
+        L.push("Prediction vs Reality:");
+        L.push(b.feasibility.before_after);
+        L.push("");
+        L.push("Prototype Maturity: " + b.feasibility.maturity);
+        L.push("Gaps: " + b.feasibility.gaps);
+        L.push("Top Uncertainty: " + b.feasibility.top_uncertainty);
+        L.push("");
+
+        // Viability
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        var vr = S.dimensions.viability.rating;
+        L.push("VIABILITY       [" + ratingDots(vr) + " " + DIMS.viability.ratings[vr - 1].label + "]");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        L.push("Economic Logic:");
+        L.push(b.viability.economics);
+        L.push("");
+        L.push("Market Size: " + b.viability.market);
+        L.push("Retention: " + b.viability.retention);
+        L.push("Protectability: " + b.viability.protectability);
+        L.push("Gaps: " + b.viability.gaps);
+        L.push("Top Uncertainty: " + b.viability.top_uncertainty);
+        L.push("");
+
+        // Synthesis
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        L.push("INTEGRATED ASSESSMENT");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        L.push(b.synthesis.student_reflection);
+        L.push("");
+        L.push("Two-Year Survival Estimate: " + b.synthesis.survival_estimate);
+        L.push("");
+
+        // Uncertainty map
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        L.push("UNCERTAINTY MAP");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        var allAssumptions = getAllAssumptionsSorted();
+        allAssumptions.forEach(function(a) {
+          L.push("  " + a.certainty + "% \u2014 \"" + a.text + "\" (" + DIMS[a.dim].label + ")");
+        });
+        var avg = getAvgCertainty();
+        L.push("");
+        L.push("Average Confidence: " + avg + "%");
+        L.push(b.uncertainty_map.commentary);
+        L.push("");
+
+        // Next steps
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        L.push("RECOMMENDED NEXT STEPS");
+        L.push("");
+        (b.next_steps || []).forEach(function(s, i) {
+          L.push("  " + (i + 1) + ". " + s);
+        });
+        L.push("");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("Generated with ENDURE Venture Assessment Tool \u00B7 " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        L.push("This assessment reflects the student's reasoning and evidence as of this date.");
+
+        return L.join("\n");
+      }
+
+      function ratingDots(r) {
+        if (r === 1) return "\u25CF\u25CB\u25CB";
+        if (r === 2) return "\u25CF\u25CF\u25CB";
+        return "\u25CF\u25CF\u25CF";
+      }
+
+      function getAllAssumptionsSorted() {
+        var all = [];
+        DIM_ORDER.forEach(function(dim) {
+          S.dimensions[dim].assumptions.forEach(function(a) {
+            all.push(Object.assign({}, a, { dim: dim }));
+          });
+        });
+        all.sort(function(a, b) { return (a.certainty || 0) - (b.certainty || 0); });
+        return all;
+      }
+
+      function getAvgCertainty() {
+        var all = getAllAssumptionsSorted();
+        if (all.length === 0) return 0;
+        var sum = all.reduce(function(s, a) { return s + (a.certainty || 0); }, 0);
+        return Math.round(sum / all.length);
+      }
+
+      function certClass(val) {
+        if (val <= 20) return "cert-low";
+        if (val <= 40) return "cert-mid";
+        return "cert-high";
+      }
+
+      function copyToClipboard() {
+        navigator.clipboard.writeText(buildPlainText()).then(function() {
+          update({ copied: true });
+          setTimeout(function() { update({ copied: false }); }, 2000);
+        });
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER HELPERS
+      // ═══════════════════════════════════════
+      function renderHeader() {
+        return e("header", { className: "header" },
+          e("span", { className: "logo-mark" }, "ENDURE"),
+          e("span", { className: "header-sub" }, "Venture Assessment")
+        );
+      }
+
+      function currentStepIndex() {
+        var p = S.phase;
+        if (p === "setup" || p === "loading") {
+          // Determine which step is active based on what's complete
+          if (S.dimensions.viability.followUpAnswers.length > 0) return 3;
+          if (S.dimensions.feasibility.followUpAnswers.length > 0) return 2;
+          if (S.dimensions.desirability.followUpAnswers.length > 0) return 1;
+          return 0;
+        }
+        var idx = DIM_ORDER.indexOf(p);
+        if (idx >= 0) return idx;
+        if (p === "synthesis") return 3;
+        if (p === "brief") return 4;
+        return 0;
+      }
+
+      function renderStepBar() {
+        var active = currentStepIndex();
+        var items = [];
+        STEP_LABELS.forEach(function(label, i) {
+          if (i > 0) items.push(e("span", { key: "c" + i, className: "step-connector" }, "\u2192"));
+          var cls = "step-pill";
+          if (i < active) cls += " done";
+          else if (i === active) cls += " active";
+          items.push(e("span", { key: "s" + i, className: cls }, label));
+        });
+        return e("div", { className: "step-bar no-print" }, items);
+      }
+
+      function renderBackButton() {
+        if (S.history.length === 0) return null;
+        return e("button", { className: "btn-back no-print", onClick: goBack }, "\u2190 Back");
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: SETUP
+      // ═══════════════════════════════════════
+      function renderSetup() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            S.showResume ? e("div", { className: "resume-banner" },
+              e("div", { className: "resume-text" }, "You have a session in progress. Resume where you left off?"),
+              e("div", { className: "resume-actions" },
+                e("button", { className: "btn", onClick: resumeSaved }, "Resume"),
+                e("button", { className: "btn btn-ghost", onClick: startFresh }, "Start Fresh")
+              )
+            ) : null,
+            e("div", { className: "eyebrow" }, "Venture Assessment"),
+            e("h1", { className: "intro-heading" }, "How strong is your venture \u2014 ", e("em", null, "honestly"), "?"),
+            e("p", { className: "intro-body" },
+              "This tool walks you through three dimensions of your venture \u2014 Desirability, Feasibility, and Viability \u2014 " +
+              "and produces an assessment brief you can submit. Be honest. The quality of your reasoning matters more than the strength of your idea."
+            ),
+            e("div", { className: "card" },
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Project Name"),
+                e("input", {
+                  className: "form-input",
+                  value: S.projectName,
+                  onChange: function(ev) { update({ projectName: ev.target.value }); },
+                  placeholder: "Your venture name"
+                })
+              ),
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Team Members"),
+                e("div", { className: "form-hint" }, "Optional"),
+                e("input", {
+                  className: "form-input",
+                  value: S.teamMembers,
+                  onChange: function(ev) { update({ teamMembers: ev.target.value }); },
+                  placeholder: "Names (optional)"
+                })
+              ),
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Project Description"),
+                e("div", { className: "form-hint" }, "One paragraph: what you\u2019re building and for whom."),
+                e("textarea", {
+                  className: "form-input",
+                  rows: 4,
+                  value: S.projectDesc,
+                  onChange: function(ev) { update({ projectDesc: ev.target.value }); },
+                  placeholder: "We\u2019re building a [product/service] that helps [who] with [what]\u2026"
+                })
+              )
+            ),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: !S.projectName.trim() || !S.projectDesc.trim(),
+              onClick: function() { navigate("desirability", "paste"); }
+            }, "Begin Assessment \u2192")
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: LOADING
+      // ═══════════════════════════════════════
+      function renderLoading() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            e("div", { className: "loading-wrap" },
+              e("div", { className: "spinner" }),
+              e("div", { className: "loading-text" }, S.loadingMsg)
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: DIMENSION (dispatches on subPhase)
+      // ═══════════════════════════════════════
+      function renderDimension(dim) {
+        var cfg = DIMS[dim];
+        var d = S.dimensions[dim];
+        var sub = S.subPhase;
+
+        if (sub === "paste") return renderPaste(dim, cfg, d);
+        if (sub === "questions") return renderQuestions(dim, cfg, d);
+        if (sub === "ai-synthesis") return renderSynthesisDisplay(dim, cfg, d);
+        if (sub === "assumption-certainty") return renderAssumptionCertainty(dim, cfg, d);
+        if (sub === "rating") return renderRating(dim, cfg, d);
+        if (sub === "followups") return renderFollowUps(dim, cfg, d);
+        return renderPaste(dim, cfg, d);
+      }
+
+      // ── Paste-in ──
+      function renderPaste(dim, cfg, d) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label),
+            e("div", { className: "dim-heading" }, cfg.heading),
+            e("div", { className: "dim-body" }, cfg.body),
+            e("div", { className: "card" },
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, cfg.pasteLabel),
+                e("div", { className: "form-hint" }, cfg.pasteHint),
+                e("textarea", {
+                  className: "form-input",
+                  rows: 6,
+                  value: d.pasteIn,
+                  onChange: function(ev) { updateDim(dim, { pasteIn: ev.target.value }); },
+                  placeholder: "Paste your notes here (optional but recommended)\u2026"
+                })
+              )
+            ),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              onClick: function() { startDimension(dim); }
+            }, "Start " + cfg.label + " Interview \u2192")
+          )
+        );
+      }
+
+      // ── Questions ──
+      function renderQuestions(dim, cfg, d) {
+        var q = d.questions[d.qIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label),
+            e("div", { className: "progress-track" },
+              d.questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < d.qIndex) cls += " done";
+                else if (i === d.qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: d.currentAnswer,
+              onChange: function(ev) { updateDim(dim, { currentAnswer: ev.target.value }); },
+              placeholder: "Your answer \u2014 be specific, estimates are fine\u2026",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                disabled: !d.currentAnswer.trim(),
+                onClick: function() { submitAnswer(dim); }
+              }, d.qIndex + 1 < d.questions.length ? "Next \u2192" : "Continue \u2192"),
+              e("span", { className: "q-counter" }, (d.qIndex + 1) + " of " + d.questions.length)
+            )
+          )
+        );
+      }
+
+      // ── Synthesis display ──
+      function renderSynthesisDisplay(dim, cfg, d) {
+        var syn = d.synthesis;
+        if (!syn) return renderLoading();
+
+        var cards = [];
+        // Main synthesis
+        cards.push(e("div", { key: "main", className: "synthesis-card" },
+          e("div", { className: "synthesis-label" }, "AI Synthesis"),
+          e("div", { className: "synthesis-text" }, syn.synthesis || syn.before_after || "")
+        ));
+        // Unmet need (desirability)
+        if (syn.unmet_need) {
+          cards.push(e("div", { key: "need", className: "unmet-need" }, syn.unmet_need));
+        }
+        // Design implications (desirability)
+        if (syn.design_implications) {
+          cards.push(e("div", { key: "impl", className: "synthesis-card" },
+            e("div", { className: "synthesis-label" }, "Design Implications"),
+            e("div", { className: "synthesis-text" },
+              Array.isArray(syn.design_implications) ? syn.design_implications.join("\n\n") : syn.design_implications
+            )
+          ));
+        }
+        // Before/after (feasibility)
+        if (syn.before_after && syn.synthesis) {
+          cards.push(e("div", { key: "ba", className: "synthesis-card" },
+            e("div", { className: "synthesis-label" }, "Prediction vs Reality"),
+            e("div", { className: "synthesis-text" }, syn.before_after)
+          ));
+        }
+        // Feasibility paragraph
+        if (syn.feasibility_paragraph) {
+          cards.push(e("div", { key: "fp", className: "synthesis-card" },
+            e("div", { className: "synthesis-label" }, "Feasibility Assessment"),
+            e("div", { className: "synthesis-text" }, syn.feasibility_paragraph)
+          ));
+        }
+        // Maturity badge (feasibility)
+        if (syn.maturity) {
+          var mClass = "maturity-badge ";
+          if (syn.maturity === "Concept") mClass += "maturity-concept";
+          else if (syn.maturity === "Early test") mClass += "maturity-early";
+          else mClass += "maturity-validated";
+          cards.push(e("div", { key: "mat" }, e("span", { className: mClass }, syn.maturity)));
+        }
+        // TAM/SAM (viability)
+        if (syn.tam_sam) {
+          cards.push(e("div", { key: "tam", className: "synthesis-card" },
+            e("div", { className: "synthesis-label" }, "Market Size"),
+            e("div", { className: "synthesis-text" }, syn.tam_sam.description),
+            syn.tam_sam.year_one ? e("div", { className: "synthesis-text", style: { marginTop: 8 } }, "Year one estimate: " + syn.tam_sam.year_one) : null
+          ));
+        }
+        // Retention (viability)
+        if (syn.retention) {
+          cards.push(e("div", { key: "ret", className: "synthesis-card" },
+            e("div", { className: "synthesis-label" }, "Retention Logic"),
+            e("div", { className: "synthesis-text" }, syn.retention)
+          ));
+        }
+        // Gaps
+        if (syn.gaps) {
+          cards.push(e("div", { key: "gaps", className: "gaps-text" }, "What you still don\u2019t know: " + syn.gaps));
+        }
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label + " \u2014 What we heard"),
+            e("div", { className: "dim-body" }, "Here\u2019s what emerged from your answers. Review this, then you\u2019ll rate your confidence in the key assumptions."),
+            cards,
+            e("div", { style: { marginTop: 32 } },
+              e("button", {
+                className: "btn",
+                onClick: function() { navigate(dim, "assumption-certainty"); }
+              }, "Rate Your Assumptions \u2192")
+            )
+          )
+        );
+      }
+
+      // ── Assumption certainty ──
+      function renderAssumptionCertainty(dim, cfg, d) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label + " \u2014 Assumption Check"),
+            e("div", { className: "dim-heading" }, "How confident are you in these assumptions?"),
+            e("div", { className: "dim-body" }, "Your " + cfg.label.toLowerCase() + " assessment rests on these key assumptions. Rate your confidence in each one."),
+            e("div", { className: "assumption-list" },
+              d.assumptions.map(function(a) {
+                return e("div", { key: a.id, className: "assumption-card" },
+                  e("div", { className: "assumption-text" }, "\u201C" + a.text + "\u201D"),
+                  e("div", { className: "certainty-pills" },
+                    [20, 40, 60, 80].map(function(val) {
+                      return e("button", {
+                        key: val,
+                        className: "certainty-pill" + (a.certainty === val ? " selected" : ""),
+                        onClick: function() { setCertainty(dim, a.id, val); }
+                      }, val + "%");
+                    })
+                  )
+                );
+              })
+            ),
+            e("button", {
+              className: "btn",
+              disabled: !allCertaintiesSet(dim),
+              onClick: function() { navigate(dim, "rating"); }
+            }, "Continue to Rating \u2192")
+          )
+        );
+      }
+
+      // ── Rating ──
+      function renderRating(dim, cfg, d) {
+        // Show assumptions summary above rating
+        var assumptionSummary = e("div", { className: "card", style: { marginBottom: 24 } },
+          e("div", { className: "synthesis-label" }, "Your assumption certainties"),
+          d.assumptions.map(function(a) {
+            return e("div", { key: a.id, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(232,227,216,0.04)" } },
+              e("span", { style: { fontSize: 13, color: "rgba(232,227,216,0.5)", flex: 1 } }, a.text),
+              e("span", { className: certClass(a.certainty), style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600, marginLeft: 12 } }, a.certainty + "%")
+            );
+          })
+        );
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label + " \u2014 Self-Assessment"),
+            e("div", { className: "dim-heading" }, "Rate your " + cfg.label.toLowerCase()),
+            e("div", { className: "dim-body" }, "Based on everything above \u2014 your interview, the synthesis, and your confidence in the assumptions \u2014 how would you rate this dimension?"),
+            assumptionSummary,
+            e("div", { className: "rating-cards" },
+              cfg.ratings.map(function(r) {
+                return e("div", {
+                  key: r.n,
+                  className: "rating-card" + (d.rating === r.n ? " selected" : ""),
+                  onClick: function() { selectRating(dim, r.n); }
+                },
+                  e("div", { className: "rating-number" }, r.n),
+                  e("div", { className: "rating-label" }, r.label),
+                  e("div", { className: "rating-desc" }, r.desc)
+                );
+              })
+            ),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: d.rating === 0,
+              onClick: function() { submitRating(dim); }
+            }, "Continue \u2192")
+          )
+        );
+      }
+
+      // ── Follow-ups ──
+      function renderFollowUps(dim, cfg, d) {
+        var q = d.followUpQuestions[d.followUpIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, cfg.label + " \u2014 Follow-up"),
+            e("div", { className: "progress-track" },
+              d.followUpQuestions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < d.followUpIndex) cls += " done";
+                else if (i === d.followUpIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: d.currentFollowUp,
+              onChange: function(ev) { updateDim(dim, { currentFollowUp: ev.target.value }); },
+              placeholder: "Your answer\u2026",
+              style: { marginBottom: 22 }
+            }),
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                disabled: !d.currentFollowUp.trim(),
+                onClick: function() { submitFollowUp(dim); }
+              }, d.followUpIndex + 1 < d.followUpQuestions.length ? "Next \u2192" : "Continue \u2192"),
+              e("span", { className: "q-counter" }, (d.followUpIndex + 1) + " of " + d.followUpQuestions.length)
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: SYNTHESIS
+      // ═══════════════════════════════════════
+      function renderSynthesis() {
+        var q = S.synthesisQuestions[S.synthesisIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Synthesis"),
+            e("div", { className: "progress-track" },
+              S.synthesisQuestions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < S.synthesisIndex) cls += " done";
+                else if (i === S.synthesisIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 6,
+              value: S.currentSynthesisAnswer,
+              onChange: function(ev) { update({ currentSynthesisAnswer: ev.target.value }); },
+              placeholder: "Take your time with this one\u2026",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                disabled: !S.currentSynthesisAnswer.trim(),
+                onClick: submitSynthesisAnswer
+              }, S.synthesisIndex + 1 < S.synthesisQuestions.length ? "Next \u2192" : "Generate Brief \u2192"),
+              e("span", { className: "q-counter" }, (S.synthesisIndex + 1) + " of " + S.synthesisQuestions.length)
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: BRIEF
+      // ═══════════════════════════════════════
+      function renderBrief() {
+        if (!S.brief) return renderLoading();
+        var b = S.brief;
+        var allA = getAllAssumptionsSorted();
+        var avg = getAvgCertainty();
+
+        function dimSection(dim, title, content) {
+          var d = S.dimensions[dim];
+          var rInfo = DIMS[dim].ratings[d.rating - 1];
+          return e("div", { key: dim, className: "brief-section" },
+            e("div", { className: "brief-section-title" }, title),
+            e("div", { className: "rating-badge rating-badge-" + d.rating },
+              ratingDots(d.rating) + " " + rInfo.label
+            ),
+            content
+          );
+        }
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+
+            // Header
+            e("div", { className: "brief-header" },
+              e("div", { className: "eyebrow" }, S.projectName),
+              e("div", { className: "brief-title" }, "Venture Assessment Brief"),
+              e("div", { className: "brief-meta" },
+                (S.teamMembers.trim() ? S.teamMembers + " \u00B7 " : "") +
+                new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+              )
+            ),
+
+            // Desirability
+            dimSection("desirability", "Desirability Assessment",
+              e("div", null,
+                e("div", { className: "brief-card" },
+                  e("div", { className: "brief-text" }, b.desirability.insight)
+                ),
+                b.desirability.unmet_need ? e("div", { className: "unmet-need" }, b.desirability.unmet_need) : null,
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Design Implications"),
+                  e("div", { className: "brief-text" }, b.desirability.implications)
+                ),
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Student\u2019s Evidence"),
+                  e("div", { className: "brief-text" }, b.desirability.evidence_summary)
+                ),
+                e("div", { className: "gaps-text" }, "Gaps: " + b.desirability.gaps),
+                e("div", { className: "gaps-text" }, "Top uncertainty: " + b.desirability.top_uncertainty)
+              )
+            ),
+
+            // Feasibility
+            dimSection("feasibility", "Feasibility Assessment",
+              e("div", null,
+                e("div", { className: "brief-card" },
+                  e("div", { className: "brief-text" }, b.feasibility.learning)
+                ),
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Prediction vs Reality"),
+                  e("div", { className: "brief-text" }, b.feasibility.before_after)
+                ),
+                b.feasibility.maturity ? e("div", { style: { marginBottom: 16 } },
+                  e("span", { className: "maturity-badge " + (b.feasibility.maturity === "Concept" ? "maturity-concept" : b.feasibility.maturity === "Early test" ? "maturity-early" : "maturity-validated") },
+                    b.feasibility.maturity
+                  )
+                ) : null,
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Student\u2019s Evidence"),
+                  e("div", { className: "brief-text" }, b.feasibility.evidence_summary)
+                ),
+                e("div", { className: "gaps-text" }, "Gaps: " + b.feasibility.gaps),
+                e("div", { className: "gaps-text" }, "Top uncertainty: " + b.feasibility.top_uncertainty)
+              )
+            ),
+
+            // Viability
+            e("div", { className: "page-break" }),
+            dimSection("viability", "Viability Assessment",
+              e("div", null,
+                e("div", { className: "brief-card" },
+                  e("div", { className: "brief-text" }, b.viability.economics)
+                ),
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Market Size"),
+                  e("div", { className: "brief-text" }, b.viability.market)
+                ),
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Retention & Protectability"),
+                  e("div", { className: "brief-text" }, b.viability.retention + "\n\n" + b.viability.protectability)
+                ),
+                e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Student\u2019s Evidence"),
+                  e("div", { className: "brief-text" }, b.viability.evidence_summary)
+                ),
+                e("div", { className: "gaps-text" }, "Gaps: " + b.viability.gaps),
+                e("div", { className: "gaps-text" }, "Top uncertainty: " + b.viability.top_uncertainty)
+              )
+            ),
+
+            // Integrated Assessment
+            e("div", { className: "page-break" }),
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Integrated Assessment"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-text" }, b.synthesis.student_reflection)
+              ),
+              b.synthesis.tensions ? e("div", { className: "brief-card" },
+                e("div", { className: "synthesis-label" }, "Tensions"),
+                e("div", { className: "brief-text" }, b.synthesis.tensions)
+              ) : null,
+              b.synthesis.reinforcements ? e("div", { className: "brief-card" },
+                e("div", { className: "synthesis-label" }, "Reinforcements"),
+                e("div", { className: "brief-text" }, b.synthesis.reinforcements)
+              ) : null,
+              e("div", { className: "brief-card" },
+                e("div", { className: "synthesis-label" }, "Two-Year Survival Estimate"),
+                e("div", { className: "brief-text" }, b.synthesis.survival_estimate)
+              )
+            ),
+
+            // Uncertainty Map
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Uncertainty Map"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "avg-confidence" }, avg + "%"),
+                e("div", { className: "avg-label" }, "Average confidence across " + allA.length + " assumptions"),
+                allA.map(function(a, i) {
+                  return e("div", { key: i, className: "uncertainty-item" },
+                    e("span", { className: "uncertainty-cert " + certClass(a.certainty) }, a.certainty + "%"),
+                    e("span", { className: "uncertainty-text" }, a.text),
+                    e("span", { className: "uncertainty-dim" }, DIMS[a.dim].label)
+                  );
+                }),
+                b.uncertainty_map && b.uncertainty_map.commentary ? e("div", { className: "brief-text", style: { marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(232,227,216,0.06)" } },
+                  b.uncertainty_map.commentary
+                ) : null
+              )
+            ),
+
+            // Next Steps
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Recommended Next Steps"),
+              e("div", { className: "brief-card" },
+                (b.next_steps || []).map(function(step, i) {
+                  return e("div", { key: i, style: { display: "flex", gap: 12, marginBottom: i < (b.next_steps.length - 1) ? 12 : 0 } },
+                    e("span", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 600, color: "#D4A853" } }, (i + 1) + "."),
+                    e("span", { className: "brief-text" }, step)
+                  );
+                })
+              )
+            ),
+
+            // Footer
+            e("div", { style: { fontSize: 12, color: "rgba(232,227,216,0.25)", textAlign: "center", marginTop: 40, paddingTop: 20, borderTop: "1px solid rgba(232,227,216,0.06)" } },
+              "Generated with ENDURE Venture Assessment Tool \u00B7 " +
+              new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+              e("br"),
+              "This assessment reflects the student\u2019s reasoning and evidence as of this date."
+            ),
+
+            // Actions
+            e("div", { className: "actions no-print", style: { marginTop: 32 } },
+              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (S.copied ? " copied" : ""),
+                onClick: copyToClipboard
+              }, S.copied ? "Copied!" : "Copy for Google Classroom"),
+              e("button", { className: "btn btn-ghost", onClick: startFresh }, "New Assessment")
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // MAIN RENDER
+      // ═══════════════════════════════════════
+      if (S.phase === "loading") return renderLoading();
+      if (S.phase === "setup") return renderSetup();
+      if (S.phase === "brief") return renderBrief();
+      if (S.phase === "synthesis") return renderSynthesis();
+      if (DIM_ORDER.indexOf(S.phase) >= 0) return renderDimension(S.phase);
+      return renderSetup();
+    }
+
+    var root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(e(App));
+  </script>
+</body>
+</html>

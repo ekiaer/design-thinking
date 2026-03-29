@@ -2,10 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0;url=tools/viability.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ENDURE Workshop Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 24px;
+      font-weight: 600;
+      color: #D4A853;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .tools {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 440px;
+    }
+    .tool-link {
+      display: block;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tool-link:hover {
+      border-color: rgba(212,168,83,0.35);
+      background: rgba(255,255,255,0.04);
+    }
+    .tool-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: #D4A853;
+      margin-bottom: 6px;
+    }
+    .tool-desc {
+      font-size: 13px;
+      color: rgba(232,227,216,0.45);
+      line-height: 1.5;
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="tools/viability.html">Unit Economics Workshop</a>...</p>
+  <div class="logo">ENDURE</div>
+  <div class="subtitle">Design Thinking Workshop Tools</div>
+  <div class="tools">
+    <a href="tools/viability.html" class="tool-link">
+      <div class="tool-name">Unit Economics Workshop</div>
+      <div class="tool-desc">Estimate CAC, LTV, and COGS for your venture. Generates an ENDURE framework analysis.</div>
+    </a>
+    <a href="tools/venture-assessment.html" class="tool-link">
+      <div class="tool-name">Venture Assessment</div>
+      <div class="tool-desc">Walk through Desirability, Feasibility, and Viability to produce your final assessment brief.</div>
+    </a>
+  </div>
 </body>
 </html>
