@@ -186,6 +186,50 @@
       align-self: center;
     }
 
+    /* ── RESOURCES ── */
+    .resources-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: rgba(232,227,216,0.28);
+      letter-spacing: 0.05em;
+      padding: 0;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .resources-toggle:hover { color: rgba(212,168,83,0.6); }
+    .resources-toggle .arrow { display: inline-block; transition: transform 0.2s; margin-right: 4px; font-size: 9px; }
+    .resources-toggle .arrow.open { transform: rotate(90deg); }
+    .resources-list {
+      list-style: none;
+      margin: 0 0 24px 0;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-left: 2px solid rgba(212,168,83,0.15);
+      border-radius: 0 4px 4px 0;
+    }
+    .resources-list li {
+      margin-bottom: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .resources-list li:last-child { margin-bottom: 0; }
+    .resources-list a {
+      color: rgba(212,168,83,0.65);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,168,83,0.15);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .resources-list a:hover { color: #D4A853; border-color: rgba(212,168,83,0.5); }
+    .resources-list .res-desc {
+      color: rgba(232,227,216,0.3);
+      font-size: 11px;
+      display: block;
+      margin-top: 1px;
+    }
+
     /* ── LOADING ── */
     .loading-wrap {
       padding: 100px 0;
@@ -443,6 +487,55 @@ Return ONLY valid JSON with no markdown, no explanation:
     const fmt = (n) => n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n;
     const ratioColor = (r) => r >= 3 ? "#5CB88A" : r >= 2 ? "#D4A853" : "#E07558";
 
+    const RESOURCES = {
+      CAC: [
+        {
+          title: "How to Calculate Customer Acquisition Cost",
+          url: "https://blog.hubspot.com/service/what-does-cac-stand-for",
+          desc: "Clear breakdown of CAC components with examples"
+        },
+        {
+          title: "Customer Acquisition Cost: The One Metric That Can Determine Your Company's Fate",
+          url: "https://www.forentrepreneurs.com/startup-killer/",
+          desc: "David Skok on why CAC matters for early ventures"
+        },
+        {
+          title: "Startup Financial Models \u2014 Unit Economics",
+          url: "https://www.ycombinator.com/library/8K-a-guide-to-seed-fundraising#unit-economics",
+          desc: "Y Combinator\u2019s guide to thinking about per-customer costs"
+        }
+      ],
+      LTV: [
+        {
+          title: "What Is Customer Lifetime Value (CLV)?",
+          url: "https://hbr.org/2014/10/the-value-of-keeping-the-right-customers",
+          desc: "Harvard Business Review on retention and customer value"
+        },
+        {
+          title: "How to Calculate Lifetime Value",
+          url: "https://neilpatel.com/blog/how-to-calculate-lifetime-value/",
+          desc: "Step-by-step walkthrough with formulas and examples"
+        },
+        {
+          title: "Unit Economics for Beginners",
+          url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+          desc: "SaaS-focused but the LTV thinking applies to any model"
+        }
+      ],
+      Both: [
+        {
+          title: "LTV:CAC Ratio Explained",
+          url: "https://www.forentrepreneurs.com/startup-killer/",
+          desc: "Why the ratio between these numbers decides viability"
+        },
+        {
+          title: "Startup Metrics for Pirates (AARRR)",
+          url: "https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version",
+          desc: "Dave McClure\u2019s framework \u2014 where CAC and LTV fit in the funnel"
+        }
+      ]
+    };
+
     const e = React.createElement;
     const { useState } = React;
 
@@ -479,6 +572,7 @@ Return ONLY valid JSON with no markdown, no explanation:
       const [results, setResults] = useState(null);
       const [error, setError] = useState("");
       const [copied, setCopied] = useState(false);
+      const [showResources, setShowResources] = useState(false);
 
       async function startInterview() {
         setError("");
@@ -504,6 +598,7 @@ Return ONLY valid JSON with no markdown, no explanation:
         setCurrentAns("");
         if (qIndex + 1 < questions.length) {
           setQIndex(qIndex + 1);
+          setShowResources(false);
         } else {
           setStep("loading");
           try {
@@ -609,6 +704,21 @@ Return ONLY valid JSON with no markdown, no explanation:
             e("div", { className: "focus-badge" }, questions[qIndex].focus + " Driver"),
             e("div", { className: "q-text" }, questions[qIndex].text),
             e("div", { className: "q-hint" }, questions[qIndex].hint),
+            e("button", {
+              className: "resources-toggle",
+              onClick: function() { setShowResources(!showResources); }
+            },
+              e("span", { className: "arrow" + (showResources ? " open" : "") }, "\u25B6"),
+              "Need help thinking this through?"
+            ),
+            showResources ? e("ul", { className: "resources-list" },
+              (RESOURCES[questions[qIndex].focus] || RESOURCES.Both).map(function(r, i) {
+                return e("li", { key: i },
+                  e("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.title),
+                  e("span", { className: "res-desc" }, r.desc)
+                );
+              })
+            ) : null,
             e("textarea", {
               className: "form-input",
               rows: 4,
