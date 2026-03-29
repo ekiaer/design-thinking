@@ -12,7 +12,7 @@
  */
 
 const ALLOWED_ORIGINS = [
-  "https://sparrowhawk.github.io",  // Update with your actual GitHub Pages URL
+  "https://ekiaer.github.io",
   "https://www.chock.llc",
   "http://localhost:8000",           // Local dev
   "http://127.0.0.1:8000",
