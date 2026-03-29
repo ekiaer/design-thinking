@@ -462,7 +462,10 @@ Return ONLY valid JSON with no markdown, no explanation:
         throw new Error("API error: " + res.status + " " + errBody);
       }
       const data = await res.json();
-      return data.content[0].text;
+      var text = data.content[0].text;
+      // Strip markdown code fences if present
+      text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+      return text;
     }
 
     function App() {
