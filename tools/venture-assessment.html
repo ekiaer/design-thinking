@@ -521,6 +521,26 @@
       margin-bottom: 16px;
     }
 
+    /* ── CONCEPT REFERENCE ── */
+    .concept-ref {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      font-style: italic;
+      line-height: 1.6;
+      padding: 14px 18px;
+      border-left: 2px solid rgba(212,168,83,0.2);
+      margin-bottom: 28px;
+    }
+    .concept-ref-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.4);
+      font-style: normal;
+      margin-bottom: 4px;
+    }
+
     /* ── ERROR ── */
     .error-msg {
       color: #E07558;
@@ -594,6 +614,8 @@
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgenjs.bundle.js"></script>
 
   <script>
     // ═══════════════════════════════════════
@@ -646,7 +668,7 @@
       }
     };
     var DIM_ORDER = ["desirability", "feasibility", "viability"];
-    var STEP_LABELS = ["Desirability", "Feasibility", "Viability", "Synthesis", "Brief"];
+    var STEP_LABELS = ["Desirability", "Feasibility", "Viability", "Synthesis", "Concept", "Brief"];
 
     // ═══════════════════════════════════════
     // SYSTEM PROMPTS
@@ -670,7 +692,9 @@
 
     var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\"}";
 
-    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
+    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
+
+    var SYSTEM_CONCEPT_FOLLOWUP = "You are a design thinking coach. A student has just completed a full Desirability, Feasibility, and Viability assessment of their venture and has revised (or kept) their concept statement.\n\nOriginal concept: \"{original}\"\nRevised concept: \"{revised}\"\n\nAsk ONE follow-up question (not two, just one) that helps the student articulate what changed and why. If the concepts are identical, ask why the original framing held up through the assessment. If they changed, ask which part of D/F/V drove the revision.\n\nThis is a metacognitive moment. The goal is reflection, not correction.\n\nKeep the question to 1\u20132 sentences. Be warm and specific.\n\nReturn ONLY valid JSON with no markdown:\n{\"question\":\"your question here\"}";
 
     // ═══════════════════════════════════════
     // INITIAL STATE
@@ -715,6 +739,10 @@
       synthesisAnswers: [],
       synthesisIndex: 0,
       currentSynthesisAnswer: "",
+      conceptRevised: "",
+      conceptReflection: "",
+      conceptFollowUpQuestion: "",
+      conceptFollowUpAsked: false,
       brief: null,
       copied: false,
       showResume: false
@@ -1008,9 +1036,41 @@
         if (S.synthesisIndex + 1 < S.synthesisQuestions.length) {
           update({ synthesisAnswers: newAnswers, currentSynthesisAnswer: "", synthesisIndex: S.synthesisIndex + 1 });
         } else {
-          update({ synthesisAnswers: newAnswers, currentSynthesisAnswer: "" });
-          generateBrief(newAnswers);
+          // Move to concept revision instead of generating brief directly
+          pushHistory();
+          update({
+            synthesisAnswers: newAnswers,
+            currentSynthesisAnswer: "",
+            conceptRevised: S.conceptRevised || S.projectDesc,
+            phase: "concept-revision",
+            subPhase: "revise",
+            error: ""
+          });
         }
+      }
+
+      // ── Concept revision follow-up ──
+      async function submitConceptRevision() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "One more question\u2026" });
+        try {
+          var prompt = SYSTEM_CONCEPT_FOLLOWUP
+            .replace("{original}", S.projectDesc)
+            .replace("{revised}", S.conceptRevised);
+          var raw = await callClaude(
+            "Original concept: " + S.projectDesc + "\n\nRevised concept: " + S.conceptRevised,
+            prompt, 400
+          );
+          var parsed = JSON.parse(raw.trim());
+          update({ phase: "concept-revision", subPhase: "reflect", conceptFollowUpQuestion: parsed.question, error: "" });
+        } catch (err) {
+          // If the follow-up call fails, skip to brief generation
+          update({ phase: "concept-revision", subPhase: "reflect", conceptFollowUpQuestion: "What changed between your original concept and this version \u2014 and why?", error: "" });
+        }
+      }
+
+      function submitConceptReflection() {
+        generateBrief(S.synthesisAnswers);
       }
 
       // ── Brief generation ──
@@ -1066,6 +1126,14 @@
           lines.push("");
         });
 
+        lines.push("=== CONCEPT STATEMENT ===");
+        lines.push("Original: " + S.projectDesc);
+        lines.push("Revised: " + (S.conceptRevised || S.projectDesc));
+        if (S.conceptReflection.trim()) {
+          lines.push("Student's reflection on what changed: " + S.conceptReflection);
+        }
+        lines.push("");
+
         lines.push("=== CROSS-CUTTING SYNTHESIS ===");
         (S.synthesisQuestions || []).forEach(function(q, i) {
           lines.push("Q: " + q.text);
@@ -1084,6 +1152,22 @@
         L.push("VENTURE ASSESSMENT BRIEF \u2014 " + S.projectName.toUpperCase());
         if (S.teamMembers.trim()) L.push("Team: " + S.teamMembers);
         L.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        L.push("");
+
+        // Concept
+        L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+        L.push("THE CONCEPT");
+        L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+        L.push("");
+        L.push(S.conceptRevised || S.projectDesc);
+        if (S.conceptRevised && S.conceptRevised !== S.projectDesc) {
+          L.push("");
+          L.push("Original: " + S.projectDesc);
+        }
+        if (S.conceptReflection.trim()) {
+          L.push("");
+          L.push("What changed: " + S.conceptReflection);
+        }
         L.push("");
 
         // Desirability
@@ -1215,6 +1299,362 @@
         });
       }
 
+      // ── DOCX EXPORT ──
+      function downloadDocx() {
+        if (!S.brief) return;
+        var b = S.brief;
+        var D = docx;
+        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        var allA = getAllAssumptionsSorted();
+        var avg = getAvgCertainty();
+
+        function heading(text, level) {
+          return new D.Paragraph({
+            heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2,
+            spacing: { before: level === 1 ? 0 : 300, after: 120 },
+            children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })]
+          });
+        }
+        function para(text, opts) {
+          opts = opts || {};
+          return new D.Paragraph({
+            spacing: { after: opts.after !== undefined ? opts.after : 120 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })]
+          });
+        }
+        function bullet(text) {
+          return new D.Paragraph({
+            bullet: { level: 0 },
+            spacing: { after: 60 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22 })]
+          });
+        }
+        function divider() {
+          return new D.Paragraph({
+            spacing: { before: 200, after: 200 },
+            border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } },
+            children: []
+          });
+        }
+        function ratingLabel(dim) {
+          var d = S.dimensions[dim];
+          var info = DIMS[dim].ratings[d.rating - 1];
+          return ratingDots(d.rating) + " " + info.label + " (" + d.rating + "/3)";
+        }
+
+        var children = [];
+        children.push(heading("Venture Assessment Brief", 1));
+        children.push(para(S.projectName, { bold: true, after: 40 }));
+        children.push(para((S.teamMembers.trim() ? S.teamMembers + " \u00B7 " : "") + dateStr, { italic: true, color: "666666", after: 40 }));
+        children.push(divider());
+
+        // Concept
+        children.push(heading("The Concept", 2));
+        children.push(para(b.concept ? b.concept.revised : (S.conceptRevised || S.projectDesc)));
+        if (S.conceptRevised && S.conceptRevised !== S.projectDesc) {
+          children.push(para("Original: " + S.projectDesc, { italic: true, color: "666666" }));
+        }
+        if (S.conceptReflection.trim()) {
+          children.push(para("What changed: " + S.conceptReflection));
+        }
+
+        // D/F/V sections
+        var dimFields = {
+          desirability: ["insight", "unmet_need", "implications", "gaps", "evidence_summary", "top_uncertainty"],
+          feasibility: ["learning", "before_after", "maturity", "gaps", "evidence_summary", "top_uncertainty"],
+          viability: ["economics", "market", "retention", "protectability", "gaps", "evidence_summary", "top_uncertainty"]
+        };
+        DIM_ORDER.forEach(function(dim) {
+          children.push(divider());
+          children.push(heading(DIMS[dim].label + " Assessment", 2));
+          children.push(para(ratingLabel(dim), { bold: true }));
+          var section = b[dim];
+          if (section) {
+            var fields = dimFields[dim];
+            fields.forEach(function(field) {
+              if (section[field]) {
+                var label = field.replace(/_/g, " ").replace(/^\w/, function(c) { return c.toUpperCase(); });
+                if (field === "gaps" || field === "top_uncertainty") {
+                  children.push(para(label + ": " + section[field], { italic: true, color: "666666" }));
+                } else {
+                  children.push(para(label + ":", { bold: true, after: 40 }));
+                  children.push(para(section[field]));
+                }
+              }
+            });
+          }
+        });
+
+        // Integrated Assessment
+        children.push(divider());
+        children.push(heading("Integrated Assessment", 2));
+        if (b.synthesis.student_reflection) children.push(para(b.synthesis.student_reflection));
+        if (b.synthesis.tensions) { children.push(para("Tensions:", { bold: true, after: 40 })); children.push(para(b.synthesis.tensions)); }
+        if (b.synthesis.reinforcements) { children.push(para("Reinforcements:", { bold: true, after: 40 })); children.push(para(b.synthesis.reinforcements)); }
+        if (b.synthesis.survival_estimate) { children.push(para("Two-Year Survival Estimate:", { bold: true, after: 40 })); children.push(para(b.synthesis.survival_estimate)); }
+
+        // Uncertainty Map
+        children.push(divider());
+        children.push(heading("Uncertainty Map", 2));
+        children.push(para("Average Confidence: " + avg + "%", { bold: true }));
+        allA.forEach(function(a) {
+          children.push(bullet(a.certainty + "% \u2014 \"" + a.text + "\" (" + DIMS[a.dim].label + ")"));
+        });
+        if (b.uncertainty_map && b.uncertainty_map.commentary) {
+          children.push(para(b.uncertainty_map.commentary, { italic: true, color: "666666" }));
+        }
+
+        // Next Steps
+        children.push(divider());
+        children.push(heading("Recommended Next Steps", 2));
+        (b.next_steps || []).forEach(function(s, i) {
+          children.push(para((i + 1) + ". " + s));
+        });
+
+        // Footer
+        children.push(divider());
+        children.push(para("Generated with ENDURE Venture Assessment Tool \u00B7 " + dateStr, { italic: true, color: "999999" }));
+
+        var doc = new D.Document({
+          sections: [{
+            properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
+            children: children
+          }]
+        });
+
+        D.Packer.toBlob(doc).then(function(blob) {
+          var slug = S.projectName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "venture-assessment-" + slug + ".docx";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+      }
+
+      // ── PPTX EXPORT ──
+      function generatePPTX() {
+        if (!S.brief) return;
+        var b = S.brief;
+        var pptx = new PptxGenJS();
+        var allA = getAllAssumptionsSorted();
+        var avg = getAvgCertainty();
+        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+        // Theme colors
+        var BG = "0D1117";
+        var CREAM = "E8E3D8";
+        var GOLD = "D4A853";
+        var MUTED = "8A857A";
+        var GREEN = "5CB88A";
+        var RED = "E07558";
+
+        pptx.defineLayout({ name: "WIDE", w: 13.33, h: 7.5 });
+        pptx.layout = "WIDE";
+
+        function addSlide(titleText) {
+          var slide = pptx.addSlide();
+          slide.background = { fill: BG };
+          // Footer bar
+          slide.addText("ENDURE Venture Assessment", { x: 0.6, y: 6.9, w: 5, h: 0.4, fontSize: 8, fontFace: "Arial", color: MUTED, italic: true });
+          return slide;
+        }
+
+        function slideTitle(slide, text, opts) {
+          opts = opts || {};
+          slide.addText(text, {
+            x: opts.x || 0.6, y: opts.y || 0.4, w: opts.w || 12, h: 0.7,
+            fontSize: opts.size || 28, fontFace: "Arial", color: GOLD, bold: true
+          });
+        }
+
+        function slideBody(slide, text, opts) {
+          opts = opts || {};
+          slide.addText(text, {
+            x: opts.x || 0.6, y: opts.y || 1.3, w: opts.w || 11.8, h: opts.h || 5,
+            fontSize: opts.size || 14, fontFace: "Arial", color: opts.color || CREAM,
+            valign: opts.valign || "top", lineSpacingMultiple: 1.5, italic: !!opts.italic
+          });
+        }
+
+        // ── SLIDE 1: Title ──
+        var s1 = addSlide();
+        s1.addText(S.projectName, { x: 0.6, y: 1.8, w: 12, h: 1.2, fontSize: 44, fontFace: "Arial", bold: true, color: CREAM });
+        if (S.teamMembers.trim()) {
+          s1.addText(S.teamMembers, { x: 0.6, y: 3.1, w: 12, h: 0.5, fontSize: 16, fontFace: "Arial", color: MUTED });
+        }
+        s1.addText(dateStr, { x: 0.6, y: 3.7, w: 12, h: 0.4, fontSize: 12, fontFace: "Arial", color: MUTED, italic: true });
+        s1.addText("ENDURE Venture Assessment", { x: 0.6, y: 4.4, w: 12, h: 0.4, fontSize: 12, fontFace: "Arial", color: GOLD, letterSpacing: 3 });
+        s1.addShape(pptx.ShapeType.rect, { x: 0.6, y: 1.5, w: 2, h: 0.06, fill: { color: GOLD } });
+
+        // ── SLIDE 2: The Concept ──
+        var s2 = addSlide();
+        slideTitle(s2, "The Concept");
+        s2.addText(S.conceptRevised || S.projectDesc, {
+          x: 0.6, y: 1.4, w: 11.8, h: 2.5,
+          fontSize: 20, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.6, valign: "top"
+        });
+        if (b.desirability && b.desirability.unmet_need) {
+          s2.addShape(pptx.ShapeType.rect, { x: 0.6, y: 4.2, w: 11.8, h: 0.02, fill: { color: MUTED } });
+          s2.addText(b.desirability.unmet_need, {
+            x: 0.6, y: 4.4, w: 11.8, h: 1.5,
+            fontSize: 14, fontFace: "Arial", color: GOLD, italic: true, lineSpacingMultiple: 1.5, valign: "top"
+          });
+        }
+        s2.notes = "Open with your concept statement. Then read the unmet need framing \u2014 this anchors everything that follows.";
+
+        // ── SLIDE 3: The Customer ──
+        var s3 = addSlide();
+        slideTitle(s3, "The Customer");
+        var dAns = S.dimensions.desirability.answers;
+        var dSyn = S.dimensions.desirability.synthesis;
+        var custText = [];
+        if (dAns[0]) custText.push([{ text: "Who: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[0].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (dAns[1]) custText.push([{ text: "Current behavior: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[1].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (dAns[2]) custText.push([{ text: "What they value: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[2].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (dSyn && dSyn.synthesis) custText.push([{ text: "Insight: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dSyn.synthesis.substring(0, 400), options: { fontSize: 13, fontFace: "Arial", color: CREAM, italic: true } }]);
+        if (custText.length > 0) {
+          s3.addText(custText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
+        }
+        s3.notes = "Describe the specific person you designed for. What do they currently do? What did you learn about what they actually value?";
+
+        // ── SLIDE 4: What We Tested ──
+        var s4 = addSlide();
+        slideTitle(s4, "What We Tested");
+        var fAns = S.dimensions.feasibility.answers;
+        var fSyn = S.dimensions.feasibility.synthesis;
+        var testText = [];
+        if (fAns[0]) testText.push([{ text: "Experiment: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[0].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (fAns[1]) testText.push([{ text: "Prediction: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[1].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (fAns[2]) testText.push([{ text: "What happened: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[2].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (fSyn && fSyn.maturity) testText.push([{ text: "Maturity: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fSyn.maturity, options: { fontSize: 13, fontFace: "Arial", color: fSyn.maturity === "Concept" ? RED : fSyn.maturity === "Validated direction" ? GREEN : GOLD } }]);
+        if (testText.length > 0) {
+          s4.addText(testText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
+        }
+        s4.notes = "Walk through your experiment: what you predicted, what happened, and what you learned. Honest failure is strong evidence.";
+
+        // ── SLIDE 5: The Economics ──
+        var s5 = addSlide();
+        slideTitle(s5, "The Economics");
+        var vSyn = S.dimensions.viability.synthesis;
+        var econText = [];
+        if (b.viability && b.viability.economics) econText.push([{ text: b.viability.economics.substring(0, 500), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (vSyn && vSyn.tam_sam) {
+          econText.push([{ text: "Market size: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.description.substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+          if (vSyn.tam_sam.year_one) econText.push([{ text: "Year one: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.year_one, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        }
+        if (b.viability && b.viability.retention) econText.push([{ text: "Retention: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: b.viability.retention.substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        if (econText.length > 0) {
+          s5.addText(econText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.6, paraSpaceAfter: 10 });
+        }
+        s5.notes = "Present your unit economics, market size, and retention logic. If you have LTV:CAC ratio, lead with that.";
+
+        // ── SLIDE 6: Our Assessment ──
+        var s6 = addSlide();
+        slideTitle(s6, "Our Assessment");
+        var ratingLabels = { 1: "Significant limitations", 2: "Manageable limitations", 3: "Unique advantage" };
+        var ratingColors = { 1: RED, 2: GOLD, 3: GREEN };
+        var yPos = 1.5;
+        DIM_ORDER.forEach(function(dim) {
+          var d = S.dimensions[dim];
+          var r = d.rating;
+          // Dimension label
+          s6.addText(DIMS[dim].label.toUpperCase(), {
+            x: 0.6, y: yPos, w: 3, h: 0.4,
+            fontSize: 11, fontFace: "Arial", color: MUTED, letterSpacing: 2, bold: true
+          });
+          // Rating dots + label
+          s6.addText(ratingDots(r) + "  " + ratingLabels[r], {
+            x: 3.8, y: yPos, w: 4, h: 0.4,
+            fontSize: 14, fontFace: "Arial", color: ratingColors[r], bold: true
+          });
+          // Evidence from follow-ups
+          var evidence = d.followUpAnswers[0] || "";
+          if (evidence) {
+            s6.addText(evidence.substring(0, 250), {
+              x: 0.6, y: yPos + 0.45, w: 11.8, h: 0.9,
+              fontSize: 11, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.4, valign: "top"
+            });
+          }
+          yPos += evidence ? 1.6 : 0.8;
+        });
+        s6.notes = "This is the centerpiece. Walk through each dimension: your rating, and the evidence behind it. Be honest about limitations.";
+
+        // ── SLIDE 7: Certainty & Uncertainty ──
+        var s7 = addSlide();
+        slideTitle(s7, "What We\u2019re Certain and Uncertain About");
+        // Average confidence
+        s7.addText(avg + "%", { x: 0.6, y: 1.3, w: 3, h: 0.8, fontSize: 36, fontFace: "Arial", color: GOLD, bold: true });
+        s7.addText("average confidence across " + allA.length + " assumptions", { x: 0.6, y: 2.0, w: 5, h: 0.4, fontSize: 11, fontFace: "Arial", color: MUTED });
+
+        var highConf = allA.filter(function(a) { return a.certainty >= 60; });
+        var lowConf = allA.filter(function(a) { return a.certainty < 60; });
+
+        var aY = 2.7;
+        if (highConf.length > 0) {
+          s7.addText("HIGHER CONFIDENCE", { x: 0.6, y: aY, w: 5, h: 0.3, fontSize: 9, fontFace: "Arial", color: GREEN, letterSpacing: 2, bold: true });
+          aY += 0.35;
+          highConf.forEach(function(a) {
+            s7.addText(a.certainty + "%  " + a.text, { x: 0.6, y: aY, w: 6, h: 0.35, fontSize: 11, fontFace: "Arial", color: CREAM });
+            s7.addText(DIMS[a.dim].label, { x: 6.8, y: aY, w: 2, h: 0.35, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
+            aY += 0.4;
+          });
+          aY += 0.2;
+        }
+        if (lowConf.length > 0) {
+          s7.addText("LOWER CONFIDENCE", { x: 0.6, y: aY, w: 5, h: 0.3, fontSize: 9, fontFace: "Arial", color: RED, letterSpacing: 2, bold: true });
+          aY += 0.35;
+          lowConf.forEach(function(a) {
+            s7.addText(a.certainty + "%  " + a.text, { x: 0.6, y: aY, w: 6, h: 0.35, fontSize: 11, fontFace: "Arial", color: CREAM });
+            s7.addText(DIMS[a.dim].label, { x: 6.8, y: aY, w: 2, h: 0.35, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
+            aY += 0.4;
+          });
+        }
+        s7.notes = "Walk through your highest and lowest confidence assumptions. Explain why the low-confidence ones matter \u2014 are they critical to your venture or manageable risks?";
+
+        // ── SLIDE 8: The Honest Bet ──
+        var s8 = addSlide();
+        slideTitle(s8, "The Honest Bet");
+        s8.addText("Will this venture exist in two years?", {
+          x: 0.6, y: 1.5, w: 11.8, h: 0.6,
+          fontSize: 16, fontFace: "Arial", color: MUTED, italic: true
+        });
+        if (b.synthesis && b.synthesis.survival_estimate) {
+          s8.addText(b.synthesis.survival_estimate, {
+            x: 0.6, y: 2.4, w: 11.8, h: 3.5,
+            fontSize: 16, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.6, valign: "top"
+          });
+        }
+        s8.notes = "Share your honest probability estimate. Explain what would change it \u2014 up or down. This is the superforecasting capstone.";
+
+        // ── SLIDE 9: What We'd Do Next ──
+        var s9 = addSlide();
+        slideTitle(s9, "What We\u2019d Do Next");
+        s9.addText("If we had another semester, here\u2019s where we\u2019d focus:", {
+          x: 0.6, y: 1.3, w: 11.8, h: 0.5,
+          fontSize: 13, fontFace: "Arial", color: MUTED, italic: true
+        });
+        var nextY = 2.1;
+        (b.next_steps || []).forEach(function(step, i) {
+          s9.addText((i + 1) + ".", { x: 0.6, y: nextY, w: 0.5, h: 0.6, fontSize: 18, fontFace: "Arial", color: GOLD, bold: true, valign: "top" });
+          s9.addText(step, { x: 1.2, y: nextY, w: 11, h: 0.8, fontSize: 14, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.4, valign: "top" });
+          nextY += 1.1;
+        });
+        // Closing thought from synthesis
+        if (b.synthesis && b.synthesis.student_reflection) {
+          s9.addShape(pptx.ShapeType.rect, { x: 0.6, y: nextY + 0.2, w: 11.8, h: 0.02, fill: { color: MUTED } });
+          s9.addText(b.synthesis.student_reflection.substring(0, 400), {
+            x: 0.6, y: nextY + 0.5, w: 11.8, h: 2,
+            fontSize: 12, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.5, valign: "top"
+          });
+        }
+        s9.notes = "Present your next experiments. Frame them as the most valuable things you could learn to reduce your biggest uncertainties.";
+
+        // Download
+        var slug = S.projectName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+        pptx.writeFile({ fileName: "venture-assessment-" + slug + ".pptx" });
+      }
+
       // ═══════════════════════════════════════
       // RENDER HELPERS
       // ═══════════════════════════════════════
@@ -1237,7 +1677,8 @@
         var idx = DIM_ORDER.indexOf(p);
         if (idx >= 0) return idx;
         if (p === "synthesis") return 3;
-        if (p === "brief") return 4;
+        if (p === "concept-revision") return 4;
+        if (p === "brief") return 5;
         return 0;
       }
 
@@ -1257,6 +1698,14 @@
       function renderBackButton() {
         if (S.history.length === 0) return null;
         return e("button", { className: "btn-back no-print", onClick: goBack }, "\u2190 Back");
+      }
+
+      function renderConceptRef() {
+        if (!S.projectDesc.trim()) return null;
+        return e("div", { className: "concept-ref" },
+          e("div", { className: "concept-ref-label" }, "Your concept"),
+          S.projectDesc
+        );
       }
 
       // ═══════════════════════════════════════
@@ -1301,14 +1750,14 @@
                 })
               ),
               e("div", { className: "form-group" },
-                e("label", { className: "form-label" }, "Project Description"),
-                e("div", { className: "form-hint" }, "One paragraph: what you\u2019re building and for whom."),
+                e("label", { className: "form-label" }, "Your Concept Statement"),
+                e("div", { className: "form-hint" }, "Describe your venture in 2\u20133 sentences. Who is it for? What does it do? What problem does it solve? Write the version you believe right now \u2014 you\u2019ll have a chance to revise it at the end."),
                 e("textarea", {
                   className: "form-input",
-                  rows: 4,
+                  rows: 5,
                   value: S.projectDesc,
                   onChange: function(ev) { update({ projectDesc: ev.target.value }); },
-                  placeholder: "We\u2019re building a [product/service] that helps [who] with [what]\u2026"
+                  placeholder: "We help [who] with [what problem] by [how]. Our solution works because [insight]\u2026"
                 })
               ),
               e("div", { className: "form-group" },
@@ -1380,6 +1829,7 @@
             e("div", { className: "eyebrow" }, cfg.label),
             e("div", { className: "dim-heading" }, cfg.heading),
             e("div", { className: "dim-body" }, cfg.body),
+            renderConceptRef(),
             journalSummary ? e("div", { className: "synthesis-card", style: { marginBottom: 24 } },
               e("div", { className: "synthesis-label" }, "From Your Journal \u2014 " + cfg.label),
               e("div", { className: "synthesis-text", style: { fontSize: 13 } }, journalSummary),
@@ -1422,6 +1872,7 @@
             renderStepBar(),
             renderBackButton(),
             e("div", { className: "eyebrow" }, cfg.label),
+            renderConceptRef(),
             e("div", { className: "progress-track" },
               d.questions.map(function(_, i) {
                 var cls = "progress-seg";
@@ -1693,9 +2144,75 @@
                 className: "btn",
                 disabled: !S.currentSynthesisAnswer.trim(),
                 onClick: submitSynthesisAnswer
-              }, S.synthesisIndex + 1 < S.synthesisQuestions.length ? "Next \u2192" : "Generate Brief \u2192"),
+              }, S.synthesisIndex + 1 < S.synthesisQuestions.length ? "Next \u2192" : "Continue \u2192"),
               e("span", { className: "q-counter" }, (S.synthesisIndex + 1) + " of " + S.synthesisQuestions.length)
             )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: CONCEPT REVISION
+      // ═══════════════════════════════════════
+      function renderConceptRevision() {
+        if (S.subPhase === "revise") {
+          return e("div", null,
+            renderHeader(),
+            e("main", { className: "main" },
+              renderStepBar(),
+              renderBackButton(),
+              e("div", { className: "eyebrow" }, "Concept Revision"),
+              e("div", { className: "dim-heading" }, "Has your thinking changed?"),
+              e("div", { className: "dim-body" }, "You\u2019ve now assessed desirability, feasibility, and viability. Look at what you wrote at the start and decide if it still holds."),
+              e("div", { className: "card", style: { marginBottom: 24 } },
+                e("div", { className: "synthesis-label" }, "You wrote this at the start"),
+                e("div", { className: "brief-text", style: { color: "rgba(232,227,216,0.5)" } }, S.projectDesc)
+              ),
+              e("div", { className: "card" },
+                e("div", { className: "form-group" },
+                  e("label", { className: "form-label" }, "Your Revised Concept Statement"),
+                  e("div", { className: "form-hint" }, "Edit below if your assessment changed your thinking. It\u2019s fine to keep it the same if your original framing held up."),
+                  e("textarea", {
+                    className: "form-input",
+                    rows: 5,
+                    value: S.conceptRevised,
+                    onChange: function(ev) { update({ conceptRevised: ev.target.value }); }
+                  })
+                )
+              ),
+              S.error ? e("div", { className: "error-msg" }, S.error) : null,
+              e("button", {
+                className: "btn",
+                disabled: !S.conceptRevised.trim(),
+                onClick: submitConceptRevision
+              }, "Continue \u2192")
+            )
+          );
+        }
+
+        // subPhase === "reflect"
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Concept Revision"),
+            e("div", { className: "q-text" }, S.conceptFollowUpQuestion || "What changed between your original concept and this version \u2014 and why?"),
+            e("div", { className: "q-hint" }, "If nothing changed, explain why your original framing held up. If it changed, point to which part of the assessment drove the revision."),
+            e("textarea", {
+              className: "form-input",
+              rows: 5,
+              value: S.conceptReflection,
+              onChange: function(ev) { update({ conceptReflection: ev.target.value }); },
+              placeholder: "Your reflection\u2026",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: !S.conceptReflection.trim(),
+              onClick: submitConceptReflection
+            }, "Generate Brief \u2192")
           )
         );
       }
@@ -1734,6 +2251,25 @@
                 (S.teamMembers.trim() ? S.teamMembers + " \u00B7 " : "") +
                 new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
               )
+            ),
+
+            // Concept
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "The Concept"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-text", style: { fontSize: 16 } },
+                  b.concept ? b.concept.revised : (S.conceptRevised || S.projectDesc)
+                )
+              ),
+              S.conceptRevised && S.conceptRevised !== S.projectDesc ? e("div", { className: "brief-card", style: { opacity: 0.6 } },
+                e("div", { className: "synthesis-label" }, "Original Concept"),
+                e("div", { className: "brief-text" }, S.projectDesc)
+              ) : null,
+              S.conceptReflection.trim() ? e("div", { className: "brief-card" },
+                e("div", { className: "synthesis-label" }, "What Changed and Why"),
+                e("div", { className: "brief-text" }, S.conceptReflection)
+              ) : null,
+              b.concept && b.concept.evolution ? e("div", { className: "gaps-text" }, b.concept.evolution) : null
             ),
 
             // Desirability
@@ -1867,12 +2403,14 @@
 
             // Actions
             e("div", { className: "actions no-print", style: { marginTop: 32 } },
-              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
+              e("button", { className: "btn", onClick: downloadDocx }, "Download Brief"),
+              e("button", { className: "btn", onClick: generatePPTX }, "Download Deck"),
               e("button", {
                 className: "btn btn-ghost btn-copy" + (S.copied ? " copied" : ""),
                 onClick: copyToClipboard
-              }, S.copied ? "Copied!" : "Copy for Google Classroom"),
-              e("button", { className: "btn btn-ghost", onClick: startFresh }, "New Assessment")
+              }, S.copied ? "Copied!" : "Copy Text"),
+              e("button", { className: "btn btn-ghost", onClick: function() { window.print(); } }, "Print"),
+              e("button", { className: "btn btn-ghost", onClick: startFresh }, "Start Over")
             )
           )
         );
@@ -1884,6 +2422,7 @@
       if (S.phase === "loading") return renderLoading();
       if (S.phase === "setup") return renderSetup();
       if (S.phase === "brief") return renderBrief();
+      if (S.phase === "concept-revision") return renderConceptRevision();
       if (S.phase === "synthesis") return renderSynthesis();
       if (DIM_ORDER.indexOf(S.phase) >= 0) return renderDimension(S.phase);
       return renderSetup();
