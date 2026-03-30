@@ -656,8 +656,8 @@
       },
       viability: {
         label: "Viability",
-        pasteLabel: "Unit Economics Output",
-        pasteHint: "Paste the output from the Unit Economics tool if you have it. Otherwise, describe your revenue model and cost structure in your own words.",
+        pasteLabel: "Unit Economics & Market Sizing Output",
+        pasteHint: "Paste the output from the Unit Economics and/or Market Sizing tools if you have them. Otherwise, describe your revenue model and cost structure in your own words. If you haven't run those tools yet, we'll walk you through them next.",
         heading: "Does the math actually work?",
         body: "Let\u2019s examine whether this venture can sustain itself economically \u2014 your unit economics, market size, retention logic, and what\u2019s hard for competitors to copy.",
         ratings: [
@@ -678,23 +678,33 @@
 
     var SYSTEM_FEASIBILITY_QUESTIONS = "You are a design thinking coach helping college students assess the feasibility of their hydration venture.\n\nBased on the student's project description and any experiment notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe the most important experiment or prototype test they ran and what they were trying to learn\n2. Ask what they predicted would happen and how confident they were (1\u201310)\n3. Ask what actually happened and where reality diverged from their prediction\n4. Ask what they'd do differently and what's the next experiment they'd run with another month\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their hydration venture.\n\nBased on the student's project description and any unit economics data they've shared, generate exactly 4 interview questions.\n\nThe questions should cover:\n1. Which assumption in their unit economics they're most and least confident in, and why\n2. Market sizing: how many people in their target geography/segment could realistically use this in year one, and what year three looks like if things go well (TAM/SAM thinking in plain language)\n3. What would make a customer come back a second time and a tenth time \u2014 their repeat-use logic\n4. If a well-funded competitor entered tomorrow, what would be hardest for them to replicate\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+    var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their hydration venture.\n\nBased on the student's project description and any unit economics and market sizing data they've shared, generate exactly 3 interview questions.\n\nThe questions should cover:\n1. Which assumption in their unit economics they're most and least confident in, and why\n2. What would make a customer come back a second time and a tenth time \u2014 their repeat-use logic\n3. If a well-funded competitor entered tomorrow, what would be hardest for them to replicate\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
     var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their hydration venture.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized customer insight (specific, not generic)\n2. An unmet need framing: \"[Customer] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the venture\n4. Honest gaps: what the student still doesn't know about this customer\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of customer insight\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
 
     var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their hydration venture.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to business feasibility\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
 
-    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics data, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided)\n2. TAM/SAM analysis in plain language based on their market sizing answers\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics and market sizing data provided in context, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided — use the specific numbers from Unit Economics tool output if available)\n2. TAM/SAM analysis in plain language (use the specific numbers from Market Sizing tool output if available)\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n\nIf Unit Economics and/or Market Sizing data is provided in context, incorporate those specific numbers into your synthesis.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
 
     var SYSTEM_FOLLOWUP = "You are a design thinking coach. A student just rated their venture's performance on one dimension and you need to ask two follow-up questions.\n\nIMPORTANT RULES:\n- Never tell the student what rating to give or suggest they should change it\n- If they rated high (3), probe for evidence they might be overlooking. Be respectfully skeptical.\n- If they rated low (1), explore what specifically they're uncertain about. Affirm that recognizing limitations is strong thinking.\n- If they rated medium (2), ask what would move them to a 1 or a 3.\n- Reference their specific answers and assumptions from the interview.\n- Keep questions to one sentence each.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
     var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\"}";
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
     var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
 
     var SYSTEM_CONCEPT_FOLLOWUP = "You are a design thinking coach. A student has just completed a full Desirability, Feasibility, and Viability assessment of their venture and has revised (or kept) their concept statement.\n\nOriginal concept: \"{original}\"\nRevised concept: \"{revised}\"\n\nAsk ONE follow-up question (not two, just one) that helps the student articulate what changed and why. If the concepts are identical, ask why the original framing held up through the assessment. If they changed, ask which part of D/F/V drove the revision.\n\nThis is a metacognitive moment. The goal is reflection, not correction.\n\nKeep the question to 1\u20132 sentences. Be warm and specific.\n\nReturn ONLY valid JSON with no markdown:\n{\"question\":\"your question here\"}";
+
+    // ── INLINE TOOL PROMPTS ──
+
+    var SYSTEM_UE_INLINE_QUESTIONS = "You help design thinking students analyze unit economics for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.\nGenerate exactly 5 interview questions covering three areas:\n- COGS (Cost of Goods Sold): 2 questions about production costs, materials, packaging, shipping, supplier pricing, and per-unit manufacturing\n- CAC (Customer Acquisition Cost): 1-2 questions about how they find and convert customers\n- LTV (Lifetime Value): 1-2 questions about revenue per customer, repeat purchases, retention\nBe concrete and specific to their idea — reference the actual product, customer, channel.\nQuestions should be answerable without real data yet (educated estimates are fine).\nStart with COGS questions, then CAC, then LTV. Keep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"COGS\",\"hint\":\"short guidance for student\"}]}";
+
+    var SYSTEM_UE_INLINE_ANALYSIS = "You analyze startup unit economics through the ENDURE framework for a design thinking class.\nThese students are building physical products (bottles, sensors, supplements), so production and distribution costs are critical.\nENDURE dimensions: Environmental Scanning (E), Network Orchestration (N), Disruptive Experimentation (D), Unmet Needs Research (U), Resilience Building (R), Evolution Enablement (E).\n\nBased on the project and interview:\n1. Estimate COGS (Cost of Goods Sold) per unit — materials, manufacturing, packaging, shipping/fulfillment\n2. Calculate gross margin per unit (revenue minus COGS)\n3. Build LTV on GROSS MARGIN, not raw revenue — this is the real value of a customer\n4. Estimate CAC range\n5. Calculate the LTV:CAC ratio using margin-based LTV\n6. Pick 2–3 ENDURE dimensions most relevant to their economics\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"cogs\":{\"per_unit\":number,\"breakdown\":[{\"item\":\"materials/manufacturing/packaging/shipping/other\",\"cost\":number,\"note\":\"brief explanation\"}],\"assumptions\":[\"...\",\"...\"]},\n  \"gross_margin\":{\"revenue_per_unit\":number,\"cogs_per_unit\":number,\"margin_per_unit\":number,\"margin_percent\":number,\"interpretation\":\"one sentence on whether this margin is healthy for their category\"},\n  \"cac\":{\"low\":number,\"high\":number,\"assumptions\":[\"...\",\"...\",\"...\"]},\n  \"ltv\":{\"low\":number,\"high\":number,\"basis\":\"margin-based — built on gross profit, not revenue\",\"assumptions\":[\"...\",\"...\",\"...\"]},\n  \"ratio\":{\"value\":number,\"interpretation\":\"one sentence on viability — note this uses margin-based LTV\",\"benchmark\":\"industry context\"},\n  \"endure\":[{\"dimension\":\"full name\",\"letter\":\"single letter\",\"insight\":\"2-3 sentences connecting this dimension to their unit economics\",\"impact\":\"COGS|CAC|LTV|Margin|Both\"}],\n  \"brief\":\"2-3 paragraph written brief covering production costs, margins, acquisition costs, and strategic risks. Highlight where margin pressure or scale effects could change the picture.\"\n}";
+
+    var SYSTEM_TAM_INLINE_QUESTIONS = "You help design thinking students estimate market size for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.\nGenerate exactly 4 interview questions covering three areas:\n- TAM (Total Addressable Market): 1 question about the total potential users/buyers in their target geography and category — who could theoretically buy this?\n- SAM (Serviceable Addressable Market): 1-2 questions about what realistic segment they can actually reach — geographic, demographic, or channel constraints that narrow the TAM\n- TARGET (Year-One Target): 1 question about their realistic first-year reach given their starting position, channels, and capacity\n\nBe concrete and specific to their idea — reference the actual product, customer, market.\nQuestions should be answerable without real data yet (educated estimates and reasoning are fine).\nStart with TAM questions, then SAM, then TARGET. Keep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"TAM\",\"hint\":\"short guidance for student\"}]}";
+
+    var SYSTEM_TAM_INLINE_ANALYSIS = "You analyze startup market sizing through the ENDURE framework for a design thinking class.\nThese students are building early-stage ventures (physical products, apps, services), so realistic estimation matters more than precision.\n\nBased on the project and interview:\n1. Estimate the Total Addressable Market (TAM) — the entire potential market if every possible customer bought\n2. Estimate the Serviceable Addressable Market (SAM) — the segment they can realistically reach given geography, channels, and positioning\n3. Estimate a Year-One Target — what they could actually achieve in their first year given starting resources\n4. Provide a reality check — is this a niche play, a mid-market opportunity, or a mass-market bet?\n5. Write a 2-3 paragraph market logic brief\n\nUse specific numbers when possible. Show your reasoning through assumptions.\nIf the student gave estimates, use those as anchors but pressure-test them.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"tam\": {\"value\": \"human-readable size (e.g. ~2.5M college athletes)\", \"description\": \"1-2 sentences explaining the TAM scope\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"sam\": {\"value\": \"human-readable size (e.g. ~15K athletes in Pacific NW D3)\", \"description\": \"1-2 sentences explaining the narrowing\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"year_one_target\": {\"value\": \"human-readable target (e.g. 200-400 customers)\", \"description\": \"1-2 sentences on why this is realistic\"},\n  \"reality_check\": \"1-2 sentences — is this a niche play, mid-market opportunity, or mass-market bet? What does the size imply about strategy?\",\n  \"brief\": \"2-3 paragraph market logic brief covering total opportunity, realistic segment, year-one path, and what the sizing implies about go-to-market strategy and competitive dynamics.\"\n}";
 
     // ═══════════════════════════════════════
     // INITIAL STATE
@@ -735,6 +745,17 @@
         feasibility: makeDimState(),
         viability: makeDimState()
       },
+      // Tool detection
+      unitEconomicsDetected: false,
+      unitEconomicsContent: null,
+      unitEconomicsResults: null,
+      tamSamDetected: false,
+      tamSamContent: null,
+      tamSamResults: null,
+      ueInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
+      tamInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
+      ueCopied: false,
+      tamCopied: false,
       synthesisQuestions: [],
       synthesisAnswers: [],
       synthesisIndex: 0,
@@ -861,8 +882,14 @@
             updateDim("desirability", { pasteIn: parsed.desirability.material || "" });
             updateDim("feasibility", { pasteIn: parsed.feasibility.material || "" });
             updateDim("viability", { pasteIn: parsed.viability.material || "" });
+            // Store tool detection results
+            var td = parsed.tools_detected || { unit_economics: { found: false }, tam_sam: { found: false } };
             update({
               journal: { raw: journalText, parsed: parsed, provided: true },
+              unitEconomicsDetected: !!(td.unit_economics && td.unit_economics.found),
+              unitEconomicsContent: (td.unit_economics && td.unit_economics.content) || null,
+              tamSamDetected: !!(td.tam_sam && td.tam_sam.found),
+              tamSamContent: (td.tam_sam && td.tam_sam.content) || null,
               phase: "desirability",
               subPhase: "paste",
               error: ""
@@ -873,6 +900,331 @@
         } else {
           navigate("desirability", "paste");
         }
+      }
+
+      // ── Inline tool helpers ──
+      function updateInline(tool, partial) {
+        var current = Object.assign({}, S[tool]);
+        Object.keys(partial).forEach(function(k) { current[k] = partial[k]; });
+        var u = {};
+        u[tool] = current;
+        update(u);
+      }
+
+      var fmtUE = function(n) { return n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n; };
+
+      // ── Viability detection gate ──
+      function startViabilityFlow() {
+        var pasteText = S.dimensions.viability.pasteIn || "";
+        // Client-side detection on paste-in text (for no-journal case)
+        var ueDetected = S.unitEconomicsDetected || pasteText.indexOf("ENDURE Unit Economics Analysis") !== -1;
+        var tamDetected = S.tamSamDetected || pasteText.indexOf("ENDURE Market Sizing Analysis") !== -1;
+
+        // If detected via paste but not via journal, store the content
+        if (!S.unitEconomicsDetected && pasteText.indexOf("ENDURE Unit Economics Analysis") !== -1) {
+          var ueStart = pasteText.indexOf("ENDURE Unit Economics Analysis");
+          update({ unitEconomicsDetected: true, unitEconomicsContent: pasteText.substring(ueStart) });
+        }
+        if (!S.tamSamDetected && pasteText.indexOf("ENDURE Market Sizing Analysis") !== -1) {
+          var tamStart = pasteText.indexOf("ENDURE Market Sizing Analysis");
+          update({ tamSamDetected: true, tamSamContent: pasteText.substring(tamStart) });
+        }
+
+        pushHistory();
+        if (ueDetected) {
+          update({ phase: "viability", subPhase: "ue-review", error: "" });
+        } else {
+          startUeInlineInterview();
+        }
+      }
+
+      // ── UE inline interview ──
+      async function startUeInlineInterview() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing unit economics questions\u2026" });
+        try {
+          var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
+          var raw = await callClaude(context, SYSTEM_UE_INLINE_QUESTIONS, 800);
+          var parsed = JSON.parse(raw.trim());
+          updateInline("ueInline", { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "" });
+          update({ phase: "viability", subPhase: "ue-interview", error: "" });
+        } catch (err) {
+          update({ phase: "viability", subPhase: "paste", error: "Something went wrong. (" + err.message + ")" });
+        }
+      }
+
+      async function submitUeInlineAnswer() {
+        var ue = S.ueInline;
+        var newAnswers = ue.answers.concat([ue.currentAnswer]);
+        updateInline("ueInline", { answers: newAnswers, currentAnswer: "" });
+        if (ue.qIndex + 1 < ue.questions.length) {
+          updateInline("ueInline", { answers: newAnswers, currentAnswer: "", qIndex: ue.qIndex + 1 });
+        } else {
+          // Generate UE analysis
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Building your unit economics model\u2026" });
+          try {
+            var qa = ue.questions.map(function(q, i) {
+              return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
+            }).join("\n\n");
+            var raw = await callClaude(
+              "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nInterview:\n" + qa,
+              SYSTEM_UE_INLINE_ANALYSIS
+            );
+            var parsed = JSON.parse(raw.trim());
+            update({ unitEconomicsResults: parsed, phase: "viability", subPhase: "ue-results", error: "" });
+          } catch (err) {
+            update({ phase: "viability", subPhase: "ue-interview", error: "Something went wrong. (" + err.message + ")" });
+          }
+        }
+      }
+
+      function continueAfterUeResults() {
+        pushHistory();
+        if (S.tamSamDetected) {
+          update({ phase: "viability", subPhase: "tam-review", error: "" });
+        } else {
+          startTamInlineInterview();
+        }
+      }
+
+      // ── TAM inline interview ──
+      async function startTamInlineInterview() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing market sizing questions\u2026" });
+        try {
+          var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
+          var raw = await callClaude(context, SYSTEM_TAM_INLINE_QUESTIONS, 800);
+          var parsed = JSON.parse(raw.trim());
+          updateInline("tamInline", { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "" });
+          update({ phase: "viability", subPhase: "tam-interview", error: "" });
+        } catch (err) {
+          update({ phase: "viability", subPhase: "paste", error: "Something went wrong. (" + err.message + ")" });
+        }
+      }
+
+      async function submitTamInlineAnswer() {
+        var tam = S.tamInline;
+        var newAnswers = tam.answers.concat([tam.currentAnswer]);
+        updateInline("tamInline", { answers: newAnswers, currentAnswer: "" });
+        if (tam.qIndex + 1 < tam.questions.length) {
+          updateInline("tamInline", { answers: newAnswers, currentAnswer: "", qIndex: tam.qIndex + 1 });
+        } else {
+          // Generate TAM analysis
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Sizing your market\u2026" });
+          try {
+            var qa = tam.questions.map(function(q, i) {
+              return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
+            }).join("\n\n");
+            var raw = await callClaude(
+              "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nInterview:\n" + qa,
+              SYSTEM_TAM_INLINE_ANALYSIS
+            );
+            var parsed = JSON.parse(raw.trim());
+            update({ tamSamResults: parsed, phase: "viability", subPhase: "tam-results", error: "" });
+          } catch (err) {
+            update({ phase: "viability", subPhase: "tam-interview", error: "Something went wrong. (" + err.message + ")" });
+          }
+        }
+      }
+
+      function continueAfterTamResults() {
+        // Move on to the 3 viability evaluation questions
+        startDimension("viability");
+      }
+
+      function continueFromReview(tool) {
+        pushHistory();
+        if (tool === "ue") {
+          if (S.tamSamDetected) {
+            update({ phase: "viability", subPhase: "tam-review", error: "" });
+          } else {
+            startTamInlineInterview();
+          }
+        } else {
+          // tool === "tam" — move to viability questions
+          startDimension("viability");
+        }
+      }
+
+      // ── Inline UE export helpers ──
+      function buildUeInlinePlainText() {
+        if (!S.unitEconomicsResults) return "";
+        var r = S.unitEconomicsResults;
+        var lines = [];
+        lines.push("ENDURE Unit Economics Analysis — " + S.projectName.toUpperCase());
+        lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        lines.push("LTV : CAC RATIO — " + Number(r.ratio.value).toFixed(1) + "x");
+        lines.push(r.ratio.interpretation);
+        lines.push(r.ratio.benchmark);
+        if (r.cogs) {
+          lines.push("");
+          lines.push("───────────────────────────────────────");
+          lines.push("COST OF GOODS SOLD: " + fmtUE(r.cogs.per_unit) + " per unit");
+          if (r.cogs.breakdown) {
+            r.cogs.breakdown.forEach(function(b) {
+              lines.push("  — " + b.item + ": " + fmtUE(b.cost) + (b.note ? " (" + b.note + ")" : ""));
+            });
+          }
+          if (r.cogs.assumptions) {
+            r.cogs.assumptions.forEach(function(a) { lines.push("  — " + a); });
+          }
+        }
+        if (r.gross_margin) {
+          lines.push("");
+          lines.push("GROSS MARGIN: " + fmtUE(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)");
+          lines.push("  Revenue " + fmtUE(r.gross_margin.revenue_per_unit) + " – COGS " + fmtUE(r.gross_margin.cogs_per_unit));
+          lines.push(r.gross_margin.interpretation);
+        }
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("CUSTOMER ACQUISITION COST: " + fmtUE(r.cac.low) + " – " + fmtUE(r.cac.high));
+        r.cac.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("LIFETIME VALUE: " + fmtUE(r.ltv.low) + " – " + fmtUE(r.ltv.high));
+        if (r.ltv.basis) { lines.push("  (" + r.ltv.basis + ")"); }
+        r.ltv.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("STRATEGIC BRIEF");
+        lines.push("");
+        lines.push(r.brief);
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        return lines.join("\n");
+      }
+
+      function downloadUeInlineDocx() {
+        if (!S.unitEconomicsResults) return;
+        var r = S.unitEconomicsResults;
+        var D = docx;
+        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        function heading(text, level) {
+          return new D.Paragraph({ heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2, spacing: { before: level === 1 ? 0 : 300, after: 120 }, children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })] });
+        }
+        function para(text, opts) { opts = opts || {}; return new D.Paragraph({ spacing: { after: opts.after !== undefined ? opts.after : 120 }, children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })] }); }
+        function bullet(text) { return new D.Paragraph({ bullet: { level: 0 }, spacing: { after: 60 }, children: [new D.TextRun({ text: text, font: "Arial", size: 22 })] }); }
+        function divider() { return new D.Paragraph({ spacing: { before: 200, after: 200 }, border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } }, children: [] }); }
+        var children = [];
+        children.push(heading("ENDURE Unit Economics Analysis", 1));
+        children.push(para(S.projectName, { bold: true, after: 40 }));
+        children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
+        children.push(divider());
+        children.push(heading("LTV : CAC Ratio", 2));
+        children.push(para(Number(r.ratio.value).toFixed(1) + "\u00D7", { bold: true }));
+        children.push(para(r.ratio.interpretation));
+        children.push(para(r.ratio.benchmark, { italic: true, color: "666666" }));
+        if (r.cogs) {
+          children.push(divider()); children.push(heading("Cost of Goods Sold", 2));
+          children.push(para(fmtUE(r.cogs.per_unit) + " per unit", { bold: true }));
+          if (r.cogs.breakdown) r.cogs.breakdown.forEach(function(b) { children.push(bullet(b.item + ": " + fmtUE(b.cost) + (b.note ? " (" + b.note + ")" : ""))); });
+          if (r.cogs.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.cogs.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
+        }
+        if (r.gross_margin) {
+          children.push(divider()); children.push(heading("Gross Margin", 2));
+          children.push(para(fmtUE(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)", { bold: true }));
+          children.push(para(r.gross_margin.interpretation));
+        }
+        children.push(divider()); children.push(heading("Customer Acquisition Cost", 2));
+        children.push(para(fmtUE(r.cac.low) + " \u2013 " + fmtUE(r.cac.high), { bold: true }));
+        children.push(para("Assumptions:", { bold: true, after: 60 }));
+        r.cac.assumptions.forEach(function(a) { children.push(bullet(a)); });
+        children.push(divider()); children.push(heading("Lifetime Value", 2));
+        children.push(para(fmtUE(r.ltv.low) + " \u2013 " + fmtUE(r.ltv.high), { bold: true }));
+        if (r.ltv.basis) children.push(para(r.ltv.basis, { italic: true, color: "666666" }));
+        children.push(para("Assumptions:", { bold: true, after: 60 }));
+        r.ltv.assumptions.forEach(function(a) { children.push(bullet(a)); });
+        children.push(divider()); children.push(heading("Strategic Brief", 2));
+        children.push(para(r.brief));
+        children.push(divider());
+        children.push(para("Generated with ENDURE Unit Economics \u00B7 " + dateStr, { italic: true, color: "999999" }));
+        var doc = new D.Document({ sections: [{ properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } }, children: children }] });
+        D.Packer.toBlob(doc).then(function(blob) {
+          var slug = S.projectName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+          var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "unit-economics-" + slug + ".docx"; a.click(); URL.revokeObjectURL(a.href);
+        });
+      }
+
+      // ── Inline TAM export helpers ──
+      function buildTamInlinePlainText() {
+        if (!S.tamSamResults) return "";
+        var r = S.tamSamResults;
+        var lines = [];
+        lines.push("ENDURE Market Sizing Analysis — " + S.projectName.toUpperCase());
+        lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        lines.push("TOTAL ADDRESSABLE MARKET (TAM)");
+        lines.push(r.tam.value);
+        lines.push(r.tam.description);
+        if (r.tam.assumptions) r.tam.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("SERVICEABLE ADDRESSABLE MARKET (SAM)");
+        lines.push(r.sam.value);
+        lines.push(r.sam.description);
+        if (r.sam.assumptions) r.sam.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("YEAR-ONE TARGET");
+        lines.push(r.year_one_target.value);
+        lines.push(r.year_one_target.description);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("REALITY CHECK");
+        lines.push(r.reality_check);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("MARKET LOGIC BRIEF");
+        lines.push("");
+        lines.push(r.brief);
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        return lines.join("\n");
+      }
+
+      function downloadTamInlineDocx() {
+        if (!S.tamSamResults) return "";
+        var r = S.tamSamResults;
+        var D = docx;
+        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        function heading(text, level) {
+          return new D.Paragraph({ heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2, spacing: { before: level === 1 ? 0 : 300, after: 120 }, children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })] });
+        }
+        function para(text, opts) { opts = opts || {}; return new D.Paragraph({ spacing: { after: opts.after !== undefined ? opts.after : 120 }, children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })] }); }
+        function bullet(text) { return new D.Paragraph({ bullet: { level: 0 }, spacing: { after: 60 }, children: [new D.TextRun({ text: text, font: "Arial", size: 22 })] }); }
+        function divider() { return new D.Paragraph({ spacing: { before: 200, after: 200 }, border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } }, children: [] }); }
+        var children = [];
+        children.push(heading("ENDURE Market Sizing Analysis", 1));
+        children.push(para(S.projectName, { bold: true, after: 40 }));
+        children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
+        children.push(divider());
+        children.push(heading("Total Addressable Market (TAM)", 2));
+        children.push(para(r.tam.value, { bold: true })); children.push(para(r.tam.description));
+        if (r.tam.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.tam.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
+        children.push(divider());
+        children.push(heading("Serviceable Addressable Market (SAM)", 2));
+        children.push(para(r.sam.value, { bold: true })); children.push(para(r.sam.description));
+        if (r.sam.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.sam.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
+        children.push(divider());
+        children.push(heading("Year-One Target", 2));
+        children.push(para(r.year_one_target.value, { bold: true })); children.push(para(r.year_one_target.description));
+        children.push(divider());
+        children.push(heading("Reality Check", 2));
+        children.push(para(r.reality_check));
+        children.push(divider());
+        children.push(heading("Market Logic Brief", 2));
+        children.push(para(r.brief));
+        children.push(divider());
+        children.push(para("Generated with ENDURE Market Sizing \u00B7 " + dateStr, { italic: true, color: "999999" }));
+        var doc = new D.Document({ sections: [{ properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } }, children: children }] });
+        D.Packer.toBlob(doc).then(function(blob) {
+          var slug = S.projectName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+          var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "market-sizing-" + slug + ".docx"; a.click(); URL.revokeObjectURL(a.href);
+        });
       }
 
       // ── Dimension question prompts lookup ──
@@ -922,6 +1274,19 @@
             }).join("\n\n");
             var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
             if (d.pasteIn.trim()) context += "\n\nStudent's notes:\n" + d.pasteIn;
+            // Enrich viability context with UE/TAM data
+            if (dim === "viability") {
+              if (S.unitEconomicsResults) {
+                context += "\n\nUnit Economics Data:\n" + buildUeInlinePlainText();
+              } else if (S.unitEconomicsContent) {
+                context += "\n\nUnit Economics Data:\n" + S.unitEconomicsContent;
+              }
+              if (S.tamSamResults) {
+                context += "\n\nMarket Sizing Data:\n" + buildTamInlinePlainText();
+              } else if (S.tamSamContent) {
+                context += "\n\nMarket Sizing Data:\n" + S.tamSamContent;
+              }
+            }
             context += "\n\nInterview:\n" + qa;
             var raw = await callClaude(context, synthesisPrompts[dim], 1500);
             var parsed = JSON.parse(raw.trim());
@@ -1125,6 +1490,26 @@
           });
           lines.push("");
         });
+
+        // Include inline tool data
+        if (S.unitEconomicsResults) {
+          lines.push("=== UNIT ECONOMICS DATA ===");
+          lines.push(buildUeInlinePlainText());
+          lines.push("");
+        } else if (S.unitEconomicsContent) {
+          lines.push("=== UNIT ECONOMICS DATA ===");
+          lines.push(S.unitEconomicsContent);
+          lines.push("");
+        }
+        if (S.tamSamResults) {
+          lines.push("=== MARKET SIZING DATA ===");
+          lines.push(buildTamInlinePlainText());
+          lines.push("");
+        } else if (S.tamSamContent) {
+          lines.push("=== MARKET SIZING DATA ===");
+          lines.push(S.tamSamContent);
+          lines.push("");
+        }
 
         lines.push("=== CONCEPT STATEMENT ===");
         lines.push("Original: " + S.projectDesc);
@@ -1538,8 +1923,19 @@
         slideTitle(s5, "The Economics");
         var vSyn = S.dimensions.viability.synthesis;
         var econText = [];
-        if (b.viability && b.viability.economics) econText.push([{ text: b.viability.economics.substring(0, 500), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (vSyn && vSyn.tam_sam) {
+        // Prefer inline tool results when available
+        if (S.unitEconomicsResults) {
+          var ueR = S.unitEconomicsResults;
+          econText.push([{ text: "LTV:CAC Ratio: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: Number(ueR.ratio.value).toFixed(1) + "\u00D7 \u2014 " + ueR.ratio.interpretation, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+          if (ueR.gross_margin) econText.push([{ text: "Gross margin: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fmtUE(ueR.gross_margin.margin_per_unit) + "/unit (" + Math.round(ueR.gross_margin.margin_percent) + "%)", options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        } else if (b.viability && b.viability.economics) {
+          econText.push([{ text: b.viability.economics.substring(0, 500), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        }
+        if (S.tamSamResults) {
+          var tamR = S.tamSamResults;
+          econText.push([{ text: "TAM: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: tamR.tam.value, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+          econText.push([{ text: "Year-one target: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: tamR.year_one_target.value, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+        } else if (vSyn && vSyn.tam_sam) {
           econText.push([{ text: "Market size: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.description.substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
           if (vSyn.tam_sam.year_one) econText.push([{ text: "Year one: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.year_one, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
         }
@@ -1806,6 +2202,16 @@
         var d = S.dimensions[dim];
         var sub = S.subPhase;
 
+        // Viability sub-phase routing for inline tools
+        if (dim === "viability") {
+          if (sub === "ue-review") return renderUeReview();
+          if (sub === "ue-interview") return renderUeInlineInterview();
+          if (sub === "ue-results") return renderUeResults();
+          if (sub === "tam-review") return renderTamReview();
+          if (sub === "tam-interview") return renderTamInlineInterview();
+          if (sub === "tam-results") return renderTamResults();
+        }
+
         if (sub === "paste") return renderPaste(dim, cfg, d);
         if (sub === "questions") return renderQuestions(dim, cfg, d);
         if (sub === "ai-synthesis") return renderSynthesisDisplay(dim, cfg, d);
@@ -1856,8 +2262,245 @@
             S.error ? e("div", { className: "error-msg" }, S.error) : null,
             e("button", {
               className: "btn",
-              onClick: function() { startDimension(dim); }
+              onClick: function() { dim === "viability" ? startViabilityFlow() : startDimension(dim); }
             }, "Start " + cfg.label + " Interview \u2192")
+          )
+        );
+      }
+
+      // ── UE Review (detected in journal) ──
+      function renderUeReview() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
+            e("div", { className: "dim-heading" }, "Your Unit Economics"),
+            e("div", { className: "dim-body" }, "We found your Unit Economics analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
+            renderConceptRef(),
+            e("div", { className: "card" },
+              e("div", { style: { whiteSpace: "pre-wrap", fontSize: 13, color: "rgba(232,227,216,0.55)", lineHeight: "1.6" } },
+                S.unitEconomicsContent || "(Unit Economics data detected)"
+              )
+            ),
+            e("div", { className: "actions" },
+              e("button", { className: "btn", onClick: function() { continueFromReview("ue"); } }, "Continue \u2192"),
+              e("button", {
+                className: "btn btn-ghost",
+                onClick: function() { update({ unitEconomicsDetected: false, unitEconomicsContent: null }); startUeInlineInterview(); },
+                style: { fontSize: 12 }
+              }, "Run a fresh analysis instead")
+            )
+          )
+        );
+      }
+
+      // ── UE Inline Interview ──
+      function renderUeInlineInterview() {
+        var ue = S.ueInline;
+        var q = ue.questions[ue.qIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
+            renderConceptRef(),
+            e("div", { className: "progress-track" },
+              ue.questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < ue.qIndex) cls += " done";
+                else if (i === ue.qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, q.focus + " Driver"),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: ue.currentAnswer,
+              onChange: function(ev) { updateInline("ueInline", { currentAnswer: ev.target.value }); },
+              placeholder: "Your answer \u2014 estimates and ranges are fine\u2026",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitUeInlineAnswer,
+                disabled: !ue.currentAnswer.trim()
+              }, ue.qIndex + 1 < ue.questions.length ? "Next \u2192" : "Generate Model \u2192"),
+              e("span", { className: "q-counter" }, (ue.qIndex + 1) + " of " + ue.questions.length)
+            )
+          )
+        );
+      }
+
+      // ── UE Results ──
+      function renderUeResults() {
+        var r = S.unitEconomicsResults;
+        if (!r) return renderLoading();
+        var ratioColor = r.ratio.value >= 3 ? "#5CB88A" : r.ratio.value >= 2 ? "#D4A853" : "#E07558";
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
+            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "Unit Economics Analysis"),
+            e("div", { className: "results-sub", style: { fontSize: 12, color: "rgba(232,227,216,0.3)", marginBottom: 24 } },
+              "This output will be included in your final brief automatically."
+            ),
+            // Key metric: LTV:CAC
+            e("div", { className: "card", style: { textAlign: "center", padding: 28, marginBottom: 20 } },
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "rgba(232,227,216,0.4)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 } }, "LTV : CAC Ratio"),
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 36, fontWeight: 600, color: ratioColor } }, Number(r.ratio.value).toFixed(1) + "\u00D7"),
+              e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 6 } }, r.ratio.interpretation)
+            ),
+            // Export
+            e("div", { className: "actions", style: { marginBottom: 24 } },
+              e("button", { className: "btn btn-ghost", onClick: downloadUeInlineDocx }, "Download Word Doc"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (S.ueCopied ? " copied" : ""),
+                onClick: function() {
+                  navigator.clipboard.writeText(buildUeInlinePlainText()).then(function() {
+                    update({ ueCopied: true });
+                    setTimeout(function() { update({ ueCopied: false }); }, 2000);
+                  });
+                }
+              }, S.ueCopied ? "Copied!" : "Copy Text")
+            ),
+            e("button", { className: "btn", onClick: continueAfterUeResults }, "Continue to Market Sizing \u2192")
+          )
+        );
+      }
+
+      // ── TAM Review (detected in journal) ──
+      function renderTamReview() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
+            e("div", { className: "dim-heading" }, "Your Market Sizing"),
+            e("div", { className: "dim-body" }, "We found your Market Sizing analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
+            renderConceptRef(),
+            e("div", { className: "card" },
+              e("div", { style: { whiteSpace: "pre-wrap", fontSize: 13, color: "rgba(232,227,216,0.55)", lineHeight: "1.6" } },
+                S.tamSamContent || "(Market Sizing data detected)"
+              )
+            ),
+            e("div", { className: "actions" },
+              e("button", { className: "btn", onClick: function() { continueFromReview("tam"); } }, "Continue \u2192"),
+              e("button", {
+                className: "btn btn-ghost",
+                onClick: function() { update({ tamSamDetected: false, tamSamContent: null }); startTamInlineInterview(); },
+                style: { fontSize: 12 }
+              }, "Run a fresh analysis instead")
+            )
+          )
+        );
+      }
+
+      // ── TAM Inline Interview ──
+      function renderTamInlineInterview() {
+        var tam = S.tamInline;
+        var q = tam.questions[tam.qIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
+            renderConceptRef(),
+            e("div", { className: "progress-track" },
+              tam.questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < tam.qIndex) cls += " done";
+                else if (i === tam.qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, q.focus + " Sizing"),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: tam.currentAnswer,
+              onChange: function(ev) { updateInline("tamInline", { currentAnswer: ev.target.value }); },
+              placeholder: "Your answer \u2014 estimates and ranges are fine\u2026",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitTamInlineAnswer,
+                disabled: !tam.currentAnswer.trim()
+              }, tam.qIndex + 1 < tam.questions.length ? "Next \u2192" : "Generate Analysis \u2192"),
+              e("span", { className: "q-counter" }, (tam.qIndex + 1) + " of " + tam.questions.length)
+            )
+          )
+        );
+      }
+
+      // ── TAM Results ──
+      function renderTamResults() {
+        var r = S.tamSamResults;
+        if (!r) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
+            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "Market Sizing Analysis"),
+            e("div", { className: "results-sub", style: { fontSize: 12, color: "rgba(232,227,216,0.3)", marginBottom: 24 } },
+              "This output will be included in your final brief automatically."
+            ),
+            // Key metrics
+            e("div", { className: "metrics-grid", style: { marginBottom: 20 } },
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type", style: { color: "#7EB8DA" } }, "TAM"),
+                e("div", { className: "metric-value" }, r.tam.value),
+                e("div", { className: "metric-desc" }, r.tam.description)
+              ),
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type", style: { color: "#B89ADE" } }, "SAM"),
+                e("div", { className: "metric-value" }, r.sam.value),
+                e("div", { className: "metric-desc" }, r.sam.description)
+              )
+            ),
+            e("div", { className: "card", style: { marginBottom: 20 } },
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#D4A853", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "Year-One Target"),
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 20, fontWeight: 600, color: "#E8E3D8", marginBottom: 6 } }, r.year_one_target.value),
+              e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)" } }, r.year_one_target.description)
+            ),
+            r.reality_check ? e("div", { style: { background: "rgba(224,117,88,0.04)", border: "1px solid rgba(224,117,88,0.15)", borderRadius: 8, padding: 20, marginBottom: 20 } },
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#E07558", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "Reality Check"),
+              e("div", { style: { fontSize: 14, color: "rgba(232,227,216,0.6)", lineHeight: "1.6" } }, r.reality_check)
+            ) : null,
+            // Export
+            e("div", { className: "actions", style: { marginBottom: 24 } },
+              e("button", { className: "btn btn-ghost", onClick: downloadTamInlineDocx }, "Download Word Doc"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (S.tamCopied ? " copied" : ""),
+                onClick: function() {
+                  navigator.clipboard.writeText(buildTamInlinePlainText()).then(function() {
+                    update({ tamCopied: true });
+                    setTimeout(function() { update({ tamCopied: false }); }, 2000);
+                  });
+                }
+              }, S.tamCopied ? "Copied!" : "Copy Text")
+            ),
+            e("button", { className: "btn", onClick: continueAfterTamResults }, "Continue to Viability Questions \u2192")
           )
         );
       }

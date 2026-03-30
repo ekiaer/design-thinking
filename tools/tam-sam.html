@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENDURE Market Sizing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+    }
+    .header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid rgba(232,227,216,0.06);
+    }
+    .logo-mark {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      font-weight: 600;
+      color: #D4A853;
+      letter-spacing: -0.5px;
+    }
+    .header-sub {
+      font-size: 12px;
+      color: rgba(232,227,216,0.3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(212,168,83,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+    .intro-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .intro-heading em { font-style: italic; color: #D4A853; }
+    .intro-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(232,227,216,0.5);
+      margin-bottom: 32px;
+    }
+    .card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 10px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(232,227,216,0.6);
+      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: rgba(232,227,216,0.3);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 6px;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: rgba(212,168,83,0.4); }
+    .form-input::placeholder { color: rgba(232,227,216,0.2); }
+    textarea.form-input { resize: vertical; line-height: 1.6; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #D4A853;
+      color: #0D1117;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:disabled { opacity: 0.35; cursor: default; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-ghost:hover { border-color: rgba(232,227,216,0.25); color: #E8E3D8; }
+    .btn-copy.copied { border-color: #5CB88A; color: #5CB88A; }
+    .error-msg {
+      background: rgba(224,117,88,0.08);
+      border: 1px solid rgba(224,117,88,0.25);
+      border-radius: 6px;
+      color: #E07558;
+      font-size: 13px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    /* Loading */
+    .loading-wrap { text-align: center; padding: 80px 0; }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid rgba(212,168,83,0.15);
+      border-top-color: #D4A853;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+    }
+    /* Progress */
+    .progress-track {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 32px;
+    }
+    .progress-seg {
+      height: 3px;
+      flex: 1;
+      background: rgba(232,227,216,0.08);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .progress-seg.done { background: #D4A853; }
+    .progress-seg.active { background: rgba(212,168,83,0.45); }
+    /* Interview */
+    .focus-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #D4A853;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: rgba(212,168,83,0.1);
+      border: 1px solid rgba(212,168,83,0.2);
+      border-radius: 4px;
+      padding: 4px 10px;
+      margin-bottom: 16px;
+    }
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .q-hint {
+      font-size: 13px;
+      color: rgba(232,227,216,0.3);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .q-counter {
+      font-size: 12px;
+      color: rgba(232,227,216,0.25);
+      margin-left: 12px;
+    }
+    .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    /* Resources */
+    .resources-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: rgba(232,227,216,0.35);
+      font-size: 12px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .resources-toggle:hover { color: rgba(232,227,216,0.55); }
+    .arrow {
+      display: inline-block;
+      font-size: 8px;
+      transition: transform 0.2s;
+    }
+    .arrow.open { transform: rotate(90deg); }
+    .resources-list {
+      list-style: none;
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: rgba(212,168,83,0.03);
+      border: 1px solid rgba(212,168,83,0.08);
+      border-radius: 6px;
+    }
+    .resources-list li { margin-bottom: 10px; }
+    .resources-list li:last-child { margin-bottom: 0; }
+    .resources-list a {
+      color: #D4A853;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .resources-list a:hover { text-decoration: underline; }
+    .res-desc {
+      display: block;
+      font-size: 11px;
+      color: rgba(232,227,216,0.3);
+      margin-top: 2px;
+    }
+    /* Results */
+    .results-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+    .results-sub {
+      font-size: 12px;
+      color: rgba(232,227,216,0.3);
+      margin-bottom: 36px;
+    }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(232,227,216,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 36px 0 14px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 560px) { .metrics-grid { grid-template-columns: 1fr; } }
+    .metric-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .metric-card.full-width { grid-column: 1 / -1; }
+    .metric-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .type-tam { color: #7EB8DA; }
+    .type-sam { color: #B89ADE; }
+    .type-target { color: #D4A853; }
+    .type-reality { color: #E07558; }
+    .metric-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 22px;
+      font-weight: 600;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .metric-desc {
+      font-size: 13px;
+      color: rgba(232,227,216,0.45);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .assumptions {
+      list-style: none;
+      padding: 0;
+    }
+    .assumption {
+      font-size: 12px;
+      color: rgba(232,227,216,0.3);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .assumption::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: rgba(232,227,216,0.15);
+    }
+    /* Reality check card */
+    .reality-card {
+      background: rgba(224,117,88,0.04);
+      border: 1px solid rgba(224,117,88,0.15);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 14px;
+    }
+    .reality-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #E07558;
+      margin-bottom: 10px;
+    }
+    .reality-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.6);
+      line-height: 1.6;
+    }
+    /* Brief */
+    .brief-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .brief-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.55);
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+    /* Print */
+    @media print {
+      body { background: #fff; color: #111; }
+      .header { border-color: #ccc; }
+      .logo-mark { color: #333; }
+      .header-sub { color: #999; }
+      .no-print { display: none !important; }
+      .metric-card, .brief-card, .card, .reality-card { border-color: #ddd; background: #fafafa; }
+      .metric-type, .type-tam, .type-sam, .type-target, .type-reality, .section-label { color: #555; }
+      .metric-value, .metric-desc, .brief-text, .reality-text, .results-title { color: #111; }
+      .assumption { color: #666; }
+      .eyebrow { color: #888; }
+      .results-sub { color: #999; }
+      .reality-card { background: #fef8f6; border-color: #e8ccc5; }
+      .reality-label { color: #c44; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+
+  <script>
+    // ── CONFIG ──
+    const API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
+
+    const SYSTEM_QUESTIONS = `You help design thinking students estimate market size for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.
+Generate exactly 5 interview questions covering three areas:
+- TAM (Total Addressable Market): 1-2 questions about the total potential users/buyers in their target geography and category — who could theoretically buy this?
+- SAM (Serviceable Addressable Market): 1-2 questions about what realistic segment they can actually reach — geographic, demographic, or channel constraints that narrow the TAM
+- TARGET (Year-One Target): 1-2 questions about their realistic first-year reach given their starting position, channels, and capacity
+
+Be concrete and specific to their idea — reference the actual product, customer, market.
+Questions should be answerable without real data yet (educated estimates and reasoning are fine).
+Start with TAM questions, then SAM, then TARGET. Keep each question to one sentence.
+Return ONLY valid JSON with no markdown, no explanation:
+{"questions":[{"id":1,"text":"question","focus":"TAM","hint":"short guidance for student"}]}`;
+
+    const SYSTEM_ANALYSIS = `You analyze startup market sizing through the ENDURE framework for a design thinking class.
+These students are building early-stage ventures (physical products, apps, services), so realistic estimation matters more than precision.
+
+Based on the project and interview:
+1. Estimate the Total Addressable Market (TAM) — the entire potential market if every possible customer bought
+2. Estimate the Serviceable Addressable Market (SAM) — the segment they can realistically reach given geography, channels, and positioning
+3. Estimate a Year-One Target — what they could actually achieve in their first year given starting resources
+4. Provide a reality check — is this a niche play, a mid-market opportunity, or a mass-market bet?
+5. Write a 2-3 paragraph market logic brief
+
+Use specific numbers when possible. Show your reasoning through assumptions.
+If the student gave estimates, use those as anchors but pressure-test them.
+
+Return ONLY valid JSON with no markdown, no explanation:
+{
+  "tam": {"value": "human-readable size (e.g. ~2.5M college athletes)", "description": "1-2 sentences explaining the TAM scope", "assumptions": ["assumption 1", "assumption 2"]},
+  "sam": {"value": "human-readable size (e.g. ~15K athletes in Pacific NW D3)", "description": "1-2 sentences explaining the narrowing", "assumptions": ["assumption 1", "assumption 2"]},
+  "year_one_target": {"value": "human-readable target (e.g. 200-400 customers)", "description": "1-2 sentences on why this is realistic"},
+  "reality_check": "1-2 sentences — is this a niche play, mid-market opportunity, or mass-market bet? What does the size imply about strategy?",
+  "brief": "2-3 paragraph market logic brief covering total opportunity, realistic segment, year-one path, and what the sizing implies about go-to-market strategy and competitive dynamics."
+}`;
+
+    const RESOURCES = {
+      TAM: [
+        {
+          title: "TAM SAM SOM — What It Means and Why It Matters",
+          url: "https://www.investopedia.com/terms/t/tam.asp",
+          desc: "Clear breakdown of total, serviceable, and obtainable market"
+        },
+        {
+          title: "Top-Down vs. Bottom-Up Market Sizing",
+          url: "https://www.forentrepreneurs.com/tam-sam-som/",
+          desc: "Two approaches to estimating your market — and when to use each"
+        },
+        {
+          title: "How to Estimate Market Size for a Startup",
+          url: "https://www.ycombinator.com/library/8e-how-to-estimate-market-size",
+          desc: "Y Combinator's practical guide to market sizing"
+        }
+      ],
+      SAM: [
+        {
+          title: "Defining Your Serviceable Market",
+          url: "https://hbr.org/2020/03/how-to-estimate-your-addressable-market",
+          desc: "Harvard Business Review on narrowing from TAM to reachable segments"
+        },
+        {
+          title: "Market Segmentation for Startups",
+          url: "https://www.shopify.com/blog/market-segmentation",
+          desc: "How to define the slice of the market you can actually serve"
+        },
+        {
+          title: "Geographic and Demographic Scoping",
+          url: "https://www.investopedia.com/terms/m/marketsegmentation.asp",
+          desc: "The variables that narrow a total market to a serviceable one"
+        }
+      ],
+      TARGET: [
+        {
+          title: "Setting Realistic Year-One Goals",
+          url: "https://www.forentrepreneurs.com/startup-killer/",
+          desc: "David Skok on why early traction targets matter for survival"
+        },
+        {
+          title: "Channel Capacity and Early Growth",
+          url: "https://www.ycombinator.com/library/5b-how-to-plan-an-early-stage-startup",
+          desc: "How your distribution channels constrain your first-year reach"
+        },
+        {
+          title: "The SOM Question — What Can You Actually Get?",
+          url: "https://www.investopedia.com/terms/s/serviceable-obtainable-market-som.asp",
+          desc: "Moving from addressable to obtainable — the year-one reality"
+        }
+      ]
+    };
+
+    const e = React.createElement;
+    const { useState } = React;
+
+    async function callClaude(userMsg, sys) {
+      const res = await fetch(API_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1500,
+          system: sys,
+          messages: [{ role: "user", content: userMsg }],
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.text();
+        throw new Error("API error: " + res.status + " " + errBody);
+      }
+      const data = await res.json();
+      var text = data.content[0].text;
+      text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+      return text;
+    }
+
+    function App() {
+      const [step, setStep] = useState("intro");
+      const [name, setName] = useState("");
+      const [desc, setDesc] = useState("");
+      const [questions, setQuestions] = useState([]);
+      const [qIndex, setQIndex] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [currentAns, setCurrentAns] = useState("");
+      const [results, setResults] = useState(null);
+      const [error, setError] = useState("");
+      const [copied, setCopied] = useState(false);
+      const [showResources, setShowResources] = useState(false);
+
+      async function startInterview() {
+        setError("");
+        setStep("loading");
+        try {
+          const raw = await callClaude("Project: " + name + "\n\nDescription: " + desc, SYSTEM_QUESTIONS);
+          const parsed = JSON.parse(raw.trim());
+          setQuestions(parsed.questions);
+          setStep("interview");
+        } catch (err) {
+          setError("Something went wrong. Please try again. (" + err.message + ")");
+          setStep("intro");
+        }
+      }
+
+      async function submitAnswer() {
+        const newAnswers = answers.concat([{
+          q: questions[qIndex].text,
+          a: currentAns,
+          focus: questions[qIndex].focus
+        }]);
+        setAnswers(newAnswers);
+        setCurrentAns("");
+        if (qIndex + 1 < questions.length) {
+          setQIndex(qIndex + 1);
+          setShowResources(false);
+        } else {
+          setStep("loading");
+          try {
+            const qa = newAnswers.map(function(x, i) {
+              return "Q" + (i + 1) + " [" + x.focus + "]: " + x.q + "\nA: " + x.a;
+            }).join("\n\n");
+            const raw = await callClaude(
+              "Project: " + name + "\nDescription: " + desc + "\n\nInterview:\n" + qa,
+              SYSTEM_ANALYSIS
+            );
+            const parsed = JSON.parse(raw.trim());
+            setResults(parsed);
+            setStep("results");
+          } catch (err) {
+            setError("Something went wrong generating results. Please try again. (" + err.message + ")");
+            setStep("interview");
+          }
+        }
+      }
+
+      function reset() {
+        setStep("intro");
+        setName("");
+        setDesc("");
+        setQuestions([]);
+        setQIndex(0);
+        setAnswers([]);
+        setCurrentAns("");
+        setResults(null);
+        setError("");
+        setCopied(false);
+      }
+
+      function buildPlainText() {
+        if (!results) return "";
+        var r = results;
+        var lines = [];
+        lines.push("ENDURE Market Sizing Analysis — " + name.toUpperCase());
+        lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        lines.push("TOTAL ADDRESSABLE MARKET (TAM)");
+        lines.push(r.tam.value);
+        lines.push(r.tam.description);
+        if (r.tam.assumptions) {
+          r.tam.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        }
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("SERVICEABLE ADDRESSABLE MARKET (SAM)");
+        lines.push(r.sam.value);
+        lines.push(r.sam.description);
+        if (r.sam.assumptions) {
+          r.sam.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        }
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("YEAR-ONE TARGET");
+        lines.push(r.year_one_target.value);
+        lines.push(r.year_one_target.description);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("REALITY CHECK");
+        lines.push(r.reality_check);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        lines.push("MARKET LOGIC BRIEF");
+        lines.push("");
+        lines.push(r.brief);
+        lines.push("");
+        lines.push("═══════════════════════════════════════");
+        return lines.join("\n");
+      }
+
+      function copyToClipboard() {
+        navigator.clipboard.writeText(buildPlainText()).then(function() {
+          setCopied(true);
+          setTimeout(function() { setCopied(false); }, 2000);
+        });
+      }
+
+      function downloadDocx() {
+        if (!results) return;
+        var r = results;
+        var D = docx;
+        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+        function heading(text, level) {
+          return new D.Paragraph({
+            heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2,
+            spacing: { before: level === 1 ? 0 : 300, after: 120 },
+            children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })]
+          });
+        }
+        function para(text, opts) {
+          opts = opts || {};
+          return new D.Paragraph({
+            spacing: { after: opts.after !== undefined ? opts.after : 120 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })]
+          });
+        }
+        function bullet(text) {
+          return new D.Paragraph({
+            bullet: { level: 0 },
+            spacing: { after: 60 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22 })]
+          });
+        }
+        function divider() {
+          return new D.Paragraph({
+            spacing: { before: 200, after: 200 },
+            border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } },
+            children: []
+          });
+        }
+
+        var children = [];
+
+        // Title
+        children.push(heading("ENDURE Market Sizing Analysis", 1));
+        children.push(para(name, { bold: true, after: 40 }));
+        children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
+        children.push(divider());
+
+        // TAM
+        children.push(heading("Total Addressable Market (TAM)", 2));
+        children.push(para(r.tam.value, { bold: true }));
+        children.push(para(r.tam.description));
+        if (r.tam.assumptions) {
+          children.push(para("Assumptions:", { bold: true, after: 60 }));
+          r.tam.assumptions.forEach(function(a) { children.push(bullet(a)); });
+        }
+
+        // SAM
+        children.push(divider());
+        children.push(heading("Serviceable Addressable Market (SAM)", 2));
+        children.push(para(r.sam.value, { bold: true }));
+        children.push(para(r.sam.description));
+        if (r.sam.assumptions) {
+          children.push(para("Assumptions:", { bold: true, after: 60 }));
+          r.sam.assumptions.forEach(function(a) { children.push(bullet(a)); });
+        }
+
+        // Year-One Target
+        children.push(divider());
+        children.push(heading("Year-One Target", 2));
+        children.push(para(r.year_one_target.value, { bold: true }));
+        children.push(para(r.year_one_target.description));
+
+        // Reality Check
+        children.push(divider());
+        children.push(heading("Reality Check", 2));
+        children.push(para(r.reality_check));
+
+        // Brief
+        children.push(divider());
+        children.push(heading("Market Logic Brief", 2));
+        children.push(para(r.brief));
+
+        // Footer
+        children.push(divider());
+        children.push(para("Generated with ENDURE Market Sizing \u00B7 " + dateStr, { italic: true, color: "999999" }));
+
+        var doc = new D.Document({
+          sections: [{
+            properties: {
+              page: {
+                margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 }
+              }
+            },
+            children: children
+          }]
+        });
+
+        D.Packer.toBlob(doc).then(function(blob) {
+          var slug = name.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "market-sizing-" + slug + ".docx";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+      }
+
+      // ── RENDER ──
+
+      if (step === "loading") {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "loading-wrap" },
+              e("div", { className: "spinner" }),
+              e("div", { className: "loading-text" }, "Sizing your market\u2026")
+            )
+          )
+        );
+      }
+
+      if (step === "interview" && questions[qIndex]) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "progress-track no-print" },
+              questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < qIndex) cls += " done";
+                else if (i === qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, questions[qIndex].focus + " Sizing"),
+            e("div", { className: "q-text" }, questions[qIndex].text),
+            e("div", { className: "q-hint" }, questions[qIndex].hint),
+            e("button", {
+              className: "resources-toggle",
+              onClick: function() { setShowResources(!showResources); }
+            },
+              e("span", { className: "arrow" + (showResources ? " open" : "") }, "\u25B6"),
+              "Need help thinking this through?"
+            ),
+            showResources ? e("ul", { className: "resources-list" },
+              (RESOURCES[questions[qIndex].focus] || RESOURCES.TAM).map(function(r, i) {
+                return e("li", { key: i },
+                  e("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.title),
+                  e("span", { className: "res-desc" }, r.desc)
+                );
+              })
+            ) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: currentAns,
+              onChange: function(ev) { setCurrentAns(ev.target.value); },
+              placeholder: "Your answer \u2014 estimates and ranges are fine\u2026",
+              style: { marginBottom: 22 }
+            }),
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitAnswer,
+                disabled: !currentAns.trim()
+              }, qIndex + 1 < questions.length ? "Next \u2192" : "Generate Analysis \u2192"),
+              e("span", { className: "q-counter" }, (qIndex + 1) + " of " + questions.length)
+            )
+          )
+        );
+      }
+
+      if (step === "results" && results) {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            e("div", { className: "eyebrow" }, name),
+            e("div", { className: "results-title" }, "Market Sizing Analysis"),
+            e("div", { className: "results-sub" },
+              "Generated for class discussion \u00B7 " +
+              new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+            ),
+
+            // TAM + SAM cards
+            e("div", { className: "section-label" }, "Market Scope"),
+            e("div", { className: "metrics-grid" },
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type type-tam" }, "Total Addressable Market (TAM)"),
+                e("div", { className: "metric-value" }, results.tam.value),
+                e("div", { className: "metric-desc" }, results.tam.description),
+                results.tam.assumptions ? e("ul", { className: "assumptions" },
+                  results.tam.assumptions.map(function(a, i) {
+                    return e("li", { key: i, className: "assumption" }, a);
+                  })
+                ) : null
+              ),
+              e("div", { className: "metric-card" },
+                e("div", { className: "metric-type type-sam" }, "Serviceable Addressable Market (SAM)"),
+                e("div", { className: "metric-value" }, results.sam.value),
+                e("div", { className: "metric-desc" }, results.sam.description),
+                results.sam.assumptions ? e("ul", { className: "assumptions" },
+                  results.sam.assumptions.map(function(a, i) {
+                    return e("li", { key: i, className: "assumption" }, a);
+                  })
+                ) : null
+              )
+            ),
+
+            // Year-One Target card
+            e("div", { className: "section-label" }, "Year-One Target"),
+            e("div", { className: "metric-card" },
+              e("div", { className: "metric-type type-target" }, "Realistic First-Year Reach"),
+              e("div", { className: "metric-value" }, results.year_one_target.value),
+              e("div", { className: "metric-desc" }, results.year_one_target.description)
+            ),
+
+            // Reality Check
+            e("div", { className: "reality-card" },
+              e("div", { className: "reality-label" }, "Reality Check"),
+              e("div", { className: "reality-text" }, results.reality_check)
+            ),
+
+            // Brief
+            e("div", { className: "section-label" }, "Market Logic Brief"),
+            e("div", { className: "brief-card" },
+              e("div", { className: "brief-text" }, results.brief)
+            ),
+
+            // Actions
+            e("div", { className: "actions no-print" },
+              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
+              e("button", { className: "btn", onClick: downloadDocx }, "Download Word Doc"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (copied ? " copied" : ""),
+                onClick: copyToClipboard
+              }, copied ? "Copied!" : "Copy Text"),
+              e("button", { className: "btn btn-ghost", onClick: reset }, "New Analysis")
+            )
+          )
+        );
+      }
+
+      // ── INTRO (default) ──
+      return e("div", null,
+        renderHeader(),
+        e("main", { className: "main" },
+          e("div", { className: "eyebrow" }, "Design Thinking \u00B7 Market Sizing"),
+          e("h1", { className: "intro-heading" },
+            "How big is the opportunity", e("br"), e("em", null, "really"), "?"
+          ),
+          e("p", { className: "intro-body" },
+            "This tool walks you through estimating the size of your market \u2014 " +
+            "from the total addressable market (TAM) down to the serviceable segment (SAM) " +
+            "and a realistic year-one target. You\u2019ll leave with a clear picture of whether " +
+            "you\u2019re chasing a niche, a mid-market opportunity, or a mass-market bet."
+          ),
+          e("div", { className: "card" },
+            e("div", { className: "form-group" },
+              e("label", { className: "form-label" }, "Project Name"),
+              e("input", {
+                className: "form-input",
+                value: name,
+                onChange: function(ev) { setName(ev.target.value); },
+                placeholder: "e.g. GreenDelivery, TutorLink\u2026"
+              })
+            ),
+            e("div", { className: "form-group" },
+              e("label", { className: "form-label" }, "Describe your startup idea"),
+              e("div", { className: "form-hint" }, "Who is your customer? What do you sell? Where are they? How do they find you?"),
+              e("textarea", {
+                className: "form-input",
+                rows: 5,
+                value: desc,
+                onChange: function(ev) { setDesc(ev.target.value); },
+                placeholder: "We help [who] do [what] by [how]. Our customers are [where] and find us through [channel]\u2026"
+              })
+            )
+          ),
+          error ? e("div", { className: "error-msg" }, error) : null,
+          e("button", {
+            className: "btn",
+            onClick: startInterview,
+            disabled: !name.trim() || !desc.trim()
+          }, "Begin Analysis \u2192")
+        )
+      );
+    }
+
+    function renderHeader() {
+      return e("header", { className: "header" },
+        e("span", { className: "logo-mark" }, "ENDURE"),
+        e("span", { className: "header-sub" }, "Market Sizing")
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(e(App));
+  </script>
+</body>
+</html>
