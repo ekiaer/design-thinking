@@ -647,6 +647,7 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgenjs.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
 
   <script>
     // ═══════════════════════════════════════
@@ -897,6 +898,38 @@
       function startFresh() {
         sessionStorage.removeItem("va-state");
         setS(INITIAL_STATE);
+      }
+
+      // ── Journal upload ──
+      function handleJournalUpload(ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var name = file.name.toLowerCase();
+        if (name.endsWith(".docx")) {
+          update({ loadingMsg: "Reading your document\u2026" });
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var arrayBuffer = e.target.result;
+            mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+              .then(function(result) {
+                update({ journal: Object.assign({}, S.journal, { raw: result.value }), error: "" });
+              })
+              .catch(function(err) {
+                update({ error: "Couldn\u2019t read that file. Try exporting from Google Docs as .docx and uploading again. (" + err.message + ")" });
+              });
+          };
+          reader.readAsArrayBuffer(file);
+        } else if (name.endsWith(".txt")) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            update({ journal: Object.assign({}, S.journal, { raw: e.target.result }), error: "" });
+          };
+          reader.readAsText(file);
+        } else {
+          update({ error: "Please upload a .docx or .txt file. To use a Google Doc, go to File \u2192 Download \u2192 Microsoft Word (.docx)." });
+        }
+        // Reset the input so the same file can be re-uploaded
+        ev.target.value = "";
       }
 
       // ── Journal parsing ──
@@ -2239,13 +2272,28 @@
               ),
               e("div", { className: "form-group" },
                 e("label", { className: "form-label" }, "Full Journal (Optional)"),
-                e("div", { className: "form-hint" }, "Paste your full journal here \u2014 all weeks, raw notes, everything. The tool will organize your work across Desirability, Feasibility, and Viability. Skip this if you prefer to paste notes manually in each section."),
+                e("div", { className: "form-hint" }, "Upload your journal as a .docx file, or paste the text below. The tool will organize your work across Desirability, Feasibility, and Viability. Skip this if you prefer to paste notes manually in each section."),
+                e("div", { style: { display: "flex", gap: 10, marginBottom: 12 } },
+                  e("label", {
+                    className: "btn btn-ghost",
+                    style: { cursor: "pointer", fontSize: 12, padding: "8px 16px" }
+                  },
+                    e("input", {
+                      type: "file",
+                      accept: ".docx,.txt",
+                      onChange: handleJournalUpload,
+                      style: { display: "none" }
+                    }),
+                    "Upload .docx"
+                  ),
+                  S.journal.raw.trim() ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)", alignSelf: "center" } }, "\u2713 Journal loaded") : null
+                ),
                 e("textarea", {
                   className: "form-input",
-                  rows: 12,
+                  rows: S.journal.raw.trim() ? 12 : 6,
                   value: S.journal.raw,
                   onChange: function(ev) { update({ journal: Object.assign({}, S.journal, { raw: ev.target.value }) }); },
-                  placeholder: "Week 1: We started by researching\u2026\nWeek 2: Talked to three people about\u2026\nWeek 3: Built a prototype that\u2026"
+                  placeholder: "Or paste your journal text here\u2026\n\nWeek 1: We started by researching\u2026\nWeek 2: Talked to three people about\u2026\nWeek 3: Built a prototype that\u2026"
                 })
               )
             ),
