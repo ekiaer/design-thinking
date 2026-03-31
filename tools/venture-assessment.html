@@ -295,6 +295,33 @@
       line-height: 1.7;
       margin-top: 14px;
     }
+    .reading-connection {
+      background: rgba(126,184,218,0.04);
+      border-left: 2px solid rgba(126,184,218,0.25);
+      border-radius: 0 8px 8px 0;
+      padding: 18px 20px;
+      margin-top: 20px;
+    }
+    .reading-connection-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(126,184,218,0.6);
+      margin-bottom: 8px;
+    }
+    .reading-connection-text {
+      font-size: 13px;
+      color: rgba(232,227,216,0.55);
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .reading-connection-sources {
+      font-size: 11px;
+      color: rgba(232,227,216,0.3);
+      margin-top: 10px;
+    }
     .maturity-badge {
       display: inline-block;
       font-family: 'IBM Plex Mono', monospace;
@@ -588,6 +615,10 @@
       .cert-high { color: #3a8a5c; }
       .unmet-need { color: #555; border-color: #ddd; }
       .synthesis-card { border-left-color: #999; }
+      .reading-connection { background: #f4f8fb; border-left-color: #8ab4d0; }
+      .reading-connection-label { color: #5a8ba8; }
+      .reading-connection-text { color: #333; }
+      .reading-connection-sources { color: #888; }
       .brief-section { page-break-inside: avoid; }
       .brief-section + .brief-section { page-break-before: auto; }
       .page-break { page-break-before: always; }
@@ -680,11 +711,11 @@
 
     var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their hydration venture.\n\nBased on the student's project description and any unit economics and market sizing data they've shared, generate exactly 3 interview questions.\n\nThe questions should cover:\n1. Which assumption in their unit economics they're most and least confident in, and why\n2. What would make a customer come back a second time and a tenth time \u2014 their repeat-use logic\n3. If a well-funded competitor entered tomorrow, what would be hardest for them to replicate\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their hydration venture.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized customer insight (specific, not generic)\n2. An unmet need framing: \"[Customer] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the venture\n4. Honest gaps: what the student still doesn't know about this customer\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of customer insight\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+    var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their hydration venture.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized customer insight (specific, not generic)\n2. An unmet need framing: \"[Customer] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the venture\n4. Honest gaps: what the student still doesn't know about this customer\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n6. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Geertz, \"Thick Description\" (1973): Seeing meaning behind behavior, not just the behavior itself. Connects when student describes observations, workarounds, or coping behaviors.\n   - Moon, \"Different\" (2010): Designing for the extreme user, not the average. Connects when student describes a specific person rather than a demographic.\n   - Fish, \"Interpretive Communities\" (1980): Meaning is socially constructed by communities. Connects when insight depends on a specific community's shared values.\n   - ANTH101 / Anthropology for Everyone: Ethnographic methods \u2014 participant observation, seeing big and small. Connects when student describes fieldwork or observation.\n   - Reader Response Theory (Rosenblatt, Iser, Fish): Product meaning is co-created with the user. Connects when student discusses how customers might experience the product differently than intended.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of customer insight\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Geertz\",\"title\":\"Thick Description\",\"year\":1973}]}}";
 
-    var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their hydration venture.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to business feasibility\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+    var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their hydration venture.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to business feasibility\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Tetlock, \"Superforecasting\" (2015): Probabilistic thinking, calibrating confidence, updating beliefs with evidence. Connects when student describes experiment predictions, confidence levels, and how results changed their thinking.\n   - Edmondson, \"The Fearless Organization\" (2018): Psychological safety enables honest failure. Teams that can't admit mistakes can't learn. Connects when student describes what surprised them, what went wrong, or what they'd do differently.\n   - d.school / IDEO / Double Diamond: Design thinking as iterative process. Prototyping as learning, not just building. Connects when student describes their prototyping approach or iteration cycle.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Tetlock\",\"title\":\"Superforecasting\",\"year\":2015}]}}";
 
-    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics and market sizing data provided in context, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided — use the specific numbers from Unit Economics tool output if available)\n2. TAM/SAM analysis in plain language (use the specific numbers from Market Sizing tool output if available)\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n\nIf Unit Economics and/or Market Sizing data is provided in context, incorporate those specific numbers into your synthesis.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}]}";
+    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics and market sizing data provided in context, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided \u2014 use the specific numbers from Unit Economics tool output if available)\n2. TAM/SAM analysis in plain language (use the specific numbers from Market Sizing tool output if available)\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Brand, \"Pace Layers\" / \"The Clock of the Long Now\" (1999): Different parts of a system change at different speeds. Connects when student discusses how their venture would evolve over time, or why competitors can't easily replicate what they're building.\n   - Johnson, \"Where Good Ideas Come From\" (2010): Ideas emerge from networks, not isolation. The adjacent possible. Connects when student discusses distribution strategy, partnerships, or how their idea builds on existing platforms.\n   - Moon, \"Different\" (2010): Competitive differentiation comes from doing less, not more. Connects when student discusses competitive advantage or why their approach differs from incumbents.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nIf Unit Economics and/or Market Sizing data is provided in context, incorporate those specific numbers into your synthesis.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Brand\",\"title\":\"The Clock of the Long Now\",\"year\":1999}]}}";
 
     var SYSTEM_FOLLOWUP = "You are a design thinking coach. A student just rated their venture's performance on one dimension and you need to ask two follow-up questions.\n\nIMPORTANT RULES:\n- Never tell the student what rating to give or suggest they should change it\n- If they rated high (3), probe for evidence they might be overlooking. Be respectfully skeptical.\n- If they rated low (1), explore what specifically they're uncertain about. Affirm that recognizing limitations is strong thinking.\n- If they rated medium (2), ask what would move them to a 1 or a 3.\n- Reference their specific answers and assumptions from the interview.\n- Keep questions to one sentence each.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
@@ -692,7 +723,7 @@
 
     var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
-    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"]\n}";
+    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
 
     var SYSTEM_CONCEPT_FOLLOWUP = "You are a design thinking coach. A student has just completed a full Desirability, Feasibility, and Viability assessment of their venture and has revised (or kept) their concept statement.\n\nOriginal concept: \"{original}\"\nRevised concept: \"{revised}\"\n\nAsk ONE follow-up question (not two, just one) that helps the student articulate what changed and why. If the concepts are identical, ask why the original framing held up through the assessment. If they changed, ask which part of D/F/V drove the revision.\n\nThis is a metacognitive moment. The goal is reflection, not correction.\n\nKeep the question to 1\u20132 sentences. Be warm and specific.\n\nReturn ONLY valid JSON with no markdown:\n{\"question\":\"your question here\"}";
 
@@ -1632,6 +1663,26 @@
         L.push(b.uncertainty_map.commentary);
         L.push("");
 
+        // Theoretical Foundations
+        if (b.theoretical_foundations) {
+          L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
+          L.push("THEORETICAL FOUNDATIONS");
+          L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+          L.push("");
+          if (b.theoretical_foundations.desirability) {
+            L.push("DESIRABILITY: " + b.theoretical_foundations.desirability);
+            L.push("");
+          }
+          if (b.theoretical_foundations.feasibility) {
+            L.push("FEASIBILITY: " + b.theoretical_foundations.feasibility);
+            L.push("");
+          }
+          if (b.theoretical_foundations.viability) {
+            L.push("VIABILITY: " + b.theoretical_foundations.viability);
+            L.push("");
+          }
+        }
+
         // Next steps
         L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
         L.push("RECOMMENDED NEXT STEPS");
@@ -1789,6 +1840,33 @@
           children.push(para(b.uncertainty_map.commentary, { italic: true, color: "666666" }));
         }
 
+        // Theoretical Foundations
+        if (b.theoretical_foundations) {
+          children.push(divider());
+          children.push(heading("Theoretical Foundations", 2));
+          if (b.theoretical_foundations.desirability) {
+            children.push(new D.Paragraph({
+              spacing: { before: 160, after: 60 },
+              children: [new D.TextRun({ text: "Desirability", bold: true, font: "Arial", size: 22 })]
+            }));
+            children.push(para(b.theoretical_foundations.desirability));
+          }
+          if (b.theoretical_foundations.feasibility) {
+            children.push(new D.Paragraph({
+              spacing: { before: 160, after: 60 },
+              children: [new D.TextRun({ text: "Feasibility", bold: true, font: "Arial", size: 22 })]
+            }));
+            children.push(para(b.theoretical_foundations.feasibility));
+          }
+          if (b.theoretical_foundations.viability) {
+            children.push(new D.Paragraph({
+              spacing: { before: 160, after: 60 },
+              children: [new D.TextRun({ text: "Viability", bold: true, font: "Arial", size: 22 })]
+            }));
+            children.push(para(b.theoretical_foundations.viability));
+          }
+        }
+
         // Next Steps
         children.push(divider());
         children.push(heading("Recommended Next Steps", 2));
@@ -1901,7 +1979,8 @@
         if (custText.length > 0) {
           s3.addText(custText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
         }
-        s3.notes = "Describe the specific person you designed for. What do they currently do? What did you learn about what they actually value?";
+        var dRC = S.dimensions.desirability.synthesis && S.dimensions.desirability.synthesis.reading_connection;
+        s3.notes = "Describe the specific person you designed for. What do they currently do? What did you learn about what they actually value?" + (dRC ? "\n\nTheory connection: " + dRC.text : "");
 
         // ── SLIDE 4: What We Tested ──
         var s4 = addSlide();
@@ -1916,7 +1995,8 @@
         if (testText.length > 0) {
           s4.addText(testText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
         }
-        s4.notes = "Walk through your experiment: what you predicted, what happened, and what you learned. Honest failure is strong evidence.";
+        var fRC = S.dimensions.feasibility.synthesis && S.dimensions.feasibility.synthesis.reading_connection;
+        s4.notes = "Walk through your experiment: what you predicted, what happened, and what you learned. Honest failure is strong evidence." + (fRC ? "\n\nTheory connection: " + fRC.text : "");
 
         // ── SLIDE 5: The Economics ──
         var s5 = addSlide();
@@ -1943,7 +2023,8 @@
         if (econText.length > 0) {
           s5.addText(econText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.6, paraSpaceAfter: 10 });
         }
-        s5.notes = "Present your unit economics, market size, and retention logic. If you have LTV:CAC ratio, lead with that.";
+        var vRC = S.dimensions.viability.synthesis && S.dimensions.viability.synthesis.reading_connection;
+        s5.notes = "Present your unit economics, market size, and retention logic. If you have LTV:CAC ratio, lead with that." + (vRC ? "\n\nTheory connection: " + vRC.text : "");
 
         // ── SLIDE 6: Our Assessment ──
         var s6 = addSlide();
@@ -2621,6 +2702,16 @@
             e("div", { className: "eyebrow" }, cfg.label + " \u2014 What we heard"),
             e("div", { className: "dim-body" }, "Here\u2019s what emerged from your answers. Review this, then you\u2019ll rate your confidence in the key assumptions."),
             cards,
+            syn.reading_connection ? e("div", { className: "reading-connection" },
+              e("div", { className: "reading-connection-label" }, "Connecting to Theory"),
+              e("div", { className: "reading-connection-text" }, syn.reading_connection.text),
+              syn.reading_connection.sources && syn.reading_connection.sources.length > 0 ?
+                e("div", { className: "reading-connection-sources" },
+                  "\u2014 " + syn.reading_connection.sources.map(function(s) {
+                    return s.author + ", " + s.title + (s.year ? " (" + s.year + ")" : "");
+                  }).join("; ")
+                ) : null
+            ) : null,
             e("div", { style: { marginTop: 32 } },
               e("button", {
                 className: "btn",
@@ -3022,6 +3113,25 @@
                 ) : null
               )
             ),
+
+            // Theoretical Foundations
+            b.theoretical_foundations ? e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Theoretical Foundations"),
+              e("div", { className: "brief-card" },
+                b.theoretical_foundations.desirability ? e("div", null,
+                  e("div", { className: "synthesis-label", style: { marginBottom: 6 } }, "Desirability"),
+                  e("div", { className: "brief-text", style: { marginBottom: 16 } }, b.theoretical_foundations.desirability)
+                ) : null,
+                b.theoretical_foundations.feasibility ? e("div", null,
+                  e("div", { className: "synthesis-label", style: { marginBottom: 6 } }, "Feasibility"),
+                  e("div", { className: "brief-text", style: { marginBottom: 16 } }, b.theoretical_foundations.feasibility)
+                ) : null,
+                b.theoretical_foundations.viability ? e("div", null,
+                  e("div", { className: "synthesis-label", style: { marginBottom: 6 } }, "Viability"),
+                  e("div", { className: "brief-text" }, b.theoretical_foundations.viability)
+                ) : null
+              )
+            ) : null,
 
             // Next Steps
             e("div", { className: "brief-section" },
