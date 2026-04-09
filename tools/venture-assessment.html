@@ -722,9 +722,9 @@
 
     var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Financial Model\" header, that is Financial Model tool output. Set financial_model.found to true and extract the full tool output block as content.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
-    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
+    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n- If a \"FINANCIAL MODEL DATA\" block is included, treat it as first-class viability evidence. Reference its 3-year trajectory, breakeven (or lack of one), most sensitive assumption, and top pressure-tests directly in viability.economics and viability.top_uncertainty. Quote specific numbers where useful. Do NOT recalculate \u2014 trust the numbers in the model. If the model shows the venture loses money for all three years, say so plainly.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
 
     var SYSTEM_CONCEPT_FOLLOWUP = "You are a design thinking coach. A student has just completed a full Desirability, Feasibility, and Viability assessment of their venture and has revised (or kept) their concept statement.\n\nOriginal concept: \"{original}\"\nRevised concept: \"{revised}\"\n\nAsk ONE follow-up question (not two, just one) that helps the student articulate what changed and why. If the concepts are identical, ask why the original framing held up through the assessment. If they changed, ask which part of D/F/V drove the revision.\n\nThis is a metacognitive moment. The goal is reflection, not correction.\n\nKeep the question to 1\u20132 sentences. Be warm and specific.\n\nReturn ONLY valid JSON with no markdown:\n{\"question\":\"your question here\"}";
 
@@ -784,6 +784,8 @@
       tamSamDetected: false,
       tamSamContent: null,
       tamSamResults: null,
+      financialModelDetected: false,
+      financialModelContent: null,
       ueInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
       tamInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
       ueCopied: false,
@@ -947,13 +949,15 @@
             updateDim("feasibility", { pasteIn: parsed.feasibility.material || "" });
             updateDim("viability", { pasteIn: parsed.viability.material || "" });
             // Store tool detection results
-            var td = parsed.tools_detected || { unit_economics: { found: false }, tam_sam: { found: false } };
+            var td = parsed.tools_detected || { unit_economics: { found: false }, tam_sam: { found: false }, financial_model: { found: false } };
             update({
               journal: { raw: journalText, parsed: parsed, provided: true },
               unitEconomicsDetected: !!(td.unit_economics && td.unit_economics.found),
               unitEconomicsContent: (td.unit_economics && td.unit_economics.content) || null,
               tamSamDetected: !!(td.tam_sam && td.tam_sam.found),
               tamSamContent: (td.tam_sam && td.tam_sam.content) || null,
+              financialModelDetected: !!(td.financial_model && td.financial_model.found),
+              financialModelContent: (td.financial_model && td.financial_model.content) || null,
               phase: "desirability",
               subPhase: "paste",
               error: ""
@@ -992,6 +996,10 @@
         if (!S.tamSamDetected && pasteText.indexOf("ENDURE Market Sizing Analysis") !== -1) {
           var tamStart = pasteText.indexOf("ENDURE Market Sizing Analysis");
           update({ tamSamDetected: true, tamSamContent: pasteText.substring(tamStart) });
+        }
+        if (!S.financialModelDetected && pasteText.indexOf("ENDURE Financial Model") !== -1) {
+          var fmStart = pasteText.indexOf("ENDURE Financial Model");
+          update({ financialModelDetected: true, financialModelContent: pasteText.substring(fmStart) });
         }
 
         pushHistory();
@@ -1094,8 +1102,12 @@
       }
 
       function continueAfterTamResults() {
-        // Move on to the 3 viability evaluation questions
-        startDimension("viability");
+        pushHistory();
+        if (S.financialModelDetected) {
+          update({ phase: "viability", subPhase: "fm-review", error: "" });
+        } else {
+          startDimension("viability");
+        }
       }
 
       function continueFromReview(tool) {
@@ -1106,8 +1118,14 @@
           } else {
             startTamInlineInterview();
           }
+        } else if (tool === "tam") {
+          if (S.financialModelDetected) {
+            update({ phase: "viability", subPhase: "fm-review", error: "" });
+          } else {
+            startDimension("viability");
+          }
         } else {
-          // tool === "tam" — move to viability questions
+          // tool === "fm" — move to viability questions
           startDimension("viability");
         }
       }
@@ -1350,6 +1368,9 @@
               } else if (S.tamSamContent) {
                 context += "\n\nMarket Sizing Data:\n" + S.tamSamContent;
               }
+              if (S.financialModelContent) {
+                context += "\n\nFinancial Model Data:\n" + S.financialModelContent;
+              }
             }
             context += "\n\nInterview:\n" + qa;
             var raw = await callClaude(context, synthesisPrompts[dim], 1500);
@@ -1574,6 +1595,11 @@
           lines.push(S.tamSamContent);
           lines.push("");
         }
+        if (S.financialModelContent) {
+          lines.push("=== FINANCIAL MODEL DATA ===");
+          lines.push(S.financialModelContent);
+          lines.push("");
+        }
 
         lines.push("=== CONCEPT STATEMENT ===");
         lines.push("Original: " + S.projectDesc);
@@ -1670,6 +1696,11 @@
         L.push("Gaps: " + b.viability.gaps);
         L.push("Top Uncertainty: " + b.viability.top_uncertainty);
         L.push("");
+        if (S.financialModelContent) {
+          L.push("\u2500\u2500\u2500 Financial Model \u2500\u2500\u2500");
+          L.push(S.financialModelContent);
+          L.push("");
+        }
 
         // Synthesis
         L.push("\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550");
@@ -1850,6 +1881,19 @@
                   children.push(para(section[field]));
                 }
               }
+            });
+          }
+          // After viability body, append the Financial Model content if present
+          if (dim === "viability" && S.financialModelContent) {
+            children.push(new D.Paragraph({
+              spacing: { before: 160, after: 60 },
+              children: [new D.TextRun({ text: "Financial Model", bold: true, font: "Arial", size: 22 })]
+            }));
+            S.financialModelContent.split("\n").forEach(function(line) {
+              children.push(new D.Paragraph({
+                spacing: { after: 40 },
+                children: [new D.TextRun({ text: line || " ", font: "Consolas", size: 18, color: "555555" })]
+              }));
             });
           }
         });
@@ -2170,7 +2214,7 @@
       // ═══════════════════════════════════════
       function renderHeader() {
         return e("header", { className: "header" },
-          e("span", { className: "logo-mark" }, "ENDURE"),
+          e("a", { href: "index.html", className: "logo-mark", style: { textDecoration: "none", color: "inherit" }, title: "Back to all tools" }, "ENDURE"),
           e("span", { className: "header-sub" }, "Venture Assessment")
         );
       }
@@ -2339,6 +2383,7 @@
           if (sub === "tam-review") return renderTamReview();
           if (sub === "tam-interview") return renderTamInlineInterview();
           if (sub === "tam-results") return renderTamResults();
+          if (sub === "fm-review") return renderFmReview();
         }
 
         if (sub === "paste") return renderPaste(dim, cfg, d);
@@ -2504,6 +2549,34 @@
               }, S.ueCopied ? "Copied!" : "Copy Text")
             ),
             e("button", { className: "btn", onClick: continueAfterUeResults }, "Continue to Market Sizing \u2192")
+          )
+        );
+      }
+
+      // ── Financial Model Review (detected in journal or paste) ──
+      function renderFmReview() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Financial Model"),
+            e("div", { className: "dim-heading" }, "Your Financial Model"),
+            e("div", { className: "dim-body" }, "We found your Financial Model in your journal. Review it below \u2014 its 3-year trajectory, sensitivity, and pressure-tests will be folded into your final brief."),
+            renderConceptRef(),
+            e("div", { className: "card" },
+              e("div", { style: { whiteSpace: "pre-wrap", fontSize: 13, color: "rgba(232,227,216,0.55)", lineHeight: "1.6" } },
+                S.financialModelContent || "(Financial Model detected)"
+              )
+            ),
+            e("div", { className: "actions" },
+              e("button", { className: "btn", onClick: function() { continueFromReview("fm"); } }, "Continue \u2192"),
+              e("button", {
+                className: "btn btn-ghost",
+                onClick: function() { update({ financialModelDetected: false, financialModelContent: null }); startDimension("viability"); },
+                style: { fontSize: 12 }
+              }, "Skip and continue without it")
+            )
           )
         );
       }
@@ -3117,6 +3190,13 @@
                   e("div", { className: "synthesis-label" }, "Student\u2019s Evidence"),
                   e("div", { className: "brief-text" }, b.viability.evidence_summary)
                 ),
+                S.financialModelContent ? e("div", { className: "brief-card" },
+                  e("div", { className: "synthesis-label" }, "Financial Model"),
+                  e("div", {
+                    className: "brief-text",
+                    style: { whiteSpace: "pre-wrap", fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, lineHeight: "1.5", color: "rgba(232,227,216,0.55)" }
+                  }, S.financialModelContent)
+                ) : null,
                 e("div", { className: "gaps-text" }, "Gaps: " + b.viability.gaps),
                 e("div", { className: "gaps-text" }, "Top uncertainty: " + b.viability.top_uncertainty)
               )

@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENDURE · Financial Model</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .header {
+      border-bottom: 1px solid rgba(212,168,83,0.18);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-mark {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: #D4A853;
+      letter-spacing: -1px;
+    }
+    .header-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(232,227,216,0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .main {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 32px 40px 80px;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .step-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(232,227,216,0.08);
+      color: rgba(232,227,216,0.25);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .step-pill.active {
+      border-color: rgba(212,168,83,0.5);
+      color: #D4A853;
+      background: rgba(212,168,83,0.08);
+    }
+    .step-pill.done {
+      border-color: rgba(92,184,138,0.3);
+      color: rgba(92,184,138,0.6);
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #D4A853;
+      margin-bottom: 18px;
+    }
+    .intro-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      line-height: 1.1;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 22px;
+    }
+    .intro-body {
+      font-size: 15px;
+      color: rgba(232,227,216,0.55);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 16px;
+    }
+    .dim-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      line-height: 1.2;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .dim-body {
+      font-size: 14px;
+      color: rgba(232,227,216,0.45);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 560px;
+    }
+
+    /* ── CARDS & FORMS ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .form-group { margin-bottom: 24px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.75);
+      margin-bottom: 8px;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 4px;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .form-input:focus { border-color: rgba(212,168,83,0.45); }
+    .form-input::placeholder { color: rgba(232,227,216,0.2); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      background: #D4A853;
+      color: #0D1117;
+      border: none;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 13px 28px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+    .btn-back {
+      background: transparent;
+      color: rgba(232,227,216,0.35);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 20px;
+      transition: color 0.15s;
+    }
+    .btn-back:hover { color: rgba(232,227,216,0.6); }
+    .btn-copy {
+      background: transparent;
+      color: rgba(232,227,216,0.5);
+      border: 1px solid rgba(232,227,216,0.12);
+    }
+    .btn-copy:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
+    .btn-copy.copied { color: #5CB88A; border-color: rgba(92,184,138,0.3); }
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    /* ── PROGRESS ── */
+    .progress-track {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 40px;
+    }
+    .progress-seg {
+      height: 3px;
+      flex: 1;
+      border-radius: 2px;
+      background: rgba(232,227,216,0.08);
+      transition: background 0.3s;
+    }
+    .progress-seg.active { background: #D4A853; }
+    .progress-seg.done { background: rgba(212,168,83,0.35); }
+
+    .focus-badge {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #D4A853;
+      border: 1px solid rgba(212,168,83,0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 18px;
+    }
+
+    /* ── QUESTIONS ── */
+    .q-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 10px;
+    }
+    .q-hint {
+      font-size: 13px;
+      color: rgba(232,227,216,0.38);
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+    .q-counter {
+      font-size: 12px;
+      color: rgba(232,227,216,0.28);
+      align-self: center;
+    }
+    .volume-prefill {
+      background: rgba(212,168,83,0.05);
+      border: 1px solid rgba(212,168,83,0.18);
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: rgba(232,227,216,0.6);
+    }
+    .volume-prefill strong { color: #D4A853; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+
+    /* ── ASSUMPTION CERTAINTY ── */
+    .assumption-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .assumption-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .assumption-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 8px;
+    }
+    .assumption-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.62);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .assumption-values {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: rgba(232,227,216,0.45);
+      margin-bottom: 14px;
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .assumption-values span strong {
+      color: #E8E3D8;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .assumption-note {
+      font-size: 12px;
+      color: rgba(232,227,216,0.35);
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+    .certainty-pills {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .certainty-pills-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.35);
+      margin-right: 6px;
+    }
+    .certainty-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(232,227,216,0.1);
+      background: transparent;
+      color: rgba(232,227,216,0.35);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+    .certainty-pill:hover {
+      border-color: rgba(212,168,83,0.3);
+      color: rgba(232,227,216,0.6);
+    }
+    .certainty-pill.selected {
+      background: #D4A853;
+      border-color: #D4A853;
+      color: #0D1117;
+    }
+
+    /* ── STRUCTURED COST GRID ── */
+    .grid-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+    }
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .grid-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.75);
+    }
+    .grid-prompt {
+      font-size: 13px;
+      color: rgba(232,227,216,0.5);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .entry-toggle {
+      display: inline-flex;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .entry-toggle button {
+      background: transparent;
+      border: none;
+      padding: 5px 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.4);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .entry-toggle button.active {
+      background: #D4A853;
+      color: #0D1117;
+    }
+    .grid-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .grid-row-head {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.35);
+      text-align: right;
+    }
+    .grid-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 4px;
+      color: #E8E3D8;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      padding: 8px 10px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    .grid-input:focus { border-color: rgba(212,168,83,0.45); }
+    .grid-preview {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: rgba(232,227,216,0.35);
+      margin-top: 6px;
+      padding-left: 60px;
+    }
+    .growth-field {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(232,227,216,0.08);
+    }
+    .growth-field-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.35);
+      margin-bottom: 6px;
+    }
+    .growth-field textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 4px;
+      color: rgba(232,227,216,0.75);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+      resize: vertical;
+    }
+    .growth-field textarea:focus { border-color: rgba(212,168,83,0.3); }
+    .implied-toggle {
+      margin-top: 12px;
+      font-size: 12px;
+      color: rgba(232,227,216,0.5);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .implied-toggle input { accent-color: #D4A853; }
+    .grid-legend {
+      background: rgba(212,168,83,0.05);
+      border: 1px solid rgba(212,168,83,0.18);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      font-size: 13px;
+      color: rgba(232,227,216,0.6);
+      line-height: 1.6;
+    }
+    .grid-legend strong { color: #D4A853; font-weight: 500; }
+    .inline-cert-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(232,227,216,0.06);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ── LIVE BRIEF / STALE BADGE ── */
+    .stale-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212,168,83,0.12);
+      border: 1px solid rgba(212,168,83,0.45);
+      color: #D4A853;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 4px;
+    }
+    .stale-badge::before {
+      content: "";
+      width: 6px; height: 6px;
+      background: #D4A853;
+      border-radius: 50%;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .brief-edit-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    /* ── LOADING ── */
+    .loading-wrap {
+      padding: 100px 0;
+      text-align: center;
+    }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 2px solid rgba(212,168,83,0.12);
+      border-top-color: #D4A853;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+    }
+
+    /* ── CONCEPT REFERENCE ── */
+    .concept-ref {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      font-style: italic;
+      line-height: 1.6;
+      padding: 14px 18px;
+      border-left: 2px solid rgba(212,168,83,0.2);
+      margin-bottom: 28px;
+    }
+    .concept-ref-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.4);
+      font-style: normal;
+      margin-bottom: 4px;
+    }
+
+    /* ── UPSTREAM SUMMARY CARD ── */
+    .upstream-summary {
+      background: rgba(92,184,138,0.04);
+      border: 1px solid rgba(92,184,138,0.2);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .upstream-summary-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(92,184,138,0.7);
+      margin-bottom: 10px;
+    }
+    .upstream-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(92,184,138,0.08);
+      color: rgba(232,227,216,0.55);
+    }
+    .upstream-row:last-child { border-bottom: none; }
+    .upstream-row strong {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 500;
+      color: #E8E3D8;
+    }
+
+    /* ── MODEL TABLE ── */
+    .model-table-wrap {
+      overflow-x: auto;
+      margin-bottom: 8px;
+    }
+    .model-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+    }
+    .model-table th {
+      text-align: right;
+      padding: 12px 14px;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.7);
+      border-bottom: 1px solid rgba(212,168,83,0.25);
+    }
+    .model-table th:first-child { text-align: left; width: 45%; }
+    .model-table td {
+      padding: 12px 14px;
+      text-align: right;
+      color: rgba(232,227,216,0.75);
+      border-bottom: 1px solid rgba(232,227,216,0.04);
+    }
+    .model-table td:first-child {
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      color: rgba(232,227,216,0.55);
+      font-size: 14px;
+    }
+    .model-table tr.model-sub td:first-child {
+      padding-left: 26px;
+      color: rgba(232,227,216,0.4);
+      font-style: italic;
+    }
+    .model-table tr.model-subtotal td {
+      color: #E8E3D8;
+      font-weight: 600;
+      background: rgba(255,255,255,0.02);
+    }
+    .model-table tr.model-subtotal td:first-child { color: #E8E3D8; font-style: normal; }
+    .model-table tr.model-total td {
+      border-top: 2px solid rgba(212,168,83,0.45);
+      border-bottom: none;
+      font-weight: 600;
+      color: #E8E3D8;
+      padding-top: 18px;
+      padding-bottom: 18px;
+      background: rgba(212,168,83,0.04);
+    }
+    .model-table tr.model-total td:first-child { color: #D4A853; }
+    .model-table td.neg { color: #E07558; }
+    .model-table td.pos { color: #5CB88A; }
+
+    /* ── BRIEF ── */
+    .brief-header { margin-bottom: 40px; }
+    .brief-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 400;
+      color: #E8E3D8;
+      margin-bottom: 4px;
+    }
+    .brief-meta {
+      font-size: 13px;
+      color: rgba(232,227,216,0.35);
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .brief-section { margin-bottom: 40px; }
+    .brief-section-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(232,227,216,0.06);
+    }
+    .brief-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.07);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .brief-text {
+      font-size: 14px;
+      color: rgba(232,227,216,0.62);
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+    .brief-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.55);
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+    .brief-sub:first-child { margin-top: 0; }
+
+    /* ── LEDGER ── */
+    .ledger-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(232,227,216,0.04);
+      gap: 16px;
+    }
+    .ledger-item:last-child { border-bottom: none; }
+    .ledger-text {
+      font-size: 13px;
+      color: rgba(232,227,216,0.55);
+      flex: 1;
+    }
+    .ledger-text strong {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.35);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .ledger-cert {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+    .cert-1 { color: #E07558; background: rgba(224,117,88,0.1); }
+    .cert-2 { color: #D4A853; background: rgba(212,168,83,0.1); }
+    .cert-3 { color: #5CB88A; background: rgba(92,184,138,0.1); }
+
+    /* ── TOP THREE ── */
+    .pressure-item {
+      background: rgba(224,117,88,0.04);
+      border-left: 3px solid rgba(224,117,88,0.4);
+      padding: 18px 22px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 14px;
+    }
+    .pressure-rank {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(224,117,88,0.7);
+      margin-bottom: 6px;
+    }
+    .pressure-assumption {
+      font-size: 14px;
+      color: #E8E3D8;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .pressure-why, .pressure-evidence {
+      font-size: 12px;
+      color: rgba(232,227,216,0.5);
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+    .pressure-why strong, .pressure-evidence strong {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.3);
+      font-weight: 500;
+      margin-right: 6px;
+    }
+
+    /* ── ERROR ── */
+    .error-msg {
+      color: #E07558;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; color: #111; }
+      .header { border-color: #ddd; background: #fff; }
+      .logo-mark { color: #222; }
+      .no-print { display: none !important; }
+      .step-bar { display: none !important; }
+      .eyebrow, .section-label, .brief-section-title, .brief-sub, .assumption-label { color: #555; }
+      .brief-card, .assumption-card, .card { background: #f8f6f0; border-color: #ddd; }
+      .brief-text, .assumption-text, .ledger-text { color: #333; }
+      .intro-heading, .brief-title, .dim-heading, .pressure-assumption { color: #111; }
+      .model-table { color: #111; }
+      .model-table th { color: #555; border-bottom-color: #bbb; }
+      .model-table td { color: #333; }
+      .model-table td:first-child { color: #444; }
+      .model-table tr.model-sub td:first-child { color: #777; }
+      .model-table tr.model-subtotal td { color: #111; background: #efece4; }
+      .model-table tr.model-total td { color: #111; background: #efece4; border-top-color: #999; }
+      .model-table tr.model-total td:first-child { color: #8a6a20; }
+      .model-table td.neg { color: #c0523a; }
+      .model-table td.pos { color: #3a8a5c; }
+      .cert-1 { background: #fef0ec; color: #c0523a; }
+      .cert-2 { background: #fdf6e8; color: #9a7a2a; }
+      .cert-3 { background: #edf7f1; color: #3a8a5c; }
+      .pressure-item { background: #fdf3f0; border-left-color: #c0523a; }
+      .pressure-rank { color: #8a4030; }
+      .pressure-why, .pressure-evidence { color: #444; }
+      .upstream-summary { background: #f0f8f3; border-color: #cce6d5; }
+      .upstream-summary-label { color: #3a7a56; }
+      .upstream-row { color: #333; }
+      .upstream-row strong { color: #111; }
+      .brief-section { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 600px) {
+      .main { padding: 24px 20px 60px; }
+      .intro-heading { font-size: 28px; }
+      .dim-heading { font-size: 22px; }
+      .q-text { font-size: 20px; }
+      .model-table { font-size: 11px; }
+      .model-table th, .model-table td { padding: 8px 6px; }
+      .step-bar { gap: 4px; }
+      .step-pill { font-size: 9px; padding: 4px 8px; }
+      .brief-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+
+  <script>
+    // ═══════════════════════════════════════
+    // CONFIG
+    // ═══════════════════════════════════════
+    var API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
+    var e = React.createElement;
+    var useState = React.useState;
+
+    var STEP_LABELS = ["Setup", "Upstream", "Fixed Costs", "Variable & Growth", "Brief"];
+
+    // ═══════════════════════════════════════
+    // DEFAULT ASSUMPTION SHAPES
+    // ═══════════════════════════════════════
+    // Default fixed-cost line items. `entry_mode` controls how the input is displayed
+    // (monthly × 12 vs annual). Values (y1/y2/y3) are always stored as annual dollars internally.
+    var DEFAULT_FIXED = [
+      {
+        id: "workspace",
+        label: "Workspace",
+        prompt: "Rent, coworking, shared studio, mailbox — anywhere you work that costs money. Include your home-office cost if you pay one (utilities, internet allocation, a corner of the rent).",
+        entry_mode: "monthly",
+        y1: 0, y2: 0, y3: 0,
+        growth_rationale: "",
+        is_implied: false
+      },
+      {
+        id: "founder_salary",
+        label: "Founder salary",
+        prompt: "What do you pay yourself each year? If you're not paying yourself, toggle 'opportunity cost' below — we'll surface what your time is worth elsewhere.",
+        entry_mode: "annual",
+        y1: 0, y2: 0, y3: 0,
+        growth_rationale: "",
+        is_implied: false
+      },
+      {
+        id: "software",
+        label: "Software & tools",
+        prompt: "Shopify, QuickBooks, hosting, CRM, design tools, subscriptions — everything you pay a recurring fee for.",
+        entry_mode: "monthly",
+        y1: 0, y2: 0, y3: 0,
+        growth_rationale: "",
+        is_implied: false
+      },
+      {
+        id: "overhead",
+        label: "Insurance, legal & overhead",
+        prompt: "LLC filing, business insurance, accountant once a year, registrations, equipment you'd need to buy. The boring stuff.",
+        entry_mode: "monthly",
+        y1: 0, y2: 0, y3: 0,
+        growth_rationale: "",
+        is_implied: false
+      }
+    ];
+
+    // Default variable/growth assumptions. variable_overhead_pct is a decimal of revenue.
+    // marketing_annual is stored as annual dollars with an entry_mode toggle.
+    // volume is units/year. sale_price is dollars per unit.
+    function defaultVariableData() {
+      return {
+        variable_overhead_pct: 0.05,
+        variable_overhead_note: "",
+        marketing_annual: { y1: 0, y2: 0, y3: 0, entry_mode: "monthly", growth_rationale: "", note: "" },
+        volume: { y1: 0, y2: 0, y3: 0, growth_rationale: "", note: "" },
+        sale_price: { y1: 0, y2: 0, y3: 0, growth_rationale: "", note: "" }
+      };
+    }
+
+    // ═══════════════════════════════════════
+    // SYSTEM PROMPTS
+    // ═══════════════════════════════════════
+
+    var SYSTEM_EXTRACT_UPSTREAM = "You extract structured values from ENDURE Unit Economics and/or Market Sizing briefs that a student pasted.\n\nFrom a Unit Economics brief (starts with 'ENDURE Unit Economics Analysis'), extract:\n- unit_cost: COGS per unit in dollars (number)\n- sale_price: revenue per unit in dollars (number)\n- cac_low, cac_high: the stated CAC range in dollars per customer\n- ltv_low, ltv_high: the stated LTV range in dollars (margin-based)\n- ltv_cac_ratio: the LTV:CAC ratio if stated (number)\n- contribution_margin: gross margin per unit in dollars\n\nFrom a Market Sizing brief (starts with 'ENDURE Market Sizing Analysis'), extract:\n- tam_label: the human-readable TAM (e.g. '~2.5M college athletes') as a string\n- sam_label: the human-readable SAM (e.g. '~15K athletes in Pacific NW D3') as a string\n- year_one_target_label: the Year-One Target exactly as written (e.g. '200-400 customers') as a string\n- som_units: the Year-One Target as a single unit count (number). If the brief gives a range (e.g. '200-400'), use the midpoint. If it gives dollars or percentages, return null.\n\nReturn null for any field that cannot be confidently extracted.\n\nReturn ONLY JSON, no markdown:\n{\"ue_present\":true,\"unit_cost\":number|null,\"sale_price\":number|null,\"cac_low\":number|null,\"cac_high\":number|null,\"ltv_low\":number|null,\"ltv_high\":number|null,\"ltv_cac_ratio\":number|null,\"contribution_margin\":number|null,\"tam_present\":true,\"tam_label\":string|null,\"sam_label\":string|null,\"year_one_target_label\":string|null,\"som_units\":number|null}";
+
+    // Inline UE prompts — identical to Tool 3
+    var SYSTEM_UE_INLINE_QUESTIONS = "You help design thinking students analyze unit economics for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.\nGenerate exactly 5 interview questions covering three areas:\n- COGS (Cost of Goods Sold): 2 questions about production costs, materials, packaging, shipping, supplier pricing, and per-unit manufacturing\n- CAC (Customer Acquisition Cost): 1-2 questions about how they find and convert customers\n- LTV (Lifetime Value): 1-2 questions about revenue per customer, repeat purchases, retention\nBe concrete and specific to their idea — reference the actual product, customer, channel.\nQuestions should be answerable without real data yet (educated estimates are fine).\nStart with COGS questions, then CAC, then LTV. Keep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"COGS\",\"hint\":\"short guidance for student\"}]}";
+
+    var SYSTEM_UE_INLINE_ANALYSIS = "You analyze startup unit economics for a design thinking class.\nThese students are building physical products (bottles, sensors, supplements), so production and distribution costs are critical.\n\nBased on the project and interview:\n1. Estimate COGS (Cost of Goods Sold) per unit — materials, manufacturing, packaging, shipping/fulfillment\n2. Calculate gross margin per unit (revenue minus COGS)\n3. Build LTV on GROSS MARGIN, not raw revenue\n4. Estimate CAC range\n5. Calculate the LTV:CAC ratio\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"cogs\":{\"per_unit\":number,\"breakdown\":[{\"item\":\"materials\",\"cost\":number,\"note\":\"...\"}],\"assumptions\":[\"...\"]},\n  \"gross_margin\":{\"revenue_per_unit\":number,\"cogs_per_unit\":number,\"margin_per_unit\":number,\"margin_percent\":number,\"interpretation\":\"...\"},\n  \"cac\":{\"low\":number,\"high\":number,\"assumptions\":[\"...\"]},\n  \"ltv\":{\"low\":number,\"high\":number,\"basis\":\"margin-based\",\"assumptions\":[\"...\"]},\n  \"ratio\":{\"value\":number,\"interpretation\":\"...\",\"benchmark\":\"...\"}\n}";
+
+    var SYSTEM_TAM_INLINE_QUESTIONS = "You help design thinking students estimate market size for early-stage startup ideas.\nGenerate exactly 4 interview questions:\n- TAM: 1 question about total potential users in their target category\n- SAM: 1-2 questions about what realistic segment they can actually reach\n- TARGET: 1 question about realistic first-year reach\n\nBe concrete. Start with TAM, then SAM, then TARGET.\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"TAM\",\"hint\":\"short guidance\"}]}";
+
+    var SYSTEM_TAM_INLINE_ANALYSIS = "You analyze startup market sizing for a design thinking class.\n\nBased on the project and interview:\n1. Estimate TAM\n2. Estimate SAM\n3. Estimate a Year-One Target IN UNITS (not dollars) — pick a single number, not a range\n4. Provide a reality check\n\nUse specific numbers. Show reasoning through assumptions.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"tam\":{\"value\":\"human-readable size\",\"description\":\"...\",\"assumptions\":[\"...\"]},\n  \"sam\":{\"value\":\"human-readable size\",\"description\":\"...\",\"assumptions\":[\"...\"]},\n  \"year_one_target\":{\"value\":\"human-readable target\",\"units\":number,\"description\":\"why this is realistic\"},\n  \"reality_check\":\"niche/mid/mass assessment\",\n  \"brief\":\"2-3 paragraph market logic brief\"\n}";
+
+    var SYSTEM_FIN_BRIEF = "You narrate a Financial Model Brief for a design thinking student. You will receive: the fully-computed 3-year model, the upstream unit economics and market sizing that were already decided in Tools 1 and 2, the student's assumptions ledger, a precomputed sensitivity result, and an optional Reality Layer.\n\nYou are NOT doing math. The numbers are already calculated. You write short, honest narration that helps the student see the shape of the business.\n\nRULES:\n\n1. DO NOT recalculate anything. Use the numbers you are given.\n\n2. No hedging, no ranges, no 'revenue could be between X and Y'. The model is the model. Uncertainty lives in the certainty ratings, not in the prose.\n\n3. Reference decisions the student already made in Tools 1 and 2. You will receive an UPSTREAM CONTEXT block with CAC range, LTV range, LTV:CAC ratio, TAM, SAM, and the Year-One Target. Use these to ground the narrative. NEVER claim CAC, LTV, TAM, SAM, or the market target is 'missing' or 'not accounted for' — they were captured in the upstream tools.\n\n4. Cross-check marketing spend against CAC. The model represents customer acquisition via the marketing_annual line, NOT via CAC × volume. Divide Y1 marketing by Y1 volume (or Y1 new customers if different) and compare to the upstream CAC range. If the implied CAC is wildly off (3× higher or 3× lower), flag it in biggest_line_item or top_three. If it's in range, don't belabor the point.\n\n5. Cross-check Y1 volume against the market sizing Year-One Target. If Y1 volume is way above the stated target, flag it as over-ambitious in top_three. If it's way below, note the student is being conservative.\n\n6. Honest gaps are ONLY for things not captured in upstream data or the reality layer. Examples of legitimate gaps: working capital (unless Reality Layer wc_enabled), taxes (unless tax_enabled), cash timing between delivery and payment, financing costs, capex beyond initial equipment, competitive response (unless price_pressure_enabled). If a Reality Layer item IS enabled, reference its actual number in the narration rather than putting it in gaps.\n\n7. If REALITY LAYER is present in the context, weave its enabled values into the narration:\n   - Taxes: name the rate, note the post-tax operating result is in the model as 'post_tax'.\n   - Working capital: compute the dollar amount (wc_pct × revenue Y1) and note it's cash the student needs to float.\n   - Founder market salary: compare to the student's actual founder_salary line and name the opportunity gap.\n   - Competitive price pressure: acknowledge the student's own price curve already captures or doesn't capture the suggested decay.\n\n8. If the student's founder salary is flagged is_implied=true, explicitly name what the student is giving up — use the founder_market_annual from Reality Layer if enabled, otherwise reference the upstream LTV/CAC or a generic opportunity cost framing.\n\n9. Top three pressure-test items: pick the three assumptions with the worst combination of LOW certainty and HIGH sensitivity from the precomputed sensitivity. For each, write one sentence on why it matters and one sentence on specific evidence (a phone call, a supplier quote, a 10-person interview, a pilot sale) that would raise its certainty.\n\n10. Each narration section is 2–3 sentences max. Plain language. No ENDURE jargon. No Viability label.\n\nReturn ONLY JSON:\n{\n  \"breakeven\":\"2-3 sentences — in which year (if any) does operating result turn positive? Roughly what unit volume covers all costs? If Reality Layer taxes are on, mention the post-tax picture too.\",\n  \"biggest_line_item\":\"2-3 sentences — which row dominates each year? Note any year where the dominant line item shifts.\",\n  \"most_sensitive\":\"2-3 sentences — narrate the precomputed sensitivity result. Name the assumption. Explain why moving it ±50% produces the largest swing in the 3-year operating result.\",\n  \"top_three\":[\n    {\"assumption\":\"...\",\"certainty\":1|2|3,\"why_it_matters\":\"one sentence\",\"evidence_needed\":\"one sentence\"},\n    {\"assumption\":\"...\",\"certainty\":1|2|3,\"why_it_matters\":\"...\",\"evidence_needed\":\"...\"},\n    {\"assumption\":\"...\",\"certainty\":1|2|3,\"why_it_matters\":\"...\",\"evidence_needed\":\"...\"}\n  ],\n  \"upstream_check\":\"2-3 sentences cross-checking the student's marketing spend against upstream CAC and their Y1 volume against the upstream Year-One Target. Name specific numbers. If everything reconciles, say so plainly in one sentence.\",\n  \"reality_notes\":\"2-3 sentences weaving enabled Reality Layer values into the narrative. If nothing is enabled, leave this field as an empty string.\",\n  \"honest_gaps\":\"2-3 sentences naming what this model still doesn't account for — but ONLY things not already in upstream data or the Reality Layer. Humble tone.\"\n}";
+
+    // ═══════════════════════════════════════
+    // INITIAL STATE
+    // ═══════════════════════════════════════
+    var INITIAL_STATE = {
+      phase: "setup",
+      loadingMsg: "",
+      error: "",
+      projectName: "",
+      projectDesc: "",
+
+      journal: { raw: "", provided: false },
+      ueBriefRaw: "",   // Unit Economics brief uploaded/pasted directly
+      tamBriefRaw: "",  // Market Sizing brief uploaded/pasted directly
+
+      // Upstream values
+      upstream: null, // {unit_cost, sale_price, cac, ltv, contribution_margin, som_units, ue_source, tam_source}
+      ueSource: "none", // "detected" | "inline" | "manual" | "none"
+      tamSource: "none",
+      pendingUpstreamText: "", // for paste detection attempts
+
+      // Inline UE
+      ueInline: { questions: [], qIndex: 0, answers: [], currentAnswer: "", results: null },
+      // Inline TAM
+      tamInline: { questions: [], qIndex: 0, answers: [], currentAnswer: "", results: null },
+
+      // Manual upstream entry (if paste parsing failed)
+      manualUpstream: { unit_cost: "", sale_price: "", cac: "", ltv: "", som_units: "" },
+
+      // Phase 1 — structured fixed-cost grid
+      fixedCosts: [],
+
+      // Phase 2 — structured variable/growth grid
+      variableData: null,
+
+      // Optional Reality Layer — things that live outside the simple P&L. Off by default.
+      // Tax is the only one that actually modifies computeModel output (post_tax row).
+      // The others are informational: passed to the narrator so it can reference real numbers
+      // instead of claiming they're missing.
+      realityLayer: {
+        tax_enabled: false,
+        tax_rate: 0.25,                  // 25% of positive operating result
+        wc_enabled: false,
+        wc_pct: 0.15,                    // 15% of revenue tied up as working capital
+        founder_market_enabled: false,
+        founder_market_annual: 0,        // e.g. $60,000 — what the founder could earn elsewhere
+        price_pressure_enabled: false,
+        price_pressure_pct: 0.05         // annual % price decay, informational only
+      },
+
+      // Assumption certainty ratings (keyed by assumption id)
+      certainty: {}, // { workspace: 2, founder_salary: 1, ... }
+
+      // Computed model
+      model: null,
+      sensitivity: null,
+
+      // AI-generated brief narration
+      brief: null,
+      briefStale: false,        // true when inputs have changed since last narration
+      briefHash: "",            // hash of inputs at last narration generation
+      briefSnapshot: null,      // { fixedCosts, variableData } captured on first brief for "reset"
+      regenerating: false,      // true while the "Re-run narration" call is in flight
+
+      // UI
+      history: [],
+      copied: false
+    };
+
+    // ═══════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════
+    function fmtUSD(n) {
+      if (n === null || n === undefined || isNaN(n)) return "—";
+      var neg = n < 0;
+      var abs = Math.abs(Math.round(n));
+      var s = "$" + abs.toLocaleString("en-US");
+      return neg ? "−" + s : s;
+    }
+    function fmtInt(n) {
+      if (n === null || n === undefined || isNaN(n)) return "—";
+      return Math.round(n).toLocaleString("en-US");
+    }
+    function todayStr() {
+      return new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    }
+
+    async function callClaude(userMsg, sys, maxTokens) {
+      maxTokens = maxTokens || 1500;
+      var res = await fetch(API_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: maxTokens,
+          system: sys,
+          messages: [{ role: "user", content: userMsg }]
+        })
+      });
+      if (!res.ok) {
+        var errBody = await res.text();
+        throw new Error("API error: " + res.status + " " + errBody);
+      }
+      var data = await res.json();
+      var text = data.content[0].text;
+      text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+      return text;
+    }
+
+    // ═══════════════════════════════════════
+    // MODEL CALCULATION
+    // ═══════════════════════════════════════
+    var CERT_LABELS = { 1: "Speculative", 2: "Directional", 3: "Validated" };
+    function certLabel(n) { return CERT_LABELS[n] || "—"; }
+
+    function computeModel(upstream, fixedCosts, variableData, realityLayer) {
+      var years = ["y1", "y2", "y3"];
+      var rows = { revenue: {}, cogs: {}, gross: {}, fixed: {}, variable: {}, operating: {}, taxes: {}, post_tax: {} };
+      var fixedBreakdown = {};
+      fixedCosts.forEach(function(fc) { fixedBreakdown[fc.id] = {}; });
+
+      var taxOn = !!(realityLayer && realityLayer.tax_enabled);
+      var taxRate = taxOn ? (realityLayer.tax_rate || 0) : 0;
+
+      years.forEach(function(y) {
+        var volume = variableData.volume[y];
+        var price = variableData.sale_price[y];
+        var unitCost = upstream.unit_cost;
+        var revenue = volume * price;
+        var cogs = volume * unitCost;
+        var gross = revenue - cogs;
+        var fixedTotal = 0;
+        fixedCosts.forEach(function(fc) {
+          fixedBreakdown[fc.id][y] = fc[y] || 0;
+          fixedTotal += fc[y] || 0;
+        });
+        var varOverhead = revenue * (variableData.variable_overhead_pct || 0) + (variableData.marketing_annual[y] || 0);
+        var operating = gross - fixedTotal - varOverhead;
+        // Taxes apply only to positive operating result. Losses don't generate a refund here.
+        var taxes = (taxOn && operating > 0) ? operating * taxRate : 0;
+        var postTax = operating - taxes;
+
+        rows.revenue[y] = revenue;
+        rows.cogs[y] = cogs;
+        rows.gross[y] = gross;
+        rows.fixed[y] = fixedTotal;
+        rows.variable[y] = varOverhead;
+        rows.taxes[y] = taxes;
+        rows.post_tax[y] = postTax;
+        rows.operating[y] = operating;
+      });
+
+      return { rows: rows, fixedBreakdown: fixedBreakdown };
+    }
+
+    // Sensitivity: for each numeric assumption, flip ±50% and record the absolute change in 3-year operating result sum
+    function computeSensitivity(upstream, fixedCosts, variableData) {
+      var base = computeModel(upstream, fixedCosts, variableData);
+      var baseSum = base.rows.operating.y1 + base.rows.operating.y2 + base.rows.operating.y3;
+      var results = [];
+
+      // Helper: deep clone
+      function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+      // Test each fixed cost
+      fixedCosts.forEach(function(fc) {
+        var up = clone(fc);
+        var fcClone = clone(fixedCosts);
+        var idx = fcClone.findIndex(function(x) { return x.id === fc.id; });
+        // +50%
+        fcClone[idx].y1 = fc.y1 * 1.5;
+        fcClone[idx].y2 = fc.y2 * 1.5;
+        fcClone[idx].y3 = fc.y3 * 1.5;
+        var hi = computeModel(upstream, fcClone, variableData);
+        // -50%
+        fcClone[idx].y1 = fc.y1 * 0.5;
+        fcClone[idx].y2 = fc.y2 * 0.5;
+        fcClone[idx].y3 = fc.y3 * 0.5;
+        var lo = computeModel(upstream, fcClone, variableData);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        var delta = Math.abs(hiSum - loSum) / 2;
+        results.push({ id: fc.id, label: fc.label, delta: delta });
+      });
+
+      // Volume
+      ["y1", "y2", "y3"].forEach(function(y) {
+        var vd = clone(variableData);
+        var baseVol = variableData.volume[y];
+        vd.volume[y] = baseVol * 1.5;
+        var hi = computeModel(upstream, fixedCosts, vd);
+        vd.volume[y] = baseVol * 0.5;
+        var lo = computeModel(upstream, fixedCosts, vd);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        results.push({ id: "volume_" + y, label: "Volume " + y.toUpperCase(), delta: Math.abs(hiSum - loSum) / 2 });
+      });
+
+      // Price
+      ["y1", "y2", "y3"].forEach(function(y) {
+        var vd = clone(variableData);
+        var basePrice = variableData.sale_price[y];
+        vd.sale_price[y] = basePrice * 1.5;
+        var hi = computeModel(upstream, fixedCosts, vd);
+        vd.sale_price[y] = basePrice * 0.5;
+        var lo = computeModel(upstream, fixedCosts, vd);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        results.push({ id: "price_" + y, label: "Sale price " + y.toUpperCase(), delta: Math.abs(hiSum - loSum) / 2 });
+      });
+
+      // Unit cost (COGS)
+      (function() {
+        var up = clone(upstream);
+        up.unit_cost = upstream.unit_cost * 1.5;
+        var hi = computeModel(up, fixedCosts, variableData);
+        up.unit_cost = upstream.unit_cost * 0.5;
+        var lo = computeModel(up, fixedCosts, variableData);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        results.push({ id: "unit_cost", label: "Unit cost (COGS)", delta: Math.abs(hiSum - loSum) / 2 });
+      })();
+
+      // Variable overhead %
+      (function() {
+        var vd = clone(variableData);
+        vd.variable_overhead_pct = variableData.variable_overhead_pct * 1.5;
+        var hi = computeModel(upstream, fixedCosts, vd);
+        vd.variable_overhead_pct = variableData.variable_overhead_pct * 0.5;
+        var lo = computeModel(upstream, fixedCosts, vd);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        results.push({ id: "variable_overhead_pct", label: "Variable overhead %", delta: Math.abs(hiSum - loSum) / 2 });
+      })();
+
+      // Marketing
+      ["y1", "y2", "y3"].forEach(function(y) {
+        var vd = clone(variableData);
+        var base = variableData.marketing_annual[y];
+        vd.marketing_annual[y] = base * 1.5;
+        var hi = computeModel(upstream, fixedCosts, vd);
+        vd.marketing_annual[y] = base * 0.5;
+        var lo = computeModel(upstream, fixedCosts, vd);
+        var hiSum = hi.rows.operating.y1 + hi.rows.operating.y2 + hi.rows.operating.y3;
+        var loSum = lo.rows.operating.y1 + lo.rows.operating.y2 + lo.rows.operating.y3;
+        results.push({ id: "marketing_" + y, label: "Marketing " + y.toUpperCase(), delta: Math.abs(hiSum - loSum) / 2 });
+      });
+
+      results.sort(function(a, b) { return b.delta - a.delta; });
+      return { baseSum: baseSum, items: results, top: results[0] };
+    }
+
+    // ═══════════════════════════════════════
+    // APP
+    // ═══════════════════════════════════════
+    function App() {
+      var stateHook = useState(INITIAL_STATE);
+      var S = stateHook[0];
+      var setS = stateHook[1];
+
+      function update(partial) { setS(Object.assign({}, S, partial)); }
+      function updateInline(key, partial) {
+        var next = Object.assign({}, S[key], partial);
+        var wrap = {};
+        wrap[key] = next;
+        setS(Object.assign({}, S, wrap));
+      }
+      function pushHistory() {
+        S.history.push({ phase: S.phase });
+      }
+      function goBack() {
+        if (S.history.length === 0) return;
+        var prev = S.history[S.history.length - 1];
+        var newHist = S.history.slice(0, -1);
+        setS(Object.assign({}, S, { phase: prev.phase, history: newHist, error: "" }));
+      }
+
+      // ── Generic file-to-text upload ──
+      // slot: "journal" | "ue" | "tam"
+      function handleFileUpload(slot, ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var name = file.name.toLowerCase();
+        function assign(text) {
+          if (slot === "journal") update({ journal: { raw: text, provided: true }, error: "" });
+          else if (slot === "ue") update({ ueBriefRaw: text, error: "" });
+          else if (slot === "tam") update({ tamBriefRaw: text, error: "" });
+        }
+        if (name.endsWith(".docx")) {
+          update({ loadingMsg: "Reading your document…" });
+          var reader = new FileReader();
+          reader.onload = function(ev2) {
+            mammoth.extractRawText({ arrayBuffer: ev2.target.result })
+              .then(function(result) { assign(result.value); })
+              .catch(function(err) {
+                update({ error: "Couldn't read that file. Try exporting from Google Docs as .docx again. (" + err.message + ")" });
+              });
+          };
+          reader.readAsArrayBuffer(file);
+        } else if (name.endsWith(".txt")) {
+          var reader2 = new FileReader();
+          reader2.onload = function(ev2) { assign(ev2.target.result); };
+          reader2.readAsText(file);
+        } else {
+          update({ error: "Please upload a .docx or .txt file. From Google Docs: File → Download → Microsoft Word (.docx)." });
+        }
+        ev.target.value = "";
+      }
+      function handleJournalUpload(ev) { handleFileUpload("journal", ev); }
+      function handleUeBriefUpload(ev) { handleFileUpload("ue", ev); }
+      function handleTamBriefUpload(ev) { handleFileUpload("tam", ev); }
+
+      // ── Begin: paste detection ──
+      async function beginSetup() {
+        pushHistory();
+        // Direct brief uploads take precedence. Any text the student supplied —
+        // journal, UE brief, or TAM brief — gets concatenated and scanned.
+        var parts = [];
+        if (S.ueBriefRaw && S.ueBriefRaw.trim()) parts.push(S.ueBriefRaw);
+        if (S.tamBriefRaw && S.tamBriefRaw.trim()) parts.push(S.tamBriefRaw);
+        if (S.journal.raw && S.journal.raw.trim()) parts.push(S.journal.raw);
+        var text = parts.join("\n\n");
+        var ueFound = text.indexOf("ENDURE Unit Economics Analysis") !== -1;
+        var tamFound = text.indexOf("ENDURE Market Sizing Analysis") !== -1;
+
+        if (ueFound || tamFound) {
+          // Extract upstream values via Claude
+          update({ phase: "loading", loadingMsg: "Reading your upstream briefs…" });
+          try {
+            var raw = await callClaude(
+              "Student project: " + S.projectName + "\nConcept: " + S.projectDesc + "\n\nPasted briefs:\n" + text,
+              SYSTEM_EXTRACT_UPSTREAM,
+              800
+            );
+            var parsed = JSON.parse(raw.trim());
+            var cacMid = (parsed.cac_low != null && parsed.cac_high != null) ? (parsed.cac_low + parsed.cac_high) / 2 : null;
+            var ltvMid = (parsed.ltv_low != null && parsed.ltv_high != null) ? (parsed.ltv_low + parsed.ltv_high) / 2 : null;
+            var up = {
+              unit_cost: parsed.unit_cost,
+              sale_price: parsed.sale_price,
+              cac: cacMid,
+              cac_low: parsed.cac_low,
+              cac_high: parsed.cac_high,
+              ltv: ltvMid,
+              ltv_low: parsed.ltv_low,
+              ltv_high: parsed.ltv_high,
+              ltv_cac_ratio: parsed.ltv_cac_ratio,
+              contribution_margin: parsed.contribution_margin,
+              tam_label: parsed.tam_label,
+              sam_label: parsed.sam_label,
+              year_one_target_label: parsed.year_one_target_label,
+              som_units: parsed.som_units
+            };
+            var ueComplete = up.unit_cost !== null && up.sale_price !== null && cacMid !== null && ltvMid !== null;
+            var tamComplete = up.som_units !== null;
+            setS(Object.assign({}, S, {
+              upstream: up,
+              ueSource: ueComplete ? "detected" : "none",
+              tamSource: tamComplete ? "detected" : "none",
+              phase: (ueComplete && tamComplete) ? "upstream-review" : (ueComplete ? "tam-inline-start" : "ue-inline-start"),
+              loadingMsg: "",
+              error: "",
+              history: S.history
+            }));
+          } catch (err) {
+            update({ phase: "ue-inline-start", error: "Couldn't parse the pasted briefs. Running inline. (" + err.message + ")" });
+          }
+        } else {
+          update({ phase: "ue-inline-start", error: "" });
+        }
+      }
+
+      // ── UE inline interview ──
+      async function startUeInline() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing unit economics questions…" });
+        try {
+          var raw = await callClaude(
+            "Project: " + S.projectName + "\nDescription: " + S.projectDesc,
+            SYSTEM_UE_INLINE_QUESTIONS,
+            800
+          );
+          var parsed = JSON.parse(raw.trim());
+          setS(Object.assign({}, S, {
+            ueInline: { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "", results: null },
+            phase: "ue-inline-interview",
+            loadingMsg: "",
+            error: ""
+          }));
+        } catch (err) {
+          update({ phase: "setup", error: "Couldn't generate UE questions. (" + err.message + ")" });
+        }
+      }
+
+      async function submitUeInlineAnswer() {
+        var ue = S.ueInline;
+        var newAnswers = ue.answers.concat([ue.currentAnswer]);
+        if (ue.qIndex + 1 < ue.questions.length) {
+          updateInline("ueInline", { answers: newAnswers, currentAnswer: "", qIndex: ue.qIndex + 1 });
+        } else {
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Building your unit economics…" });
+          try {
+            var qa = ue.questions.map(function(q, i) {
+              return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
+            }).join("\n\n");
+            var raw = await callClaude(
+              "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nInterview:\n" + qa,
+              SYSTEM_UE_INLINE_ANALYSIS,
+              1800
+            );
+            var parsed = JSON.parse(raw.trim());
+            var up = Object.assign({}, S.upstream || {}, {
+              unit_cost: parsed.cogs.per_unit,
+              sale_price: parsed.gross_margin.revenue_per_unit,
+              cac: (parsed.cac.low + parsed.cac.high) / 2,
+              cac_low: parsed.cac.low,
+              cac_high: parsed.cac.high,
+              ltv: (parsed.ltv.low + parsed.ltv.high) / 2,
+              ltv_low: parsed.ltv.low,
+              ltv_high: parsed.ltv.high,
+              ltv_cac_ratio: parsed.ratio && parsed.ratio.value,
+              contribution_margin: parsed.gross_margin.margin_per_unit
+            });
+            var nextPhase = S.tamSource === "detected" ? "upstream-review" : "tam-inline-start";
+            setS(Object.assign({}, S, {
+              upstream: up,
+              ueSource: "inline",
+              ueInline: Object.assign({}, ue, { answers: newAnswers, currentAnswer: "", results: parsed }),
+              phase: nextPhase,
+              loadingMsg: "",
+              error: ""
+            }));
+          } catch (err) {
+            updateInline("ueInline", { answers: newAnswers });
+            update({ phase: "ue-inline-interview", error: "Couldn't build UE. (" + err.message + ")" });
+          }
+        }
+      }
+
+      // ── TAM inline interview ──
+      async function startTamInline() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Preparing market sizing questions…" });
+        try {
+          var raw = await callClaude(
+            "Project: " + S.projectName + "\nDescription: " + S.projectDesc,
+            SYSTEM_TAM_INLINE_QUESTIONS,
+            800
+          );
+          var parsed = JSON.parse(raw.trim());
+          setS(Object.assign({}, S, {
+            tamInline: { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "", results: null },
+            phase: "tam-inline-interview",
+            loadingMsg: "",
+            error: ""
+          }));
+        } catch (err) {
+          update({ phase: "setup", error: "Couldn't generate TAM questions. (" + err.message + ")" });
+        }
+      }
+
+      async function submitTamInlineAnswer() {
+        var tam = S.tamInline;
+        var newAnswers = tam.answers.concat([tam.currentAnswer]);
+        if (tam.qIndex + 1 < tam.questions.length) {
+          updateInline("tamInline", { answers: newAnswers, currentAnswer: "", qIndex: tam.qIndex + 1 });
+        } else {
+          pushHistory();
+          update({ phase: "loading", loadingMsg: "Sizing your market…" });
+          try {
+            var qa = tam.questions.map(function(q, i) {
+              return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
+            }).join("\n\n");
+            var raw = await callClaude(
+              "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nInterview:\n" + qa,
+              SYSTEM_TAM_INLINE_ANALYSIS,
+              1400
+            );
+            var parsed = JSON.parse(raw.trim());
+            var up = Object.assign({}, S.upstream || {}, {
+              tam_label: parsed.tam && parsed.tam.value,
+              sam_label: parsed.sam && parsed.sam.value,
+              year_one_target_label: parsed.year_one_target && parsed.year_one_target.value,
+              som_units: parsed.year_one_target.units
+            });
+            setS(Object.assign({}, S, {
+              upstream: up,
+              tamSource: "inline",
+              tamInline: Object.assign({}, tam, { answers: newAnswers, currentAnswer: "", results: parsed }),
+              phase: "upstream-review",
+              loadingMsg: "",
+              error: ""
+            }));
+          } catch (err) {
+            updateInline("tamInline", { answers: newAnswers });
+            update({ phase: "tam-inline-interview", error: "Couldn't size market. (" + err.message + ")" });
+          }
+        }
+      }
+
+      // ── Upstream review → start fixed costs (structured form) ──
+      function startFixedCosts() {
+        pushHistory();
+        // Seed a deep copy of the defaults so the form is pre-built with 4 line items.
+        var seeded = JSON.parse(JSON.stringify(DEFAULT_FIXED));
+        var newCert = Object.assign({}, S.certainty);
+        seeded.forEach(function(fc) { if (newCert[fc.id] === undefined) newCert[fc.id] = 0; });
+        update({
+          phase: "fixed-form",
+          fixedCosts: seeded,
+          certainty: newCert,
+          error: ""
+        });
+      }
+
+      // Update a single field on a fixed-cost line.
+      function updateFixedLine(id, partial) {
+        var next = S.fixedCosts.map(function(fc) {
+          if (fc.id !== id) return fc;
+          return Object.assign({}, fc, partial);
+        });
+        update({ fixedCosts: next });
+      }
+
+      // Structured entry: the student types the DISPLAY value (monthly or annual depending
+      // on entry_mode). We immediately convert to annual and store.
+      function setFixedYearValue(id, year, displayValue) {
+        var fc = S.fixedCosts.find(function(x) { return x.id === id; });
+        if (!fc) return;
+        var num = parseFloat(displayValue) || 0;
+        var annual = fc.entry_mode === "monthly" ? num * 12 : num;
+        var partial = {};
+        partial[year] = annual;
+        updateFixedLine(id, partial);
+      }
+
+      function toggleFixedEntryMode(id) {
+        var fc = S.fixedCosts.find(function(x) { return x.id === id; });
+        if (!fc) return;
+        updateFixedLine(id, { entry_mode: fc.entry_mode === "monthly" ? "annual" : "monthly" });
+      }
+
+      // "Opportunity cost" toggle for founder salary.
+      function toggleFounderImplied() {
+        var fc = S.fixedCosts.find(function(x) { return x.id === "founder_salary"; });
+        if (!fc) return;
+        updateFixedLine("founder_salary", { is_implied: !fc.is_implied });
+      }
+
+      function setCertainty(id, value) {
+        var next = Object.assign({}, S.certainty);
+        next[id] = value;
+        update({ certainty: next });
+      }
+
+      function allFixedCertaintiesSet() {
+        return S.fixedCosts.every(function(fc) { return S.certainty[fc.id] >= 1; });
+      }
+
+      // Require every non-founder line to have Y1 > 0 (founder can be $0 if is_implied is
+      // off and student truly pays themselves nothing — edge case, allow it). The certainty
+      // step is where the student confirms the values.
+      function fixedFormReady() {
+        return S.fixedCosts.length > 0 && S.fixedCosts.every(function(fc) {
+          return (fc.y1 >= 0 && fc.y2 >= 0 && fc.y3 >= 0);
+        });
+      }
+
+      function startVariableForm() {
+        pushHistory();
+        var vd = S.variableData ? S.variableData : defaultVariableData();
+        // Pre-fill sale_price Y1 from upstream if empty, volume Y1 from SOM units if empty.
+        if (!vd.sale_price.y1 && S.upstream && S.upstream.sale_price) {
+          vd.sale_price.y1 = S.upstream.sale_price;
+          vd.sale_price.y2 = S.upstream.sale_price;
+          vd.sale_price.y3 = S.upstream.sale_price;
+        }
+        if (!vd.volume.y1 && S.upstream && S.upstream.som_units) {
+          vd.volume.y1 = S.upstream.som_units;
+          vd.volume.y2 = S.upstream.som_units;
+          vd.volume.y3 = S.upstream.som_units;
+        }
+        var newCert = Object.assign({}, S.certainty);
+        ["variable_overhead_pct", "marketing_annual", "volume", "sale_price"].forEach(function(id) {
+          if (newCert[id] === undefined) newCert[id] = 0;
+        });
+        update({
+          phase: "var-form",
+          variableData: vd,
+          certainty: newCert,
+          error: ""
+        });
+      }
+
+      function updateVariableField(key, partial) {
+        var vd = Object.assign({}, S.variableData);
+        vd[key] = Object.assign({}, vd[key], partial);
+        update({ variableData: vd });
+      }
+
+      // Marketing supports monthly/annual entry; volume and price are always per-year / per-unit.
+      function setMarketingYearValue(year, displayValue) {
+        var vd = S.variableData;
+        var num = parseFloat(displayValue) || 0;
+        var annual = vd.marketing_annual.entry_mode === "monthly" ? num * 12 : num;
+        var partial = {};
+        partial[year] = annual;
+        updateVariableField("marketing_annual", partial);
+      }
+
+      function toggleMarketingEntryMode() {
+        var vd = S.variableData;
+        updateVariableField("marketing_annual", { entry_mode: vd.marketing_annual.entry_mode === "monthly" ? "annual" : "monthly" });
+      }
+
+      function setVolumeYearValue(year, displayValue) {
+        var partial = {};
+        partial[year] = parseFloat(displayValue) || 0;
+        updateVariableField("volume", partial);
+      }
+
+      function setPriceYearValue(year, displayValue) {
+        var partial = {};
+        partial[year] = parseFloat(displayValue) || 0;
+        updateVariableField("sale_price", partial);
+      }
+
+      function setVariableOverheadPct(displayValue) {
+        var pct = parseFloat(displayValue) || 0;
+        update({ variableData: Object.assign({}, S.variableData, { variable_overhead_pct: pct / 100 }) });
+      }
+
+      // Reality layer handlers. Each toggle flips an _enabled flag; the numeric fields
+      // are edited in place. The narrator only references values that are enabled.
+      function updateRealityLayer(partial) {
+        update({ realityLayer: Object.assign({}, S.realityLayer, partial) });
+      }
+      function toggleReality(key) {
+        var next = {};
+        next[key] = !S.realityLayer[key];
+        updateRealityLayer(next);
+      }
+
+      function varFormReady() {
+        var vd = S.variableData;
+        if (!vd) return false;
+        return vd.volume.y1 > 0 && vd.sale_price.y1 > 0;
+      }
+
+      function allVarCertaintiesSet() {
+        var ids = ["variable_overhead_pct", "marketing_annual", "volume", "sale_price"];
+        return ids.every(function(id) { return S.certainty[id] >= 1; });
+      }
+
+      // Hash of all numeric inputs — used to detect "narration is stale" on the brief page.
+      function computeInputsHash(fixedCosts, variableData, upstream, realityLayer) {
+        var parts = [];
+        fixedCosts.forEach(function(fc) {
+          parts.push(fc.id + ":" + fc.y1 + "/" + fc.y2 + "/" + fc.y3 + (fc.is_implied ? "(imp)" : ""));
+        });
+        var vd = variableData;
+        parts.push("vop:" + vd.variable_overhead_pct);
+        parts.push("mkt:" + vd.marketing_annual.y1 + "/" + vd.marketing_annual.y2 + "/" + vd.marketing_annual.y3);
+        parts.push("vol:" + vd.volume.y1 + "/" + vd.volume.y2 + "/" + vd.volume.y3);
+        parts.push("price:" + vd.sale_price.y1 + "/" + vd.sale_price.y2 + "/" + vd.sale_price.y3);
+        parts.push("uc:" + upstream.unit_cost);
+        if (realityLayer) {
+          var rl = realityLayer;
+          parts.push("rl:" + (rl.tax_enabled ? "T" + rl.tax_rate : "t0") +
+            "/" + (rl.wc_enabled ? "W" + rl.wc_pct : "w0") +
+            "/" + (rl.founder_market_enabled ? "F" + rl.founder_market_annual : "f0") +
+            "/" + (rl.price_pressure_enabled ? "P" + rl.price_pressure_pct : "p0"));
+        }
+        return parts.join("|");
+      }
+
+      // Shared context builder. Both generateBrief and rerunBrief call this so the
+      // narrator sees the same structure. Includes upstream decisions from Tools 1+2,
+      // the live model, the ledger, sensitivity, and any enabled Reality Layer items.
+      function buildBriefContext(model, sensitivity) {
+        var up = S.upstream || {};
+        var rl = S.realityLayer;
+        var vd = S.variableData;
+
+        // Upstream context — decisions already made in Tools 1 and 2.
+        var upstreamParts = [];
+        upstreamParts.push("Unit cost (COGS): " + fmtUSD(up.unit_cost));
+        upstreamParts.push("Sale price (from Tool 1): " + fmtUSD(up.sale_price));
+        if (up.contribution_margin != null) upstreamParts.push("Contribution margin: " + fmtUSD(up.contribution_margin));
+        if (up.cac_low != null && up.cac_high != null) {
+          upstreamParts.push("CAC range (captured in Tool 1): " + fmtUSD(up.cac_low) + " – " + fmtUSD(up.cac_high) + " per customer");
+        } else if (up.cac != null) {
+          upstreamParts.push("CAC (captured in Tool 1): " + fmtUSD(up.cac) + " per customer");
+        }
+        if (up.ltv_low != null && up.ltv_high != null) {
+          upstreamParts.push("LTV range (margin-based, captured in Tool 1): " + fmtUSD(up.ltv_low) + " – " + fmtUSD(up.ltv_high));
+        } else if (up.ltv != null) {
+          upstreamParts.push("LTV (captured in Tool 1): " + fmtUSD(up.ltv));
+        }
+        if (up.ltv_cac_ratio != null) upstreamParts.push("LTV:CAC ratio: " + up.ltv_cac_ratio.toFixed(1) + "x");
+        if (up.tam_label) upstreamParts.push("TAM (from Tool 2): " + up.tam_label);
+        if (up.sam_label) upstreamParts.push("SAM (from Tool 2): " + up.sam_label);
+        if (up.year_one_target_label) upstreamParts.push("Year-One Target (from Tool 2): " + up.year_one_target_label);
+        if (up.som_units) upstreamParts.push("Year-One Target as units: " + fmtInt(up.som_units));
+
+        // Ledger with certainty
+        var ledger = [];
+        S.fixedCosts.forEach(function(fc) {
+          ledger.push({ id: fc.id, label: fc.label, text: fc.label + ": " + fmtUSD(fc.y1) + " / " + fmtUSD(fc.y2) + " / " + fmtUSD(fc.y3) + (fc.is_implied ? " [opportunity cost — not paid]" : "") + (fc.growth_rationale ? " — " + fc.growth_rationale : ""), certainty: S.certainty[fc.id] });
+        });
+        ledger.push({ id: "variable_overhead_pct", label: "Variable overhead %", text: "Variable overhead: " + (vd.variable_overhead_pct * 100).toFixed(1) + "% of revenue", certainty: S.certainty.variable_overhead_pct });
+        ledger.push({ id: "marketing_annual", label: "Marketing", text: "Marketing: " + fmtUSD(vd.marketing_annual.y1) + " / " + fmtUSD(vd.marketing_annual.y2) + " / " + fmtUSD(vd.marketing_annual.y3) + (vd.marketing_annual.growth_rationale ? " — " + vd.marketing_annual.growth_rationale : ""), certainty: S.certainty.marketing_annual });
+        ledger.push({ id: "volume", label: "Volume", text: "Volume (units): " + fmtInt(vd.volume.y1) + " / " + fmtInt(vd.volume.y2) + " / " + fmtInt(vd.volume.y3) + (vd.volume.growth_rationale ? " — " + vd.volume.growth_rationale : ""), certainty: S.certainty.volume });
+        ledger.push({ id: "sale_price", label: "Sale price", text: "Sale price: " + fmtUSD(vd.sale_price.y1) + " / " + fmtUSD(vd.sale_price.y2) + " / " + fmtUSD(vd.sale_price.y3) + (vd.sale_price.growth_rationale ? " — " + vd.sale_price.growth_rationale : ""), certainty: S.certainty.sale_price });
+        var ledgerText = ledger.map(function(l) { return "[" + certLabel(l.certainty) + "] " + l.text; }).join("\n");
+
+        // Model summary — include post-tax if taxes on
+        var m = model.rows;
+        var modelLines = [];
+        ["y1", "y2", "y3"].forEach(function(y, i) {
+          var line = "Year " + (i + 1) + ": Revenue " + fmtUSD(m.revenue[y]) + ", COGS " + fmtUSD(m.cogs[y]) + ", Gross " + fmtUSD(m.gross[y]) + ", Fixed " + fmtUSD(m.fixed[y]) + ", Variable " + fmtUSD(m.variable[y]) + ", Operating " + fmtUSD(m.operating[y]);
+          if (rl.tax_enabled) line += ", Taxes " + fmtUSD(m.taxes[y]) + ", Post-tax " + fmtUSD(m.post_tax[y]);
+          modelLines.push(line);
+        });
+        var modelSummary = modelLines.join("\n");
+
+        // Implied CAC cross-check: Y1 marketing ÷ Y1 volume
+        var impliedCac = (vd.volume.y1 > 0) ? (vd.marketing_annual.y1 / vd.volume.y1) : null;
+
+        // Sensitivity text
+        var sensitivityText = "Most sensitive: " + sensitivity.top.label + " (±50% swings 3-year operating result by " + fmtUSD(sensitivity.top.delta * 2) + " total). Ranking:\n" + sensitivity.items.slice(0, 5).map(function(r, i) { return (i + 1) + ". " + r.label + " — swing " + fmtUSD(r.delta * 2); }).join("\n");
+
+        // Reality Layer block
+        var realityParts = [];
+        if (rl.tax_enabled) {
+          realityParts.push("TAXES ENABLED at " + (rl.tax_rate * 100).toFixed(1) + "%. Post-tax operating result is in the model above as 'Post-tax'. Reference the actual post-tax numbers in breakeven and reality_notes.");
+        }
+        if (rl.wc_enabled) {
+          var wcY1 = m.revenue.y1 * rl.wc_pct;
+          realityParts.push("WORKING CAPITAL ENABLED at " + (rl.wc_pct * 100).toFixed(1) + "% of revenue. Y1 working capital ≈ " + fmtUSD(wcY1) + " tied up in inventory/receivables. This is cash the student needs to float — reference it in reality_notes.");
+        }
+        if (rl.founder_market_enabled && rl.founder_market_annual > 0) {
+          var founderLine = S.fixedCosts.find(function(fc) { return fc.id === "founder_salary"; });
+          var founderPaid = founderLine ? founderLine.y1 : 0;
+          var gap = rl.founder_market_annual - founderPaid;
+          realityParts.push("FOUNDER MARKET SALARY ENABLED at " + fmtUSD(rl.founder_market_annual) + "/yr. Student is currently paying themselves " + fmtUSD(founderPaid) + "/yr. Opportunity gap: " + fmtUSD(gap) + "/yr. Reference this in reality_notes or honest_gaps.");
+        }
+        if (rl.price_pressure_enabled) {
+          realityParts.push("COMPETITIVE PRICE PRESSURE ENABLED at " + (rl.price_pressure_pct * 100).toFixed(1) + "%/yr suggested decay. The student's sale_price line above shows whether they've already priced this in — cross-check Y2 and Y3 price vs Y1.");
+        }
+        var realityText = realityParts.length ? realityParts.join("\n") : "Reality Layer: nothing enabled. Use honest_gaps for taxes, working capital, and competitive response.";
+
+        var founderImpliedNote = "";
+        var founderLine = S.fixedCosts.find(function(fc) { return fc.id === "founder_salary"; });
+        if (founderLine && founderLine.is_implied) {
+          founderImpliedNote = "\n\nFOUNDER SALARY IS IMPLIED: Student is not actually paying themselves. Name what they're giving up in honest_gaps or reality_notes.";
+        }
+
+        return "Project: " + S.projectName + "\nConcept: " + S.projectDesc + "\n\n" +
+          "UPSTREAM CONTEXT (from Tools 1 and 2 — already decided, DO NOT claim these are missing):\n" + upstreamParts.join("\n") + "\n\n" +
+          "COMPUTED MODEL (do not recalculate):\n" + modelSummary + "\n\n" +
+          "IMPLIED CAC CHECK: The student's Y1 marketing spend ÷ Y1 volume = " + (impliedCac != null ? fmtUSD(impliedCac) + " per unit acquired" : "n/a") + ". Compare against the upstream CAC range.\n\n" +
+          "ASSUMPTIONS LEDGER:\n" + ledgerText + "\n\n" +
+          "PRECOMPUTED SENSITIVITY:\n" + sensitivityText + "\n\n" +
+          "REALITY LAYER:\n" + realityText + founderImpliedNote;
+      }
+
+      async function generateBrief() {
+        pushHistory();
+        update({ phase: "loading", loadingMsg: "Running the model and narrating your brief…" });
+        try {
+          var model = computeModel(S.upstream, S.fixedCosts, S.variableData, S.realityLayer);
+          var sensitivity = computeSensitivity(S.upstream, S.fixedCosts, S.variableData);
+          var briefContext = buildBriefContext(model, sensitivity);
+
+          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 1800);
+          var parsed = JSON.parse(raw.trim());
+          var hash = computeInputsHash(S.fixedCosts, S.variableData, S.upstream, S.realityLayer);
+          // Snapshot only on first brief generation so "Reset" goes back to the student's
+          // committed inputs (not whatever they last typed in the live editor).
+          var snapshot = S.briefSnapshot || {
+            fixedCosts: JSON.parse(JSON.stringify(S.fixedCosts)),
+            variableData: JSON.parse(JSON.stringify(S.variableData)),
+            certainty: JSON.parse(JSON.stringify(S.certainty)),
+            realityLayer: JSON.parse(JSON.stringify(S.realityLayer))
+          };
+          setS(Object.assign({}, S, {
+            model: model,
+            sensitivity: sensitivity,
+            brief: parsed,
+            briefHash: hash,
+            briefSnapshot: snapshot,
+            briefStale: false,
+            regenerating: false,
+            phase: "brief",
+            loadingMsg: "",
+            error: ""
+          }));
+        } catch (err) {
+          update({ phase: "var-form", regenerating: false, loadingMsg: "", error: "Couldn't generate brief. (" + err.message + ")" });
+        }
+      }
+
+      // Re-run narration against the currently-edited inputs without leaving the brief.
+      async function rerunBrief() {
+        if (S.regenerating) return;
+        update({ regenerating: true, error: "" });
+        try {
+          var model = computeModel(S.upstream, S.fixedCosts, S.variableData, S.realityLayer);
+          var sensitivity = computeSensitivity(S.upstream, S.fixedCosts, S.variableData);
+          var briefContext = buildBriefContext(model, sensitivity);
+          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 1800);
+          var parsed = JSON.parse(raw.trim());
+          var hash = computeInputsHash(S.fixedCosts, S.variableData, S.upstream, S.realityLayer);
+          setS(Object.assign({}, S, {
+            model: model, sensitivity: sensitivity, brief: parsed,
+            briefHash: hash, briefStale: false, regenerating: false, error: ""
+          }));
+        } catch (err) {
+          update({ regenerating: false, error: "Couldn't re-run narration. (" + err.message + ")" });
+        }
+      }
+
+      function resetToSnapshot() {
+        if (!S.briefSnapshot) return;
+        var snap = S.briefSnapshot;
+        setS(Object.assign({}, S, {
+          fixedCosts: JSON.parse(JSON.stringify(snap.fixedCosts)),
+          variableData: JSON.parse(JSON.stringify(snap.variableData)),
+          certainty: JSON.parse(JSON.stringify(snap.certainty)),
+          realityLayer: snap.realityLayer ? JSON.parse(JSON.stringify(snap.realityLayer)) : S.realityLayer
+        }));
+      }
+
+      function reset() {
+        setS(INITIAL_STATE);
+      }
+
+      // ═══════════════════════════════════════
+      // PLAIN-TEXT BRIEF BUILDER
+      // ═══════════════════════════════════════
+      function buildPlainText() {
+        if (!S.model || !S.brief) return "";
+        var m = S.model.rows;
+        var L = [];
+        var pad = function(s, n) { s = String(s); while (s.length < n) s = " " + s; return s; };
+        var padLeft = function(s, n) { s = String(s); while (s.length < n) s = s + " "; return s; };
+
+        L.push("ENDURE Financial Model — " + S.projectName.toUpperCase());
+        L.push("Generated " + todayStr());
+        L.push("");
+        L.push("═══════════════════════════════════════════════════════");
+        L.push("3-YEAR MODEL");
+        L.push("");
+        var colW = 14;
+        L.push(padLeft("", 22) + pad("Year 1", colW) + pad("Year 2", colW) + pad("Year 3", colW));
+        L.push("───────────────────────────────────────────────────────");
+        L.push(padLeft("Revenue", 22) + pad(fmtUSD(m.revenue.y1), colW) + pad(fmtUSD(m.revenue.y2), colW) + pad(fmtUSD(m.revenue.y3), colW));
+        L.push(padLeft("– COGS", 22) + pad(fmtUSD(m.cogs.y1), colW) + pad(fmtUSD(m.cogs.y2), colW) + pad(fmtUSD(m.cogs.y3), colW));
+        L.push(padLeft("= Gross profit", 22) + pad(fmtUSD(m.gross.y1), colW) + pad(fmtUSD(m.gross.y2), colW) + pad(fmtUSD(m.gross.y3), colW));
+        L.push(padLeft("– Fixed costs", 22) + pad(fmtUSD(m.fixed.y1), colW) + pad(fmtUSD(m.fixed.y2), colW) + pad(fmtUSD(m.fixed.y3), colW));
+        L.push(padLeft("– Variable overhead", 22) + pad(fmtUSD(m.variable.y1), colW) + pad(fmtUSD(m.variable.y2), colW) + pad(fmtUSD(m.variable.y3), colW));
+        var opLabel = S.realityLayer.tax_enabled ? "= Operating (pre-tax)" : "= OPERATING RESULT";
+        L.push(padLeft(opLabel, 22) + pad(fmtUSD(m.operating.y1), colW) + pad(fmtUSD(m.operating.y2), colW) + pad(fmtUSD(m.operating.y3), colW));
+        if (S.realityLayer.tax_enabled) {
+          L.push(padLeft("– Taxes (" + (S.realityLayer.tax_rate * 100).toFixed(0) + "%)", 22) + pad(fmtUSD(m.taxes.y1), colW) + pad(fmtUSD(m.taxes.y2), colW) + pad(fmtUSD(m.taxes.y3), colW));
+          L.push(padLeft("= OPERATING (post-tax)", 22) + pad(fmtUSD(m.post_tax.y1), colW) + pad(fmtUSD(m.post_tax.y2), colW) + pad(fmtUSD(m.post_tax.y3), colW));
+        }
+        L.push("");
+        L.push("───────────────────────────────────────────────────────");
+        L.push("READING THE MODEL");
+        L.push("");
+        L.push("Breakeven:");
+        L.push(S.brief.breakeven);
+        L.push("");
+        L.push("Biggest line item:");
+        L.push(S.brief.biggest_line_item);
+        L.push("");
+        L.push("Most sensitive assumption:");
+        L.push(S.brief.most_sensitive);
+        L.push("");
+        if (S.brief.upstream_check) {
+          L.push("───────────────────────────────────────────────────────");
+          L.push("CROSS-CHECK WITH TOOLS 1 & 2");
+          L.push("");
+          L.push(S.brief.upstream_check);
+          L.push("");
+        }
+        if (S.brief.reality_notes) {
+          L.push("───────────────────────────────────────────────────────");
+          L.push("REALITY LAYER");
+          L.push("");
+          L.push(S.brief.reality_notes);
+          L.push("");
+        }
+        L.push("───────────────────────────────────────────────────────");
+        L.push("ASSUMPTIONS LEDGER (lowest certainty first)");
+        L.push("");
+        // Build ledger
+        var ledger = [];
+        S.fixedCosts.forEach(function(fc) {
+          ledger.push({ cert: S.certainty[fc.id], text: fc.label + ": " + fmtUSD(fc.y1) + " / " + fmtUSD(fc.y2) + " / " + fmtUSD(fc.y3) + (fc.growth_rationale ? " — " + fc.growth_rationale : "") });
+        });
+        var vd = S.variableData;
+        ledger.push({ cert: S.certainty.variable_overhead_pct, text: "Variable overhead: " + (vd.variable_overhead_pct * 100).toFixed(1) + "% of revenue" + (vd.variable_overhead_note ? " — " + vd.variable_overhead_note : "") });
+        ledger.push({ cert: S.certainty.marketing_annual, text: "Marketing: " + fmtUSD(vd.marketing_annual.y1) + " / " + fmtUSD(vd.marketing_annual.y2) + " / " + fmtUSD(vd.marketing_annual.y3) + (vd.marketing_annual.growth_rationale ? " — " + vd.marketing_annual.growth_rationale : "") });
+        ledger.push({ cert: S.certainty.volume, text: "Volume (units): " + fmtInt(vd.volume.y1) + " / " + fmtInt(vd.volume.y2) + " / " + fmtInt(vd.volume.y3) + (vd.volume.growth_rationale ? " — " + vd.volume.growth_rationale : "") });
+        ledger.push({ cert: S.certainty.sale_price, text: "Sale price: " + fmtUSD(vd.sale_price.y1) + " / " + fmtUSD(vd.sale_price.y2) + " / " + fmtUSD(vd.sale_price.y3) + (vd.sale_price.growth_rationale ? " — " + vd.sale_price.growth_rationale : "") });
+        ledger.sort(function(a, b) { return a.cert - b.cert; });
+        ledger.forEach(function(l) { L.push("  [" + certLabel(l.cert) + "] " + l.text); });
+        L.push("");
+        L.push("Certainty legend: Speculative (rough guess) · Directional (informed estimate) · Validated (real evidence)");
+        L.push("");
+        L.push("───────────────────────────────────────────────────────");
+        L.push("TOP THREE TO PRESSURE-TEST");
+        L.push("");
+        L.push("[EXPERIMENT-PLAN-CANDIDATES]");
+        S.brief.top_three.forEach(function(t, i) {
+          L.push("#" + (i + 1) + " | " + t.assumption + " | cert:" + certLabel(t.certainty) + " | matters: " + t.why_it_matters + " | evidence: " + t.evidence_needed);
+        });
+        L.push("[/EXPERIMENT-PLAN-CANDIDATES]");
+        L.push("");
+        S.brief.top_three.forEach(function(t, i) {
+          L.push("#" + (i + 1) + " — " + t.assumption + " (" + certLabel(t.certainty) + ")");
+          L.push("   Why it matters: " + t.why_it_matters);
+          L.push("   Evidence needed: " + t.evidence_needed);
+          L.push("");
+        });
+        L.push("───────────────────────────────────────────────────────");
+        L.push("HONEST GAPS");
+        L.push("");
+        L.push(S.brief.honest_gaps);
+        L.push("");
+        L.push("═══════════════════════════════════════════════════════");
+        return L.join("\n");
+      }
+
+      function copyToClipboard() {
+        navigator.clipboard.writeText(buildPlainText()).then(function() {
+          update({ copied: true });
+          setTimeout(function() { update({ copied: false }); }, 2000);
+        });
+      }
+
+      // ═══════════════════════════════════════
+      // DOCX EXPORT
+      // ═══════════════════════════════════════
+      function downloadDocx() {
+        if (!S.model || !S.brief) return;
+        var D = docx;
+        var m = S.model.rows;
+        var dateStr = todayStr();
+
+        function heading(text, level) {
+          return new D.Paragraph({
+            heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2,
+            spacing: { before: level === 1 ? 0 : 300, after: 120 },
+            children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })]
+          });
+        }
+        function para(text, opts) {
+          opts = opts || {};
+          return new D.Paragraph({
+            spacing: { after: opts.after !== undefined ? opts.after : 120 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })]
+          });
+        }
+        function bullet(text) {
+          return new D.Paragraph({
+            bullet: { level: 0 },
+            spacing: { after: 60 },
+            children: [new D.TextRun({ text: text, font: "Arial", size: 22 })]
+          });
+        }
+        function divider() {
+          return new D.Paragraph({
+            spacing: { before: 200, after: 200 },
+            border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } },
+            children: []
+          });
+        }
+        function cell(text, opts) {
+          opts = opts || {};
+          return new D.TableCell({
+            children: [new D.Paragraph({
+              alignment: opts.right ? D.AlignmentType.RIGHT : D.AlignmentType.LEFT,
+              children: [new D.TextRun({ text: text, bold: !!opts.bold, font: "Arial", size: 20, color: opts.color })]
+            })],
+            shading: opts.shade ? { fill: opts.shade } : undefined
+          });
+        }
+
+        var children = [];
+        children.push(heading("ENDURE Financial Model", 1));
+        children.push(para(S.projectName, { bold: true, after: 40 }));
+        children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
+        children.push(divider());
+
+        // Model table
+        children.push(heading("3-Year Model", 2));
+        var headerRow = new D.TableRow({ children: [
+          cell("", { shade: "F0EDE3" }),
+          cell("Year 1", { bold: true, right: true, shade: "F0EDE3" }),
+          cell("Year 2", { bold: true, right: true, shade: "F0EDE3" }),
+          cell("Year 3", { bold: true, right: true, shade: "F0EDE3" })
+        ]});
+        function mkRow(label, vals, opts) {
+          opts = opts || {};
+          return new D.TableRow({ children: [
+            cell(label, { bold: opts.bold, shade: opts.shade }),
+            cell(fmtUSD(vals[0]), { right: true, bold: opts.bold, shade: opts.shade, color: vals[0] < 0 ? "C0523A" : undefined }),
+            cell(fmtUSD(vals[1]), { right: true, bold: opts.bold, shade: opts.shade, color: vals[1] < 0 ? "C0523A" : undefined }),
+            cell(fmtUSD(vals[2]), { right: true, bold: opts.bold, shade: opts.shade, color: vals[2] < 0 ? "C0523A" : undefined })
+          ]});
+        }
+        var tableRows = [
+          headerRow,
+          mkRow("Revenue", [m.revenue.y1, m.revenue.y2, m.revenue.y3]),
+          mkRow("– COGS", [m.cogs.y1, m.cogs.y2, m.cogs.y3]),
+          mkRow("= Gross profit", [m.gross.y1, m.gross.y2, m.gross.y3], { bold: true, shade: "F8F6F0" }),
+          mkRow("– Fixed costs", [m.fixed.y1, m.fixed.y2, m.fixed.y3]),
+          mkRow("– Variable overhead", [m.variable.y1, m.variable.y2, m.variable.y3]),
+          mkRow(S.realityLayer.tax_enabled ? "= Operating (pre-tax)" : "= Operating result", [m.operating.y1, m.operating.y2, m.operating.y3], { bold: true, shade: "FAF4E0" })
+        ];
+        if (S.realityLayer.tax_enabled) {
+          tableRows.push(mkRow("– Taxes (" + (S.realityLayer.tax_rate * 100).toFixed(0) + "%)", [m.taxes.y1, m.taxes.y2, m.taxes.y3]));
+          tableRows.push(mkRow("= Operating (post-tax)", [m.post_tax.y1, m.post_tax.y2, m.post_tax.y3], { bold: true, shade: "FAF4E0" }));
+        }
+        var table = new D.Table({
+          width: { size: 100, type: D.WidthType.PERCENTAGE },
+          rows: tableRows
+        });
+        children.push(table);
+
+        // Reading
+        children.push(divider());
+        children.push(heading("Reading the Model", 2));
+        children.push(para("Breakeven", { bold: true, after: 40 }));
+        children.push(para(S.brief.breakeven));
+        children.push(para("Biggest line item", { bold: true, after: 40 }));
+        children.push(para(S.brief.biggest_line_item));
+        children.push(para("Most sensitive assumption", { bold: true, after: 40 }));
+        children.push(para(S.brief.most_sensitive));
+
+        if (S.brief.upstream_check) {
+          children.push(divider());
+          children.push(heading("Cross-check with Tools 1 & 2", 2));
+          children.push(para(S.brief.upstream_check));
+        }
+
+        if (S.brief.reality_notes) {
+          children.push(divider());
+          children.push(heading("Reality Layer", 2));
+          children.push(para(S.brief.reality_notes));
+        }
+
+        // Ledger
+        children.push(divider());
+        children.push(heading("Assumptions Ledger", 2));
+        var ledger = [];
+        S.fixedCosts.forEach(function(fc) {
+          ledger.push({ cert: S.certainty[fc.id], text: fc.label + ": " + fmtUSD(fc.y1) + " / " + fmtUSD(fc.y2) + " / " + fmtUSD(fc.y3) + (fc.growth_rationale ? " — " + fc.growth_rationale : "") });
+        });
+        var vd = S.variableData;
+        ledger.push({ cert: S.certainty.variable_overhead_pct, text: "Variable overhead: " + (vd.variable_overhead_pct * 100).toFixed(1) + "% of revenue" + (vd.variable_overhead_note ? " — " + vd.variable_overhead_note : "") });
+        ledger.push({ cert: S.certainty.marketing_annual, text: "Marketing: " + fmtUSD(vd.marketing_annual.y1) + " / " + fmtUSD(vd.marketing_annual.y2) + " / " + fmtUSD(vd.marketing_annual.y3) });
+        ledger.push({ cert: S.certainty.volume, text: "Volume: " + fmtInt(vd.volume.y1) + " / " + fmtInt(vd.volume.y2) + " / " + fmtInt(vd.volume.y3) });
+        ledger.push({ cert: S.certainty.sale_price, text: "Sale price: " + fmtUSD(vd.sale_price.y1) + " / " + fmtUSD(vd.sale_price.y2) + " / " + fmtUSD(vd.sale_price.y3) });
+        ledger.sort(function(a, b) { return a.cert - b.cert; });
+        ledger.forEach(function(l) { children.push(bullet("[" + certLabel(l.cert) + "] " + l.text)); });
+        children.push(para("Certainty: Speculative = rough guess · Directional = informed estimate · Validated = real evidence", { italic: true, color: "999999" }));
+
+        // Top 3
+        children.push(divider());
+        children.push(heading("Top Three to Pressure-Test", 2));
+        S.brief.top_three.forEach(function(t, i) {
+          children.push(para("#" + (i + 1) + " — " + t.assumption + " (" + certLabel(t.certainty) + ")", { bold: true, after: 40 }));
+          children.push(para("Why it matters: " + t.why_it_matters));
+          children.push(para("Evidence needed: " + t.evidence_needed));
+        });
+
+        // Honest gaps
+        children.push(divider());
+        children.push(heading("Honest Gaps", 2));
+        children.push(para(S.brief.honest_gaps));
+
+        // Footer
+        children.push(divider());
+        children.push(para("Generated with ENDURE Financial Model · " + dateStr, { italic: true, color: "999999" }));
+
+        var doc = new D.Document({
+          sections: [{
+            properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
+            children: children
+          }]
+        });
+
+        D.Packer.toBlob(doc).then(function(blob) {
+          var slug = S.projectName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "financial-model-" + slug + ".docx";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER HELPERS
+      // ═══════════════════════════════════════
+      function renderHeader() {
+        return e("header", { className: "header" },
+          e("a", { href: "index.html", className: "logo-mark", style: { textDecoration: "none", color: "inherit" }, title: "Back to all tools" }, "ENDURE"),
+          e("span", { className: "header-sub" }, "Financial Model")
+        );
+      }
+
+      function currentStepIdx() {
+        var p = S.phase;
+        if (p === "setup") return 0;
+        if (p === "ue-inline-start" || p === "ue-inline-interview" || p === "tam-inline-start" || p === "tam-inline-interview" || p === "upstream-review") return 1;
+        if (p === "fixed-form") return 2;
+        if (p === "var-form") return 3;
+        if (p === "brief") return 4;
+        return 0;
+      }
+
+      function renderStepBar() {
+        var idx = currentStepIdx();
+        return e("div", { className: "step-bar no-print" },
+          STEP_LABELS.map(function(label, i) {
+            var cls = "step-pill";
+            if (i < idx) cls += " done";
+            else if (i === idx) cls += " active";
+            return e("span", { key: i, className: cls }, label);
+          })
+        );
+      }
+
+      function renderBackButton() {
+        if (S.history.length === 0) return null;
+        return e("button", { className: "btn-back no-print", onClick: goBack }, "← Back");
+      }
+
+      function renderConceptRef() {
+        if (!S.projectDesc.trim()) return null;
+        return e("div", { className: "concept-ref" },
+          e("div", { className: "concept-ref-label" }, "Your concept"),
+          S.projectDesc
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: SETUP
+      // ═══════════════════════════════════════
+      function renderSetup() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            e("div", { className: "eyebrow" }, "Design Thinking · Financial Model"),
+            e("h1", { className: "intro-heading" }, "Can this venture actually ", e("em", null, "sustain"), " itself?"),
+            e("p", { className: "intro-body" },
+              "This tool takes your unit economics and market sizing, and walks you through the full cost structure of your business — fixed costs, variable overhead, the things that live outside the product. You'll leave with a 3-year model and a short list of assumptions worth pressure-testing."
+            ),
+            e("div", { className: "card" },
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Project Name"),
+                e("input", {
+                  className: "form-input",
+                  value: S.projectName,
+                  onChange: function(ev) { update({ projectName: ev.target.value }); },
+                  placeholder: "Your venture name"
+                })
+              ),
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Your Concept"),
+                e("div", { className: "form-hint" }, "2–3 sentences. Who is it for? What does it do? How does it make money?"),
+                e("textarea", {
+                  className: "form-input",
+                  rows: 4,
+                  value: S.projectDesc,
+                  onChange: function(ev) { update({ projectDesc: ev.target.value }); },
+                  placeholder: "We help [who] with [what] by [how]. Customers pay [how] for [what]…"
+                })
+              ),
+              // Three stacked upload slots. Any combination is fine.
+              (function() {
+                function slot(opts) {
+                  var loaded = opts.value && opts.value.trim();
+                  return e("div", { className: "form-group", style: { marginBottom: 18 } },
+                    e("label", { className: "form-label" }, opts.label + (opts.required ? "" : " (Optional)")),
+                    e("div", { className: "form-hint" }, opts.hint),
+                    e("div", { style: { display: "flex", gap: 10, marginBottom: 10, alignItems: "center" } },
+                      e("label", {
+                        className: "btn btn-ghost",
+                        style: { cursor: "pointer", fontSize: 12, padding: "8px 16px" }
+                      },
+                        e("input", {
+                          type: "file",
+                          accept: ".docx,.txt",
+                          onChange: opts.onFile,
+                          style: { display: "none" }
+                        }),
+                        "Upload .docx or .txt"
+                      ),
+                      loaded ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)" } }, "✓ Loaded (" + opts.value.length.toLocaleString() + " chars)") : null,
+                      loaded ? e("button", {
+                        className: "btn-ghost",
+                        style: { fontSize: 11, padding: "4px 10px", background: "transparent", border: "1px solid rgba(232,227,216,0.1)", color: "rgba(232,227,216,0.45)", borderRadius: 4, cursor: "pointer" },
+                        onClick: opts.onClear
+                      }, "Clear") : null
+                    ),
+                    e("textarea", {
+                      className: "form-input",
+                      rows: loaded ? 6 : 3,
+                      value: opts.value,
+                      onChange: opts.onChange,
+                      placeholder: opts.placeholder
+                    })
+                  );
+                }
+                return e("div", null,
+                  e("div", { className: "form-hint", style: { marginBottom: 14, paddingTop: 8, borderTop: "1px solid rgba(232,227,216,0.06)", fontStyle: "italic" } },
+                    "Optional inputs below. Upload any combination — all three, just the briefs, just the journal, or nothing. If upstream data is missing we'll interview you inline."
+                  ),
+                  slot({
+                    label: "Unit Economics Brief",
+                    hint: "Output from Tool 1. Upload the .docx or paste the text.",
+                    value: S.ueBriefRaw,
+                    onFile: handleUeBriefUpload,
+                    onChange: function(ev) { update({ ueBriefRaw: ev.target.value }); },
+                    onClear: function() { update({ ueBriefRaw: "" }); },
+                    placeholder: "Paste your ENDURE Unit Economics Analysis here…"
+                  }),
+                  slot({
+                    label: "Market Sizing Brief",
+                    hint: "Output from Tool 2. Upload the .docx or paste the text.",
+                    value: S.tamBriefRaw,
+                    onFile: handleTamBriefUpload,
+                    onChange: function(ev) { update({ tamBriefRaw: ev.target.value }); },
+                    onClear: function() { update({ tamBriefRaw: "" }); },
+                    placeholder: "Paste your ENDURE Market Sizing Analysis here…"
+                  }),
+                  slot({
+                    label: "Semester Journal",
+                    hint: "Your full course journal. Used as a fallback if you haven't uploaded the briefs above — we'll scan it for tool outputs.",
+                    value: S.journal.raw,
+                    onFile: handleJournalUpload,
+                    onChange: function(ev) { update({ journal: { raw: ev.target.value, provided: true } }); },
+                    onClear: function() { update({ journal: { raw: "", provided: false } }); },
+                    placeholder: "Paste your journal here…"
+                  })
+                );
+              })()
+            ),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: !S.projectName.trim() || !S.projectDesc.trim(),
+              onClick: beginSetup
+            }, "Begin →")
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: LOADING
+      // ═══════════════════════════════════════
+      function renderLoading() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            e("div", { className: "loading-wrap" },
+              e("div", { className: "spinner" }),
+              e("div", { className: "loading-text" }, S.loadingMsg || "Working…")
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: UE/TAM INLINE STARTS
+      // ═══════════════════════════════════════
+      function renderUeInlineStart() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Upstream · Unit Economics"),
+            e("h1", { className: "dim-heading" }, "First: your unit economics"),
+            e("p", { className: "dim-body" },
+              "To build a financial model, we need to know your unit cost, sale price, CAC, and LTV. " +
+              (S.journal.raw.trim() ? "We couldn't find a clean Unit Economics brief in what you pasted, so let's run a quick 5-question interview." : "Let's run a quick 5-question interview.")
+            ),
+            renderConceptRef(),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", { className: "btn", onClick: startUeInline }, "Start Unit Economics Interview →")
+          )
+        );
+      }
+
+      function renderTamInlineStart() {
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Upstream · Market Sizing"),
+            e("h1", { className: "dim-heading" }, "Next: your market sizing"),
+            e("p", { className: "dim-body" },
+              "We need your Year-One target in units to anchor your volume assumptions. " +
+              (S.tamSource === "detected" ? "" : "Let's run a quick 4-question interview.")
+            ),
+            renderConceptRef(),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", { className: "btn", onClick: startTamInline }, "Start Market Sizing Interview →")
+          )
+        );
+      }
+
+      function renderUeInlineInterview() {
+        var ue = S.ueInline;
+        var q = ue.questions[ue.qIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Upstream · Unit Economics"),
+            renderConceptRef(),
+            e("div", { className: "progress-track" },
+              ue.questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < ue.qIndex) cls += " done";
+                else if (i === ue.qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, q.focus + " Driver"),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: ue.currentAnswer,
+              onChange: function(ev) { updateInline("ueInline", { currentAnswer: ev.target.value }); },
+              placeholder: "Your answer — estimates and ranges are fine…",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitUeInlineAnswer,
+                disabled: !ue.currentAnswer.trim()
+              }, ue.qIndex + 1 < ue.questions.length ? "Next →" : "Build Unit Economics →"),
+              e("span", { className: "q-counter" }, (ue.qIndex + 1) + " of " + ue.questions.length)
+            )
+          )
+        );
+      }
+
+      function renderTamInlineInterview() {
+        var tam = S.tamInline;
+        var q = tam.questions[tam.qIndex];
+        if (!q) return renderLoading();
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Upstream · Market Sizing"),
+            renderConceptRef(),
+            e("div", { className: "progress-track" },
+              tam.questions.map(function(_, i) {
+                var cls = "progress-seg";
+                if (i < tam.qIndex) cls += " done";
+                else if (i === tam.qIndex) cls += " active";
+                return e("div", { key: i, className: cls });
+              })
+            ),
+            e("div", { className: "focus-badge" }, q.focus + " Driver"),
+            e("div", { className: "q-text" }, q.text),
+            q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
+            e("textarea", {
+              className: "form-input",
+              rows: 4,
+              value: tam.currentAnswer,
+              onChange: function(ev) { updateInline("tamInline", { currentAnswer: ev.target.value }); },
+              placeholder: "Your answer — estimates are fine…",
+              style: { marginBottom: 22 }
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("div", { className: "actions" },
+              e("button", {
+                className: "btn",
+                onClick: submitTamInlineAnswer,
+                disabled: !tam.currentAnswer.trim()
+              }, tam.qIndex + 1 < tam.questions.length ? "Next →" : "Size Market →"),
+              e("span", { className: "q-counter" }, (tam.qIndex + 1) + " of " + tam.questions.length)
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: UPSTREAM REVIEW
+      // ═══════════════════════════════════════
+      function renderUpstreamReview() {
+        var up = S.upstream;
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Upstream · Locked In"),
+            e("h1", { className: "dim-heading" }, "The numbers we'll build on"),
+            e("p", { className: "dim-body" },
+              "These come from your " +
+              (S.ueSource === "detected" ? "pasted Unit Economics brief" : "Unit Economics interview") +
+              " and your " +
+              (S.tamSource === "detected" ? "pasted Market Sizing brief" : "Market Sizing interview") +
+              ". If anything looks wrong, back up and re-run. Otherwise, let's add the rest of the business."
+            ),
+            renderConceptRef(),
+            e("div", { className: "upstream-summary" },
+              e("div", { className: "upstream-summary-label" }, "Your unit economics & market"),
+              e("div", { className: "upstream-row" }, e("span", null, "Unit cost (COGS)"), e("strong", null, fmtUSD(up.unit_cost))),
+              e("div", { className: "upstream-row" }, e("span", null, "Sale price"), e("strong", null, fmtUSD(up.sale_price))),
+              e("div", { className: "upstream-row" }, e("span", null, "Contribution margin"), e("strong", null, fmtUSD(up.contribution_margin || (up.sale_price - up.unit_cost)))),
+              e("div", { className: "upstream-row" }, e("span", null, "Customer acquisition cost (CAC)"), e("strong", null, fmtUSD(up.cac))),
+              e("div", { className: "upstream-row" }, e("span", null, "Lifetime value (LTV)"), e("strong", null, fmtUSD(up.ltv))),
+              e("div", { className: "upstream-row" }, e("span", null, "Year-1 target (SOM)"), e("strong", null, fmtInt(up.som_units) + " units"))
+            ),
+            e("button", { className: "btn", onClick: startFixedCosts }, "Continue to Fixed Costs →")
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: FIXED COSTS — STRUCTURED GRID
+      // ═══════════════════════════════════════
+      function renderFixedForm() {
+        // Display helper: show the value the student typed (monthly or annual).
+        function displayFor(fc, year) {
+          var annual = fc[year] || 0;
+          if (!annual) return "";
+          return fc.entry_mode === "monthly" ? String(Math.round(annual / 12 * 100) / 100) : String(Math.round(annual * 100) / 100);
+        }
+        function showGrowth(fc) {
+          return fc.y2 !== fc.y1 || fc.y3 !== fc.y2;
+        }
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Fixed Costs — Phase 1"),
+            e("h1", { className: "dim-heading" }, "What does the business cost to keep the lights on?"),
+            e("p", { className: "dim-body" },
+              "Fill in the costs you'll pay regardless of how many units you sell. Enter a number for each of the three years — if costs grow, tell us why in the note that appears."
+            ),
+            renderConceptRef(),
+            e("div", { className: "grid-legend" },
+              e("strong", null, "These are per-period costs"), " (what you pay every month or every year), ",
+              e("strong", null, "not per-unit"),
+              ". Per-unit costs like packaging or shipping belong with your COGS — we already have those from your unit economics. Default entry is monthly; toggle to annual when that's more natural (e.g. founder salary)."
+            ),
+            S.fixedCosts.map(function(fc) {
+              return e("div", { key: fc.id, className: "grid-card" },
+                e("div", { className: "grid-header" },
+                  e("div", { className: "grid-label" }, fc.label),
+                  e("div", { className: "entry-toggle" },
+                    e("button", {
+                      className: fc.entry_mode === "monthly" ? "active" : "",
+                      onClick: function() { if (fc.entry_mode !== "monthly") toggleFixedEntryMode(fc.id); }
+                    }, "Monthly"),
+                    e("button", {
+                      className: fc.entry_mode === "annual" ? "active" : "",
+                      onClick: function() { if (fc.entry_mode !== "annual") toggleFixedEntryMode(fc.id); }
+                    }, "Annual")
+                  )
+                ),
+                e("div", { className: "grid-prompt" }, fc.prompt),
+                e("div", { className: "grid-row" },
+                  e("div", { className: "grid-row-head" }, fc.entry_mode === "monthly" ? "$/mo" : "$/yr"),
+                  ["y1", "y2", "y3"].map(function(y, i) {
+                    return e("input", {
+                      key: y,
+                      className: "grid-input",
+                      type: "number",
+                      min: "0",
+                      step: "any",
+                      placeholder: "Year " + (i + 1),
+                      value: displayFor(fc, y),
+                      onChange: function(ev) { setFixedYearValue(fc.id, y, ev.target.value); }
+                    });
+                  })
+                ),
+                fc.entry_mode === "monthly"
+                  ? e("div", { className: "grid-preview" },
+                      "Annual: " + fmtUSD(fc.y1) + "  ·  " + fmtUSD(fc.y2) + "  ·  " + fmtUSD(fc.y3)
+                    )
+                  : null,
+                fc.id === "founder_salary"
+                  ? e("label", { className: "implied-toggle" },
+                      e("input", {
+                        type: "checkbox",
+                        checked: !!fc.is_implied,
+                        onChange: toggleFounderImplied
+                      }),
+                      "Not paying myself yet — mark as opportunity cost"
+                    )
+                  : null,
+                showGrowth(fc)
+                  ? e("div", { className: "growth-field" },
+                      e("div", { className: "growth-field-label" }, "Why does this line change year-over-year? (optional)"),
+                      e("textarea", {
+                        rows: 2,
+                        value: fc.growth_rationale || "",
+                        onChange: function(ev) { updateFixedLine(fc.id, { growth_rationale: ev.target.value }); },
+                        placeholder: "e.g. raising rent when we outgrow the garage…"
+                      })
+                    )
+                  : null,
+                e("div", { className: "inline-cert-row" },
+                  e("div", { className: "certainty-pills" },
+                    e("span", { className: "certainty-pills-label" }, "Certainty"),
+                    [1, 2, 3].map(function(val) {
+                      return e("button", {
+                        key: val,
+                        className: "certainty-pill" + (S.certainty[fc.id] === val ? " selected" : ""),
+                        onClick: function() { setCertainty(fc.id, val); }
+                      }, certLabel(val));
+                    })
+                  )
+                )
+              );
+            }),
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: !(fixedFormReady() && allFixedCertaintiesSet()),
+              onClick: startVariableForm,
+              style: { marginTop: 18 }
+            }, "Continue to Variable & Growth →")
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: VARIABLE & GROWTH — STRUCTURED GRID
+      // ═══════════════════════════════════════
+      function renderVarForm() {
+        var vd = S.variableData;
+        if (!vd) return renderLoading();
+
+        function mktDisplay(year) {
+          var annual = vd.marketing_annual[year] || 0;
+          if (!annual) return "";
+          return vd.marketing_annual.entry_mode === "monthly" ? String(Math.round(annual / 12 * 100) / 100) : String(Math.round(annual * 100) / 100);
+        }
+        function numDisplay(val) { return val ? String(val) : ""; }
+
+        function certPills(id) {
+          return e("div", { className: "inline-cert-row" },
+            e("div", { className: "certainty-pills" },
+              e("span", { className: "certainty-pills-label" }, "Certainty"),
+              [1, 2, 3].map(function(val) {
+                return e("button", {
+                  key: val,
+                  className: "certainty-pill" + (S.certainty[id] === val ? " selected" : ""),
+                  onClick: function() { setCertainty(id, val); }
+                }, certLabel(val));
+              })
+            )
+          );
+        }
+
+        function growthBlock(key, currentObj) {
+          if (currentObj.y1 === currentObj.y2 && currentObj.y2 === currentObj.y3) return null;
+          return e("div", { className: "growth-field" },
+            e("div", { className: "growth-field-label" }, "Why does this change year-over-year? (optional)"),
+            e("textarea", {
+              rows: 2,
+              value: currentObj.growth_rationale || "",
+              onChange: function(ev) { updateVariableField(key, { growth_rationale: ev.target.value }); },
+              placeholder: "e.g. doubling marketing after we hit product-market fit…"
+            })
+          );
+        }
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+            renderBackButton(),
+            e("div", { className: "eyebrow" }, "Variable & Growth — Phase 2"),
+            e("h1", { className: "dim-heading" }, "How do revenue and variable costs grow?"),
+            e("p", { className: "dim-body" },
+              "Commit to specific numbers for each year. Your unit economics already captured cost-per-unit; these are the per-period variables that shape the top line."
+            ),
+            renderConceptRef(),
+            e("div", { className: "grid-legend" },
+              e("strong", null, "Volume"), " and ", e("strong", null, "sale price"), " are per-unit — how many units you sell each year, and how much you charge per unit. ",
+              e("strong", null, "Marketing"), " and ", e("strong", null, "variable overhead"), " are per-period — recurring spend that scales with the business."
+            ),
+
+            // Volume
+            e("div", { className: "grid-card" },
+              e("div", { className: "grid-header" },
+                e("div", { className: "grid-label" }, "Unit Volume")
+              ),
+              e("div", { className: "grid-prompt" },
+                "How many units do you sell each year?" +
+                (S.upstream && S.upstream.som_units ? " Your Market Sizing target was " + fmtInt(S.upstream.som_units) + " units in Year 1 — commit to a number for each year." : "")
+              ),
+              e("div", { className: "grid-row" },
+                e("div", { className: "grid-row-head" }, "units"),
+                ["y1", "y2", "y3"].map(function(y, i) {
+                  return e("input", {
+                    key: y,
+                    className: "grid-input",
+                    type: "number",
+                    min: "0",
+                    step: "1",
+                    placeholder: "Year " + (i + 1),
+                    value: numDisplay(vd.volume[y]),
+                    onChange: function(ev) { setVolumeYearValue(y, ev.target.value); }
+                  });
+                })
+              ),
+              growthBlock("volume", vd.volume),
+              certPills("volume")
+            ),
+
+            // Sale price
+            e("div", { className: "grid-card" },
+              e("div", { className: "grid-header" },
+                e("div", { className: "grid-label" }, "Sale Price")
+              ),
+              e("div", { className: "grid-prompt" },
+                "What do you charge per unit?" +
+                (S.upstream && S.upstream.sale_price ? " Prefilled from your unit economics (" + fmtUSD(S.upstream.sale_price) + ") — change if pricing shifts over time." : "")
+              ),
+              e("div", { className: "grid-row" },
+                e("div", { className: "grid-row-head" }, "$/unit"),
+                ["y1", "y2", "y3"].map(function(y, i) {
+                  return e("input", {
+                    key: y,
+                    className: "grid-input",
+                    type: "number",
+                    min: "0",
+                    step: "any",
+                    placeholder: "Year " + (i + 1),
+                    value: numDisplay(vd.sale_price[y]),
+                    onChange: function(ev) { setPriceYearValue(y, ev.target.value); }
+                  });
+                })
+              ),
+              growthBlock("sale_price", vd.sale_price),
+              certPills("sale_price")
+            ),
+
+            // Marketing
+            e("div", { className: "grid-card" },
+              e("div", { className: "grid-header" },
+                e("div", { className: "grid-label" }, "Marketing Spend"),
+                e("div", { className: "entry-toggle" },
+                  e("button", {
+                    className: vd.marketing_annual.entry_mode === "monthly" ? "active" : "",
+                    onClick: function() { if (vd.marketing_annual.entry_mode !== "monthly") toggleMarketingEntryMode(); }
+                  }, "Monthly"),
+                  e("button", {
+                    className: vd.marketing_annual.entry_mode === "annual" ? "active" : "",
+                    onClick: function() { if (vd.marketing_annual.entry_mode !== "annual") toggleMarketingEntryMode(); }
+                  }, "Annual")
+                )
+              ),
+              e("div", { className: "grid-prompt" }, "Paid ads, content, launch spend — what it costs to pull customers in. If unsure, a reasonable first-year range for a scrappy launch is $200–$1000/mo."),
+              e("div", { className: "grid-row" },
+                e("div", { className: "grid-row-head" }, vd.marketing_annual.entry_mode === "monthly" ? "$/mo" : "$/yr"),
+                ["y1", "y2", "y3"].map(function(y, i) {
+                  return e("input", {
+                    key: y,
+                    className: "grid-input",
+                    type: "number",
+                    min: "0",
+                    step: "any",
+                    placeholder: "Year " + (i + 1),
+                    value: mktDisplay(y),
+                    onChange: function(ev) { setMarketingYearValue(y, ev.target.value); }
+                  });
+                })
+              ),
+              vd.marketing_annual.entry_mode === "monthly"
+                ? e("div", { className: "grid-preview" },
+                    "Annual: " + fmtUSD(vd.marketing_annual.y1) + "  ·  " + fmtUSD(vd.marketing_annual.y2) + "  ·  " + fmtUSD(vd.marketing_annual.y3)
+                  )
+                : null,
+              growthBlock("marketing_annual", vd.marketing_annual),
+              certPills("marketing_annual")
+            ),
+
+            // Variable overhead %
+            e("div", { className: "grid-card" },
+              e("div", { className: "grid-header" },
+                e("div", { className: "grid-label" }, "Variable Overhead %")
+              ),
+              e("div", { className: "grid-prompt" }, "Payment processing, small supplies, variable shipping surcharges — costs that scale with revenue. A common rule-of-thumb is 3–7%. Defaults to 5%."),
+              e("div", { style: { display: "flex", alignItems: "center", gap: 10, maxWidth: 200 } },
+                e("input", {
+                  className: "grid-input",
+                  type: "number",
+                  min: "0",
+                  max: "100",
+                  step: "0.5",
+                  value: (vd.variable_overhead_pct * 100).toString(),
+                  onChange: function(ev) { setVariableOverheadPct(ev.target.value); }
+                }),
+                e("span", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, color: "rgba(232,227,216,0.5)" } }, "%")
+              ),
+              certPills("variable_overhead_pct")
+            ),
+
+            // ── Reality Layer ──
+            renderRealityLayer(),
+
+            S.error ? e("div", { className: "error-msg" }, S.error) : null,
+            e("button", {
+              className: "btn",
+              disabled: !(varFormReady() && allVarCertaintiesSet()),
+              onClick: generateBrief,
+              style: { marginTop: 18 }
+            }, "Run the Model →")
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: REALITY LAYER (shared: Phase 2 + live brief)
+      // ═══════════════════════════════════════
+      function renderRealityLayer() {
+        var r = S.realityLayer;
+        function toggle(key, label) {
+          return e("label", {
+            style: { display: "flex", gap: 10, alignItems: "center", fontSize: 13, color: "rgba(232,227,216,0.7)", cursor: "pointer", marginBottom: 8 }
+          },
+            e("input", {
+              type: "checkbox",
+              checked: !!r[key],
+              onChange: function() { toggleReality(key); },
+              style: { accentColor: "#D4A853" }
+            }),
+            label
+          );
+        }
+        function numInput(key, suffix, step) {
+          return e("div", { style: { display: "flex", alignItems: "center", gap: 8, marginLeft: 28, marginBottom: 12, maxWidth: 220 } },
+            e("input", {
+              className: "grid-input",
+              type: "number",
+              min: "0",
+              step: step || "any",
+              value: typeof r[key] === "number" ? String(r[key]) : "",
+              onChange: function(ev) {
+                var v = parseFloat(ev.target.value) || 0;
+                var partial = {};
+                partial[key] = v;
+                updateRealityLayer(partial);
+              }
+            }),
+            e("span", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "rgba(232,227,216,0.5)" } }, suffix)
+          );
+        }
+        function pctInput(key) {
+          return e("div", { style: { display: "flex", alignItems: "center", gap: 8, marginLeft: 28, marginBottom: 12, maxWidth: 220 } },
+            e("input", {
+              className: "grid-input",
+              type: "number",
+              min: "0",
+              max: "100",
+              step: "0.5",
+              value: (r[key] * 100).toString(),
+              onChange: function(ev) {
+                var v = parseFloat(ev.target.value) || 0;
+                var partial = {};
+                partial[key] = v / 100;
+                updateRealityLayer(partial);
+              }
+            }),
+            e("span", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "rgba(232,227,216,0.5)" } }, "%")
+          );
+        }
+
+        return e("div", { className: "grid-card", style: { borderStyle: "dashed" } },
+          e("div", { className: "grid-header" },
+            e("div", { className: "grid-label" }, "Reality Layer — Optional")
+          ),
+          e("div", { className: "grid-prompt" },
+            "Our P&L deliberately leaves out a few things. Turn any of these on if you want the narrative to reference them — the numbers and rules-of-thumb are suggestions, not prescriptions. Taxes are the only item that actually changes the math (adds a post-tax row)."
+          ),
+
+          // Taxes
+          toggle("tax_enabled", e("span", null,
+            e("strong", null, "Taxes. "),
+            "Early-stage businesses typically see combined federal, state, and self-employment rates of ",
+            e("strong", null, "20–35%"),
+            " on positive profit. Default: 25%."
+          )),
+          r.tax_enabled ? pctInput("tax_rate") : null,
+
+          // Working capital
+          toggle("wc_enabled", e("span", null,
+            e("strong", null, "Working capital. "),
+            "Inventory, receivables, and supplier prepayments tie up cash you can't spend. Common rule: ",
+            e("strong", null, "10–20%"),
+            " of annual revenue sits in working capital. Informational only — doesn't change the P&L."
+          )),
+          r.wc_enabled ? pctInput("wc_pct") : null,
+
+          // Founder market salary
+          toggle("founder_market_enabled", e("span", null,
+            e("strong", null, "Founder market salary. "),
+            "If you're not paying yourself a market rate, the honest gap is what you'd earn elsewhere. Typical entry-level PM/engineer/ops roles in your area: ",
+            e("strong", null, "$55–85K"),
+            "."
+          )),
+          r.founder_market_enabled ? numInput("founder_market_annual", "$/yr", "1000") : null,
+
+          // Competitive price pressure
+          toggle("price_pressure_enabled", e("span", null,
+            e("strong", null, "Competitive price pressure. "),
+            "Once competitors notice, prices erode. A reasonable first-pass assumption is ",
+            e("strong", null, "3–8% annual price decay"),
+            " in Y2 and Y3. Informational only — your sale-price line above already owns the actual numbers."
+          )),
+          r.price_pressure_enabled ? pctInput("price_pressure_pct") : null
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // RENDER: BRIEF
+      // ═══════════════════════════════════════
+      function renderBrief() {
+        if (!S.brief) return renderLoading();
+        // Recompute the model on every render from the current (possibly edited) inputs.
+        // The stored S.brief narration may be stale — we render a badge when it is.
+        var liveModel = computeModel(S.upstream, S.fixedCosts, S.variableData, S.realityLayer);
+        var m = liveModel.rows;
+        var vd = S.variableData;
+        var currentHash = computeInputsHash(S.fixedCosts, S.variableData, S.upstream, S.realityLayer);
+        var isStale = S.briefHash && currentHash !== S.briefHash;
+
+        function row(label, vals, cls) {
+          cls = cls || "";
+          return e("tr", { className: cls },
+            e("td", null, label),
+            e("td", { className: vals[0] < 0 ? "neg" : "" }, fmtUSD(vals[0])),
+            e("td", { className: vals[1] < 0 ? "neg" : "" }, fmtUSD(vals[1])),
+            e("td", { className: vals[2] < 0 ? "neg" : "" }, fmtUSD(vals[2]))
+          );
+        }
+
+        return e("div", null,
+          renderHeader(),
+          e("main", { className: "main" },
+            renderStepBar(),
+
+            // Header
+            e("div", { className: "brief-header" },
+              e("div", { className: "eyebrow" }, S.projectName),
+              e("div", { className: "brief-title" }, "Financial Model Brief"),
+              e("div", { className: "brief-meta" }, "Generated " + todayStr())
+            ),
+
+            // Model table
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "3-Year Model"),
+              e("div", { className: "model-table-wrap" },
+                e("table", { className: "model-table" },
+                  e("thead", null, e("tr", null,
+                    e("th", null, ""),
+                    e("th", null, "Year 1"),
+                    e("th", null, "Year 2"),
+                    e("th", null, "Year 3")
+                  )),
+                  e("tbody", null,
+                    row("Revenue", [m.revenue.y1, m.revenue.y2, m.revenue.y3]),
+                    row("– COGS", [m.cogs.y1, m.cogs.y2, m.cogs.y3]),
+                    row("= Gross profit", [m.gross.y1, m.gross.y2, m.gross.y3], "model-subtotal"),
+                    row("– Fixed costs", [m.fixed.y1, m.fixed.y2, m.fixed.y3]),
+                    row("– Variable overhead", [m.variable.y1, m.variable.y2, m.variable.y3]),
+                    row(S.realityLayer.tax_enabled ? "= Operating (pre-tax)" : "= Operating result", [m.operating.y1, m.operating.y2, m.operating.y3], S.realityLayer.tax_enabled ? "model-subtotal" : "model-total"),
+                    S.realityLayer.tax_enabled ? row("– Taxes (" + (S.realityLayer.tax_rate * 100).toFixed(0) + "%)", [m.taxes.y1, m.taxes.y2, m.taxes.y3]) : null,
+                    S.realityLayer.tax_enabled ? row("= Operating (post-tax)", [m.post_tax.y1, m.post_tax.y2, m.post_tax.y3], "model-total") : null
+                  )
+                )
+              )
+            ),
+
+            // Reading the model
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Reading the Model"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-sub" }, "Breakeven"),
+                e("div", { className: "brief-text" }, S.brief.breakeven),
+                e("div", { className: "brief-sub" }, "Biggest Line Item"),
+                e("div", { className: "brief-text" }, S.brief.biggest_line_item),
+                e("div", { className: "brief-sub" }, "Most Sensitive Assumption"),
+                e("div", { className: "brief-text" }, S.brief.most_sensitive)
+              )
+            ),
+
+            // Upstream cross-check — connects Tool 1/2 decisions to this model
+            S.brief.upstream_check ? e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Cross-check with Tools 1 & 2"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-text" }, S.brief.upstream_check)
+              )
+            ) : null,
+
+            // Reality Layer notes (only if the narrator produced non-empty content)
+            S.brief.reality_notes && S.brief.reality_notes.trim() ? e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Reality Layer"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-text" }, S.brief.reality_notes)
+              )
+            ) : null,
+
+            // Editable assumptions ledger — change numbers here and the table above
+            // re-renders live. The narration doesn't — a stale badge appears and the
+            // student can re-run narration or reset to their original submission.
+            e("div", { className: "brief-section no-print" },
+              e("div", { className: "brief-section-title" }, "Live Assumptions — edit and see the model update"),
+              e("div", { className: "brief-edit-bar" },
+                isStale ? e("div", { className: "stale-badge" }, "Narration out of date") : null,
+                isStale ? e("button", {
+                  className: "btn",
+                  disabled: S.regenerating,
+                  onClick: rerunBrief,
+                  style: { padding: "10px 18px", fontSize: 11 }
+                }, S.regenerating ? "Re-running…" : "Re-run Narration") : null,
+                S.briefSnapshot && isStale ? e("button", {
+                  className: "btn btn-ghost",
+                  onClick: resetToSnapshot,
+                  style: { padding: "10px 18px", fontSize: 11 }
+                }, "Reset to Original") : null
+              ),
+              // Fixed cost lines
+              S.fixedCosts.map(function(fc) {
+                function dispFor(year) {
+                  var ann = fc[year] || 0;
+                  if (!ann) return "";
+                  return fc.entry_mode === "monthly" ? String(Math.round(ann / 12 * 100) / 100) : String(Math.round(ann * 100) / 100);
+                }
+                return e("div", { key: fc.id, className: "grid-card" },
+                  e("div", { className: "grid-header" },
+                    e("div", { className: "grid-label" }, fc.label + (fc.is_implied ? " · opportunity cost" : "")),
+                    e("div", { style: { display: "flex", gap: 10, alignItems: "center" } },
+                      e("div", { className: "entry-toggle" },
+                        e("button", {
+                          className: fc.entry_mode === "monthly" ? "active" : "",
+                          onClick: function() { if (fc.entry_mode !== "monthly") toggleFixedEntryMode(fc.id); }
+                        }, "Mo"),
+                        e("button", {
+                          className: fc.entry_mode === "annual" ? "active" : "",
+                          onClick: function() { if (fc.entry_mode !== "annual") toggleFixedEntryMode(fc.id); }
+                        }, "Yr")
+                      ),
+                      e("div", { className: "certainty-pills" },
+                        [1, 2, 3].map(function(val) {
+                          return e("button", {
+                            key: val,
+                            className: "certainty-pill" + (S.certainty[fc.id] === val ? " selected" : ""),
+                            onClick: function() { setCertainty(fc.id, val); }
+                          }, certLabel(val));
+                        })
+                      )
+                    )
+                  ),
+                  e("div", { className: "grid-row" },
+                    e("div", { className: "grid-row-head" }, fc.entry_mode === "monthly" ? "$/mo" : "$/yr"),
+                    ["y1", "y2", "y3"].map(function(y, i) {
+                      return e("input", {
+                        key: y,
+                        className: "grid-input",
+                        type: "number",
+                        min: "0",
+                        step: "any",
+                        placeholder: "Y" + (i + 1),
+                        value: dispFor(y),
+                        onChange: function(ev) { setFixedYearValue(fc.id, y, ev.target.value); }
+                      });
+                    })
+                  ),
+                  fc.entry_mode === "monthly"
+                    ? e("div", { className: "grid-preview" },
+                        "Annual: " + fmtUSD(fc.y1) + "  ·  " + fmtUSD(fc.y2) + "  ·  " + fmtUSD(fc.y3)
+                      )
+                    : null
+                );
+              }),
+
+              // Volume
+              e("div", { className: "grid-card" },
+                e("div", { className: "grid-header" },
+                  e("div", { className: "grid-label" }, "Unit Volume"),
+                  e("div", { className: "certainty-pills" },
+                    [1, 2, 3].map(function(val) {
+                      return e("button", {
+                        key: val,
+                        className: "certainty-pill" + (S.certainty.volume === val ? " selected" : ""),
+                        onClick: function() { setCertainty("volume", val); }
+                      }, certLabel(val));
+                    })
+                  )
+                ),
+                e("div", { className: "grid-row" },
+                  e("div", { className: "grid-row-head" }, "units"),
+                  ["y1", "y2", "y3"].map(function(y, i) {
+                    return e("input", {
+                      key: y,
+                      className: "grid-input",
+                      type: "number",
+                      min: "0",
+                      step: "1",
+                      placeholder: "Y" + (i + 1),
+                      value: vd.volume[y] || "",
+                      onChange: function(ev) { setVolumeYearValue(y, ev.target.value); }
+                    });
+                  })
+                )
+              ),
+
+              // Sale price
+              e("div", { className: "grid-card" },
+                e("div", { className: "grid-header" },
+                  e("div", { className: "grid-label" }, "Sale Price"),
+                  e("div", { className: "certainty-pills" },
+                    [1, 2, 3].map(function(val) {
+                      return e("button", {
+                        key: val,
+                        className: "certainty-pill" + (S.certainty.sale_price === val ? " selected" : ""),
+                        onClick: function() { setCertainty("sale_price", val); }
+                      }, certLabel(val));
+                    })
+                  )
+                ),
+                e("div", { className: "grid-row" },
+                  e("div", { className: "grid-row-head" }, "$/unit"),
+                  ["y1", "y2", "y3"].map(function(y, i) {
+                    return e("input", {
+                      key: y,
+                      className: "grid-input",
+                      type: "number",
+                      min: "0",
+                      step: "any",
+                      placeholder: "Y" + (i + 1),
+                      value: vd.sale_price[y] || "",
+                      onChange: function(ev) { setPriceYearValue(y, ev.target.value); }
+                    });
+                  })
+                )
+              ),
+
+              // Marketing
+              e("div", { className: "grid-card" },
+                e("div", { className: "grid-header" },
+                  e("div", { className: "grid-label" }, "Marketing"),
+                  e("div", { style: { display: "flex", gap: 10, alignItems: "center" } },
+                    e("div", { className: "entry-toggle" },
+                      e("button", {
+                        className: vd.marketing_annual.entry_mode === "monthly" ? "active" : "",
+                        onClick: function() { if (vd.marketing_annual.entry_mode !== "monthly") toggleMarketingEntryMode(); }
+                      }, "Mo"),
+                      e("button", {
+                        className: vd.marketing_annual.entry_mode === "annual" ? "active" : "",
+                        onClick: function() { if (vd.marketing_annual.entry_mode !== "annual") toggleMarketingEntryMode(); }
+                      }, "Yr")
+                    ),
+                    e("div", { className: "certainty-pills" },
+                      [1, 2, 3].map(function(val) {
+                        return e("button", {
+                          key: val,
+                          className: "certainty-pill" + (S.certainty.marketing_annual === val ? " selected" : ""),
+                          onClick: function() { setCertainty("marketing_annual", val); }
+                        }, certLabel(val));
+                      })
+                    )
+                  )
+                ),
+                e("div", { className: "grid-row" },
+                  e("div", { className: "grid-row-head" }, vd.marketing_annual.entry_mode === "monthly" ? "$/mo" : "$/yr"),
+                  ["y1", "y2", "y3"].map(function(y, i) {
+                    var ann = vd.marketing_annual[y] || 0;
+                    var disp = !ann ? "" : (vd.marketing_annual.entry_mode === "monthly" ? String(Math.round(ann / 12 * 100) / 100) : String(Math.round(ann * 100) / 100));
+                    return e("input", {
+                      key: y,
+                      className: "grid-input",
+                      type: "number",
+                      min: "0",
+                      step: "any",
+                      placeholder: "Y" + (i + 1),
+                      value: disp,
+                      onChange: function(ev) { setMarketingYearValue(y, ev.target.value); }
+                    });
+                  })
+                ),
+                vd.marketing_annual.entry_mode === "monthly"
+                  ? e("div", { className: "grid-preview" },
+                      "Annual: " + fmtUSD(vd.marketing_annual.y1) + "  ·  " + fmtUSD(vd.marketing_annual.y2) + "  ·  " + fmtUSD(vd.marketing_annual.y3)
+                    )
+                  : null
+              ),
+
+              // Variable overhead %
+              e("div", { className: "grid-card" },
+                e("div", { className: "grid-header" },
+                  e("div", { className: "grid-label" }, "Variable Overhead %"),
+                  e("div", { className: "certainty-pills" },
+                    [1, 2, 3].map(function(val) {
+                      return e("button", {
+                        key: val,
+                        className: "certainty-pill" + (S.certainty.variable_overhead_pct === val ? " selected" : ""),
+                        onClick: function() { setCertainty("variable_overhead_pct", val); }
+                      }, certLabel(val));
+                    })
+                  )
+                ),
+                e("div", { style: { display: "flex", alignItems: "center", gap: 10, maxWidth: 200 } },
+                  e("input", {
+                    className: "grid-input",
+                    type: "number",
+                    min: "0",
+                    max: "100",
+                    step: "0.5",
+                    value: (vd.variable_overhead_pct * 100).toString(),
+                    onChange: function(ev) { setVariableOverheadPct(ev.target.value); }
+                  }),
+                  e("span", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, color: "rgba(232,227,216,0.5)" } }, "%")
+                )
+              ),
+
+              // Reality Layer editor (shared component)
+              renderRealityLayer()
+            ),
+
+            // Top three
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Top Three to Pressure-Test"),
+              S.brief.top_three.map(function(t, i) {
+                return e("div", { key: i, className: "pressure-item" },
+                  e("div", { className: "pressure-rank" }, "#" + (i + 1) + " · " + certLabel(t.certainty)),
+                  e("div", { className: "pressure-assumption" }, t.assumption),
+                  e("div", { className: "pressure-why" },
+                    e("strong", null, "Why it matters"), t.why_it_matters
+                  ),
+                  e("div", { className: "pressure-evidence" },
+                    e("strong", null, "Evidence needed"), t.evidence_needed
+                  )
+                );
+              })
+            ),
+
+            // Honest gaps
+            e("div", { className: "brief-section" },
+              e("div", { className: "brief-section-title" }, "Honest Gaps"),
+              e("div", { className: "brief-card" },
+                e("div", { className: "brief-text" }, S.brief.honest_gaps)
+              )
+            ),
+
+            // Actions
+            e("div", { className: "actions no-print" },
+              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
+              e("button", { className: "btn", onClick: downloadDocx }, "Download Word Doc"),
+              e("button", {
+                className: "btn btn-ghost btn-copy" + (S.copied ? " copied" : ""),
+                onClick: copyToClipboard
+              }, S.copied ? "Copied!" : "Copy Text"),
+              e("button", { className: "btn btn-ghost", onClick: reset }, "New Model")
+            )
+          )
+        );
+      }
+
+      // ═══════════════════════════════════════
+      // DISPATCH
+      // ═══════════════════════════════════════
+      if (S.phase === "loading") return renderLoading();
+      if (S.phase === "setup") return renderSetup();
+      if (S.phase === "ue-inline-start") return renderUeInlineStart();
+      if (S.phase === "ue-inline-interview") return renderUeInlineInterview();
+      if (S.phase === "tam-inline-start") return renderTamInlineStart();
+      if (S.phase === "tam-inline-interview") return renderTamInlineInterview();
+      if (S.phase === "upstream-review") return renderUpstreamReview();
+      if (S.phase === "fixed-form") return renderFixedForm();
+      if (S.phase === "var-form") return renderVarForm();
+      if (S.phase === "brief") return renderBrief();
+      return renderSetup();
+    }
+
+    var root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(e(App));
+  </script>
+</body>
+</html>

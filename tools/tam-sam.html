@@ -898,7 +898,7 @@ Return ONLY valid JSON with no markdown, no explanation:
 
     function renderHeader() {
       return e("header", { className: "header" },
-        e("span", { className: "logo-mark" }, "ENDURE"),
+        e("a", { href: "index.html", className: "logo-mark", style: { textDecoration: "none", color: "inherit" }, title: "Back to all tools" }, "ENDURE"),
         e("span", { className: "header-sub" }, "Market Sizing")
       );
     }
