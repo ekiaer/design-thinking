@@ -475,7 +475,7 @@ Return ONLY valid JSON with no markdown, no explanation:
 
     async function callClaude(userMsg, sys) {
       var payload = JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: 1500,
         system: sys,
         messages: [{ role: "user", content: userMsg }],

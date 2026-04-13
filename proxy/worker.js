@@ -41,7 +41,7 @@ export default {
       const body = await request.json();
 
       // Only allow messages endpoint, only allow specific models
-      const allowedModels = ["claude-sonnet-4-20250514", "claude-haiku-4-5-20251001"];
+      const allowedModels = ["claude-sonnet-4-6", "claude-sonnet-4-20250514", "claude-haiku-4-5-20251001"];
       if (!allowedModels.includes(body.model)) {
         return corsResponse(origin, new Response(
           JSON.stringify({ error: "Model not allowed" }),

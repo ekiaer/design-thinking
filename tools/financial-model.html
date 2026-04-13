@@ -1021,7 +1021,7 @@
     async function callClaude(userMsg, sys, maxTokens) {
       maxTokens = maxTokens || 1500;
       var payload = JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-6",
         max_tokens: maxTokens,
         system: sys,
         messages: [{ role: "user", content: userMsg }]
