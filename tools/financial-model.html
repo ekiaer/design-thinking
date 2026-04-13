@@ -1020,24 +1020,34 @@
 
     async function callClaude(userMsg, sys, maxTokens) {
       maxTokens = maxTokens || 1500;
-      var res = await fetch(API_PROXY_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: maxTokens,
-          system: sys,
-          messages: [{ role: "user", content: userMsg }]
-        })
+      var payload = JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: maxTokens,
+        system: sys,
+        messages: [{ role: "user", content: userMsg }]
       });
-      if (!res.ok) {
-        var errBody = await res.text();
-        throw new Error("API error: " + res.status + " " + errBody);
+      var maxRetries = 3;
+      var delay = 2000;
+      for (var attempt = 0; attempt <= maxRetries; attempt++) {
+        var res = await fetch(API_PROXY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        });
+        if (res.status === 529 && attempt < maxRetries) {
+          await new Promise(function(r) { setTimeout(r, delay); });
+          delay *= 2;
+          continue;
+        }
+        if (!res.ok) {
+          var errBody = await res.text();
+          throw new Error("API error: " + res.status + " " + errBody);
+        }
+        var data = await res.json();
+        var text = data.content[0].text;
+        text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+        return text;
       }
-      var data = await res.json();
-      var text = data.content[0].text;
-      text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
-      return text;
     }
 
     // ═══════════════════════════════════════
