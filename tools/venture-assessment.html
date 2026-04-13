@@ -2416,7 +2416,7 @@
                     "Upload .docx"
                   ),
                   S.journal.raw.trim() ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)", alignSelf: "center" } },
-                    "\u2713 Journal loaded" + (S.journalImages.length > 0 ? " \u00b7 " + S.journalImages.length + " image" + (S.journalImages.length !== 1 ? "s" : "") + " found" : "")
+                    "\u2713 Journal loaded" + ((S.journalImages || []).length > 0 ? " \u00b7 " + S.journalImages.length + " image" + (S.journalImages.length !== 1 ? "s" : "") + " found" : "")
                   ) : null
                 ),
                 e("textarea", {
