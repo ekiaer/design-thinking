@@ -722,7 +722,7 @@
 
     var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Financial Model\" header, that is Financial Model tool output. Set financial_model.found to true and extract the full tool output block as content.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Financial Model\" header, that is Financial Model tool output. Set financial_model.found to true and extract the full tool output block as content.\n\nThe journal may contain embedded images marked as [IMAGE N] in the text, with the actual image following. These may be:\n- Handwritten notes or sketches \u2014 transcribe the key content and note it came from a handwritten image\n- Photos of whiteboards, sticky notes, or fieldwork \u2014 describe what you see and extract any readable text\n- Diagrams, prototypes, or screenshots \u2014 describe what they show and which dimension they inform\n- Decorative or irrelevant images \u2014 ignore these\nWhen you extract content from an image, note its source like: \"(from sketch, Image 3)\" so the student knows where it came from.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
     var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n- If a \"FINANCIAL MODEL DATA\" block is included, treat it as first-class viability evidence. Reference its 3-year trajectory, breakeven (or lack of one), most sensitive assumption, and top pressure-tests directly in viability.economics and viability.top_uncertainty. Quote specific numbers where useful. Do NOT recalculate \u2014 trust the numbers in the model. If the model shows the venture loses money for all three years, say so plainly.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
 
@@ -786,6 +786,7 @@
       tamSamResults: null,
       financialModelDetected: false,
       financialModelContent: null,
+      journalImages: [],
       ueInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
       tamInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
       ueCopied: false,
@@ -808,6 +809,8 @@
     // ═══════════════════════════════════════
     async function callClaude(userMsg, sys, maxTokens) {
       maxTokens = maxTokens || 1500;
+      // userMsg can be a string or an array of content blocks (for multimodal)
+      var content = typeof userMsg === "string" ? userMsg : userMsg;
       var res = await fetch(API_PROXY_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -815,7 +818,7 @@
           model: "claude-sonnet-4-20250514",
           max_tokens: maxTokens,
           system: sys,
-          messages: [{ role: "user", content: userMsg }]
+          messages: [{ role: "user", content: content }]
         })
       });
       if (!res.ok) {
@@ -854,7 +857,9 @@
       function update(partial) {
         setS(function(prev) {
           var next = Object.assign({}, prev, partial);
-          sessionStorage.setItem("va-state", JSON.stringify(next));
+          // Strip large binary data before persisting to sessionStorage
+          var toSave = Object.assign({}, next, { journalImages: [] });
+          sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
       }
@@ -864,7 +869,8 @@
           var dims = Object.assign({}, prev.dimensions);
           dims[dim] = Object.assign({}, dims[dim], partial);
           var next = Object.assign({}, prev, { dimensions: dims });
-          sessionStorage.setItem("va-state", JSON.stringify(next));
+          var toSave = Object.assign({}, next, { journalImages: [] });
+          sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
       }
@@ -883,7 +889,8 @@
           var h = prev.history.slice();
           var last = h.pop();
           var next = Object.assign({}, prev, { history: h, phase: last.phase, subPhase: last.subPhase, error: "" });
-          sessionStorage.setItem("va-state", JSON.stringify(next));
+          var toSave = Object.assign({}, next, { journalImages: [] });
+          sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
       }
@@ -903,6 +910,8 @@
       }
 
       // ── Journal upload ──
+      var MAX_JOURNAL_IMAGES = 20;
+
       function handleJournalUpload(ev) {
         var file = ev.target.files && ev.target.files[0];
         if (!file) return;
@@ -910,11 +919,55 @@
         if (name.endsWith(".docx")) {
           update({ loadingMsg: "Reading your document\u2026" });
           var reader = new FileReader();
-          reader.onload = function(e) {
-            var arrayBuffer = e.target.result;
-            mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+          reader.onload = function(fileEv) {
+            var arrayBuffer = fileEv.target.result;
+            var collectedImages = [];
+            var imageIndex = 0;
+
+            // Custom image converter: collect base64 and insert [IMAGE N] markers
+            var options = {
+              convertImage: mammoth.images.imgElement(function(image) {
+                imageIndex++;
+                var idx = imageIndex;
+                return image.read("base64").then(function(base64Data) {
+                  var ct = image.contentType || "image/png";
+                  // Only keep supported image types, skip wmf/emf
+                  if (ct === "image/png" || ct === "image/jpeg" || ct === "image/gif" || ct === "image/webp") {
+                    collectedImages.push({ index: idx, media_type: ct, data: base64Data });
+                  }
+                  return { src: "[IMAGE_PLACEHOLDER_" + idx + "]" };
+                });
+              })
+            };
+
+            mammoth.convertToHtml({ arrayBuffer: arrayBuffer }, options)
               .then(function(result) {
-                update({ journal: Object.assign({}, S.journal, { raw: result.value }), error: "" });
+                // Strip HTML tags, preserving image markers
+                var text = result.value
+                  .replace(/<img[^>]*src="\[IMAGE_PLACEHOLDER_(\d+)\]"[^>]*>/g, "\n[IMAGE $1]\n")
+                  .replace(/<br\s*\/?>/gi, "\n")
+                  .replace(/<\/p>/gi, "\n\n")
+                  .replace(/<[^>]+>/g, "")
+                  .replace(/&amp;/g, "&")
+                  .replace(/&lt;/g, "<")
+                  .replace(/&gt;/g, ">")
+                  .replace(/&quot;/g, '"')
+                  .replace(/&#39;/g, "'")
+                  .replace(/&nbsp;/g, " ")
+                  .replace(/\n{3,}/g, "\n\n")
+                  .trim();
+
+                // Cap images to avoid API limits
+                var images = collectedImages.slice(0, MAX_JOURNAL_IMAGES);
+                var imgNote = collectedImages.length > MAX_JOURNAL_IMAGES
+                  ? " (" + (collectedImages.length - MAX_JOURNAL_IMAGES) + " additional images were not included due to size limits)"
+                  : "";
+
+                update({
+                  journal: Object.assign({}, S.journal, { raw: text + imgNote }),
+                  journalImages: images,
+                  error: ""
+                });
               })
               .catch(function(err) {
                 update({ error: "Couldn\u2019t read that file. Try exporting from Google Docs as .docx and uploading again. (" + err.message + ")" });
@@ -924,7 +977,7 @@
         } else if (name.endsWith(".txt")) {
           var reader = new FileReader();
           reader.onload = function(e) {
-            update({ journal: Object.assign({}, S.journal, { raw: e.target.result }), error: "" });
+            update({ journal: Object.assign({}, S.journal, { raw: e.target.result }), journalImages: [], error: "" });
           };
           reader.readAsText(file);
         } else {
@@ -939,9 +992,30 @@
         var journalText = S.journal.raw.trim();
         if (journalText) {
           pushHistory();
-          update({ phase: "loading", loadingMsg: "Reading your journal\u2026" });
+          var hasImages = S.journalImages && S.journalImages.length > 0;
+          update({ phase: "loading", loadingMsg: hasImages ? "Reading your journal and images\u2026" : "Reading your journal\u2026" });
           try {
-            var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nFull Journal:\n" + journalText;
+            var contextText = "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nFull Journal:\n" + journalText;
+
+            // Build multimodal message if images are present
+            var context;
+            if (hasImages) {
+              var blocks = [{ type: "text", text: contextText }];
+              S.journalImages.forEach(function(img) {
+                blocks.push({
+                  type: "text",
+                  text: "\n[IMAGE " + img.index + " follows:]"
+                });
+                blocks.push({
+                  type: "image",
+                  source: { type: "base64", media_type: img.media_type, data: img.data }
+                });
+              });
+              context = blocks;
+            } else {
+              context = contextText;
+            }
+
             var raw = await callClaude(context, SYSTEM_JOURNAL_PARSE, 2000);
             var parsed = JSON.parse(raw.trim());
             // Pre-populate paste-in fields
@@ -2330,7 +2404,9 @@
                     }),
                     "Upload .docx"
                   ),
-                  S.journal.raw.trim() ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)", alignSelf: "center" } }, "\u2713 Journal loaded") : null
+                  S.journal.raw.trim() ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)", alignSelf: "center" } },
+                    "\u2713 Journal loaded" + (S.journalImages.length > 0 ? " \u00b7 " + S.journalImages.length + " image" + (S.journalImages.length !== 1 ? "s" : "") + " found" : "")
+                  ) : null
                 ),
                 e("textarea", {
                   className: "form-input",
