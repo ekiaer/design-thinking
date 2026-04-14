@@ -1106,13 +1106,26 @@
               parsePrompt += "\n\nIMPORTANT: This journal has many images. Be very concise in your material fields — summarize each image in ONE sentence max. Focus on extracting key facts, numbers, and quotes rather than describing images at length. Keep total response under 6000 characters.";
             }
             var raw = await callClaude(context, parsePrompt, 8000);
-            var parsed = JSON.parse(raw.trim());
+            var parsed;
+            try {
+              parsed = JSON.parse(raw.trim());
+            } catch (parseErr) {
+              console.warn("[beginAssessment] JSON parse failed, attempting partial extraction:", parseErr.message);
+              // Try to extract whatever fields we can from the truncated JSON
+              parsed = { desirability: {}, feasibility: {}, viability: {} };
+              var matDes = raw.match(/"desirability"\s*:\s*\{[^}]*"material"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+              var matFea = raw.match(/"feasibility"\s*:\s*\{[^}]*"material"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+              var matVia = raw.match(/"viability"\s*:\s*\{[^}]*"material"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+              if (matDes) parsed.desirability.material = matDes[1].replace(/\\n/g, "\n").replace(/\\"/g, '"');
+              if (matFea) parsed.feasibility.material = matFea[1].replace(/\\n/g, "\n").replace(/\\"/g, '"');
+              if (matVia) parsed.viability.material = matVia[1].replace(/\\n/g, "\n").replace(/\\"/g, '"');
+            }
             // Pre-populate paste-in fields
-            updateDim("desirability", { pasteIn: parsed.desirability.material || "" });
-            updateDim("feasibility", { pasteIn: parsed.feasibility.material || "" });
-            updateDim("viability", { pasteIn: parsed.viability.material || "" });
+            updateDim("desirability", { pasteIn: (parsed.desirability && parsed.desirability.material) || "" });
+            updateDim("feasibility", { pasteIn: (parsed.feasibility && parsed.feasibility.material) || "" });
+            updateDim("viability", { pasteIn: (parsed.viability && parsed.viability.material) || "" });
             // Store tool detection results — extract content directly from raw journal text
-            var td = parsed.tools_detected || { unit_economics: { found: false }, tam_sam: { found: false }, financial_model: { found: false } };
+            var td = (parsed && parsed.tools_detected) || { unit_economics: { found: false }, tam_sam: { found: false }, financial_model: { found: false } };
             var ueFound = !!(td.unit_economics && td.unit_economics.found);
             var tamFound = !!(td.tam_sam && td.tam_sam.found);
             var fmFound = !!(td.financial_model && td.financial_model.found);
