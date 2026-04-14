@@ -1,14 +1,8 @@
 /**
- * Cloudflare Worker — Anthropic API Proxy
+ * Cloudflare Worker — Anthropic API Proxy + Signup Slots
  *
  * Holds the API key server-side so it's never exposed in client code.
- *
- * Setup:
- *   1. npx wrangler init endure-proxy
- *   2. Copy this file as src/index.js (or reference in wrangler.toml)
- *   3. wrangler secret put ANTHROPIC_API_KEY   (paste your key when prompted)
- *   4. Update ALLOWED_ORIGINS below with your GitHub Pages domain
- *   5. npx wrangler deploy
+ * Also manages presentation signup slots via KV storage.
  */
 
 const ALLOWED_ORIGINS = [
@@ -22,12 +16,64 @@ const ALLOWED_ORIGINS = [
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
+    const url = new URL(request.url);
 
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return corsResponse(origin, new Response(null, { status: 204 }));
     }
 
+    // ── Signup endpoints ──
+    if (url.pathname === "/signups") {
+      if (!ALLOWED_ORIGINS.includes(origin)) {
+        return corsResponse(origin, new Response("Forbidden", { status: 403 }));
+      }
+
+      if (request.method === "GET") {
+        const data = await env.SIGNUPS.get("slots", "json") || {};
+        return corsResponse(origin, new Response(JSON.stringify(data), {
+          headers: { "Content-Type": "application/json" }
+        }));
+      }
+
+      if (request.method === "POST") {
+        const body = await request.json();
+        const { slotKey, teamName, action } = body;
+        if (!slotKey) {
+          return corsResponse(origin, new Response(
+            JSON.stringify({ error: "Missing slotKey" }),
+            { status: 400, headers: { "Content-Type": "application/json" } }
+          ));
+        }
+        const data = await env.SIGNUPS.get("slots", "json") || {};
+        if (action === "cancel") {
+          delete data[slotKey];
+        } else {
+          if (!teamName || !teamName.trim()) {
+            return corsResponse(origin, new Response(
+              JSON.stringify({ error: "Missing teamName" }),
+              { status: 400, headers: { "Content-Type": "application/json" } }
+            ));
+          }
+          // Prevent double-booking
+          if (data[slotKey]) {
+            return corsResponse(origin, new Response(
+              JSON.stringify({ error: "Slot already taken" }),
+              { status: 409, headers: { "Content-Type": "application/json" } }
+            ));
+          }
+          data[slotKey] = teamName.trim();
+        }
+        await env.SIGNUPS.put("slots", JSON.stringify(data));
+        return corsResponse(origin, new Response(JSON.stringify(data), {
+          headers: { "Content-Type": "application/json" }
+        }));
+      }
+
+      return corsResponse(origin, new Response("Method not allowed", { status: 405 }));
+    }
+
+    // ── Anthropic API proxy ──
     if (request.method !== "POST") {
       return corsResponse(origin, new Response("Method not allowed", { status: 405 }));
     }
@@ -83,7 +129,7 @@ function corsResponse(origin, response) {
   if (ALLOWED_ORIGINS.includes(origin)) {
     headers.set("Access-Control-Allow-Origin", origin);
   }
-  headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   headers.set("Access-Control-Allow-Headers", "Content-Type");
   headers.set("Access-Control-Max-Age", "86400");
   return new Response(response.body, {

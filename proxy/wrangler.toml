@@ -1,3 +1,7 @@
 name = "endure-proxy"
 main = "worker.js"
 compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SIGNUPS"
+id = "81ce60ec502247bfae97f4465b2d8478"

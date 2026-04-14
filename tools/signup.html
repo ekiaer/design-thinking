@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENDURE Presentation Signup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #0D1117;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      padding: 40px 20px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .header {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 8px;
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px; font-weight: 600; color: #D4A853;
+      letter-spacing: -1px; text-decoration: none;
+    }
+    .header-sub {
+      font-size: 12px; color: rgba(232,227,216,0.35);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px; font-weight: 500; color: #E8E3D8;
+      margin: 24px 0 6px;
+    }
+    .intro {
+      font-size: 13px; color: rgba(232,227,216,0.5);
+      margin-bottom: 32px; line-height: 1.5;
+    }
+    .day-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .day-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px; font-weight: 600; color: #D4A853;
+      margin-bottom: 16px;
+    }
+    .slot {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(232,227,216,0.05);
+    }
+    .slot:last-child { border-bottom: none; }
+    .slot-time {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; color: rgba(232,227,216,0.5);
+      min-width: 120px; flex-shrink: 0;
+    }
+    .slot-team {
+      font-size: 13px; color: #5CB88A; font-weight: 500;
+      flex: 1;
+    }
+    .slot-open {
+      flex: 1; display: flex; align-items: center; gap: 8px;
+    }
+    .slot-input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(232,227,216,0.12);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 13px;
+      color: #E8E3D8;
+      font-family: 'Inter', sans-serif;
+      width: 200px;
+      outline: none;
+    }
+    .slot-input:focus { border-color: rgba(212,168,83,0.4); }
+    .slot-input::placeholder { color: rgba(232,227,216,0.25); }
+    .btn {
+      background: #D4A853;
+      color: #0D1117;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-cancel {
+      background: transparent;
+      color: rgba(232,227,216,0.4);
+      border: 1px solid rgba(232,227,216,0.12);
+      font-size: 11px; padding: 4px 10px;
+    }
+    .btn-cancel:hover { color: #E07558; border-color: rgba(224,117,88,0.3); }
+    .slot-taken-label {
+      font-size: 11px; color: rgba(232,227,216,0.25);
+      font-style: italic;
+    }
+    .status {
+      font-size: 12px; margin-top: 8px; min-height: 18px;
+    }
+    .status-error { color: #E07558; }
+    .status-ok { color: #5CB88A; }
+    .loading { color: rgba(232,227,216,0.3); font-size: 13px; }
+    .refresh-note {
+      font-size: 11px; color: rgba(232,227,216,0.25);
+      margin-top: 24px; text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <a href="index.html" class="logo">ENDURE</a>
+      <span class="header-sub">Presentation Signup</span>
+    </div>
+    <h1>Final Presentations</h1>
+    <p class="intro">Sign up for a 15-minute presentation slot. Enter your team or project name and claim your time. One team per slot.</p>
+    <div id="app" class="loading">Loading slots...</div>
+    <div class="refresh-note">Page auto-refreshes every 30 seconds</div>
+  </div>
+
+  <script>
+    var API = "https://endure-proxy.ekiaer.workers.dev/signups";
+
+    var DAYS = [
+      { key: "2026-04-21", label: "Tuesday, April 21" },
+      { key: "2026-04-23", label: "Thursday, April 23" },
+      { key: "2026-04-28", label: "Tuesday, April 28" }
+    ];
+
+    var TIMES = [
+      { start: "1:50", end: "2:05" },
+      { start: "2:05", end: "2:20" },
+      { start: "2:20", end: "2:35" },
+      { start: "2:35", end: "2:50" },
+      { start: "2:50", end: "3:05" },
+      { start: "3:05", end: "3:20" }
+    ];
+
+    var slots = {};
+    var inputValues = {};
+    var statusMsg = "";
+    var statusType = "";
+
+    function slotKey(dayKey, timeIdx) {
+      return dayKey + "_" + timeIdx;
+    }
+
+    function render() {
+      var app = document.getElementById("app");
+      var html = "";
+
+      DAYS.forEach(function(day) {
+        html += '<div class="day-card">';
+        html += '<div class="day-title">' + day.label + '</div>';
+
+        TIMES.forEach(function(time, ti) {
+          var key = slotKey(day.key, ti);
+          var team = slots[key] || "";
+          html += '<div class="slot">';
+          html += '<span class="slot-time">' + time.start + ' \u2013 ' + time.end + ' PM</span>';
+
+          if (team) {
+            html += '<span class="slot-team">' + escHtml(team) + '</span>';
+            html += '<button class="btn btn-cancel" onclick="cancelSlot(\'' + key + '\')">cancel</button>';
+          } else {
+            html += '<span class="slot-open">';
+            html += '<input class="slot-input" id="inp-' + key + '" placeholder="Team name" value="' + escAttr(inputValues[key] || "") + '" onkeydown="if(event.key===\'Enter\')claimSlot(\'' + key + '\')" oninput="inputValues[\'' + key + '\']=this.value" />';
+            html += '<button class="btn" onclick="claimSlot(\'' + key + '\')">Sign up</button>';
+            html += '</span>';
+          }
+
+          html += '</div>';
+        });
+
+        html += '</div>';
+      });
+
+      if (statusMsg) {
+        html += '<div class="status status-' + statusType + '">' + statusMsg + '</div>';
+      }
+
+      app.innerHTML = html;
+    }
+
+    function escHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function escAttr(s) {
+      return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+    }
+
+    async function loadSlots() {
+      try {
+        var res = await fetch(API);
+        if (res.ok) {
+          slots = await res.json();
+        }
+      } catch (err) {
+        console.error("Failed to load slots:", err);
+      }
+      render();
+    }
+
+    async function claimSlot(key) {
+      var name = (inputValues[key] || "").trim();
+      if (!name) {
+        statusMsg = "Please enter a team name.";
+        statusType = "error";
+        render();
+        return;
+      }
+      try {
+        var res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slotKey: key, teamName: name })
+        });
+        var data = await res.json();
+        if (!res.ok) {
+          statusMsg = data.error || "Could not claim slot.";
+          statusType = "error";
+        } else {
+          slots = data;
+          inputValues[key] = "";
+          statusMsg = name + " signed up!";
+          statusType = "ok";
+        }
+      } catch (err) {
+        statusMsg = "Network error. Try again.";
+        statusType = "error";
+      }
+      render();
+      clearTimeout(window._statusTimer);
+      window._statusTimer = setTimeout(function() { statusMsg = ""; render(); }, 4000);
+    }
+
+    async function cancelSlot(key) {
+      var team = slots[key];
+      if (!confirm("Cancel " + team + "'s slot?")) return;
+      try {
+        var res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slotKey: key, action: "cancel" })
+        });
+        if (res.ok) {
+          slots = await res.json();
+          statusMsg = "Slot cancelled.";
+          statusType = "ok";
+        }
+      } catch (err) {
+        statusMsg = "Network error. Try again.";
+        statusType = "error";
+      }
+      render();
+      clearTimeout(window._statusTimer);
+      window._statusTimer = setTimeout(function() { statusMsg = ""; render(); }, 4000);
+    }
+
+    // Initial load
+    loadSlots();
+    // Auto-refresh every 30s
+    setInterval(loadSlots, 30000);
+  </script>
+</body>
+</html>
