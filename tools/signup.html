@@ -126,7 +126,7 @@
       <span class="header-sub">Presentation Signup</span>
     </div>
     <h1>Schedule Check-in</h1>
-    <p class="intro">Sign up for a 15-minute check-in slot. Enter your team or project name and claim your time. One team per slot.</p>
+    <p class="intro">Sign up for a 15-minute check-in slot. Enter your name and claim your time. One student per slot.</p>
     <div id="app" class="loading">Loading slots...</div>
     <div class="refresh-note">Page auto-refreshes every 30 seconds</div>
   </div>
@@ -177,7 +177,7 @@
             html += '<button class="btn btn-cancel" onclick="cancelSlot(\'' + key + '\')">cancel</button>';
           } else {
             html += '<span class="slot-open">';
-            html += '<input class="slot-input" id="inp-' + key + '" placeholder="Team name" value="' + escAttr(inputValues[key] || "") + '" onkeydown="if(event.key===\'Enter\')claimSlot(\'' + key + '\')" oninput="inputValues[\'' + key + '\']=this.value" />';
+            html += '<input class="slot-input" id="inp-' + key + '" placeholder="Your name" value="' + escAttr(inputValues[key] || "") + '" onkeydown="if(event.key===\'Enter\')claimSlot(\'' + key + '\')" oninput="inputValues[\'' + key + '\']=this.value" />';
             html += '<button class="btn" onclick="claimSlot(\'' + key + '\')">Sign up</button>';
             html += '</span>';
           }
@@ -217,7 +217,7 @@
     async function claimSlot(key) {
       var name = (inputValues[key] || "").trim();
       if (!name) {
-        statusMsg = "Please enter a team name.";
+        statusMsg = "Please enter your name.";
         statusType = "error";
         render();
         return;
