@@ -50,8 +50,8 @@ export default {
       }
 
       // Cap max_tokens to prevent abuse
-      if (body.max_tokens > 4000) {
-        body.max_tokens = 4000;
+      if (body.max_tokens > 16000) {
+        body.max_tokens = 16000;
       }
 
       const apiRes = await fetch("https://api.anthropic.com/v1/messages", {

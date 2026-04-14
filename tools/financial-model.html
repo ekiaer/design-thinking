@@ -1019,7 +1019,7 @@
     }
 
     async function callClaude(userMsg, sys, maxTokens) {
-      maxTokens = maxTokens || 1500;
+      maxTokens = maxTokens || 4000;
       var payload = JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: maxTokens,
@@ -1046,6 +1046,14 @@
         var data = await res.json();
         var text = data.content[0].text;
         text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+        var jsonStart = text.indexOf("{");
+        var jsonStartArr = text.indexOf("[");
+        if (jsonStart === -1 || (jsonStartArr !== -1 && jsonStartArr < jsonStart)) jsonStart = jsonStartArr;
+        if (jsonStart > 0) text = text.substring(jsonStart);
+        var lastBrace = text.lastIndexOf("}");
+        var lastBracket = text.lastIndexOf("]");
+        var jsonEnd = Math.max(lastBrace, lastBracket);
+        if (jsonEnd !== -1 && jsonEnd < text.length - 1) text = text.substring(0, jsonEnd + 1);
         return text;
       }
     }
@@ -1717,7 +1725,7 @@
           var sensitivity = computeSensitivity(S.upstream, S.fixedCosts, S.variableData);
           var briefContext = buildBriefContext(model, sensitivity);
 
-          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 1800);
+          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 4000);
           var parsed = JSON.parse(raw.trim());
           var hash = computeInputsHash(S.fixedCosts, S.variableData, S.upstream, S.realityLayer);
           // Snapshot only on first brief generation so "Reset" goes back to the student's
@@ -1753,7 +1761,7 @@
           var model = computeModel(S.upstream, S.fixedCosts, S.variableData, S.realityLayer);
           var sensitivity = computeSensitivity(S.upstream, S.fixedCosts, S.variableData);
           var briefContext = buildBriefContext(model, sensitivity);
-          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 1800);
+          var raw = await callClaude(briefContext, SYSTEM_FIN_BRIEF, 4000);
           var parsed = JSON.parse(raw.trim());
           var hash = computeInputsHash(S.fixedCosts, S.variableData, S.upstream, S.realityLayer);
           setS(Object.assign({}, S, {

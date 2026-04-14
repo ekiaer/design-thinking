@@ -722,7 +722,7 @@
 
     var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, that is Unit Economics tool output. Set unit_economics.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, that is Market Sizing tool output. Set tam_sam.found to true and extract the full tool output block as content.\n- If you find a section starting with \"ENDURE Financial Model\" header, that is Financial Model tool output. Set financial_model.found to true and extract the full tool output block as content.\n\nThe journal may contain embedded images marked as [IMAGE N] in the text, with the actual image following. These may be:\n- Handwritten notes or sketches \u2014 transcribe the key content and note it came from a handwritten image\n- Photos of whiteboards, sticky notes, or fieldwork \u2014 describe what you see and extract any readable text\n- Diagrams, prototypes, or screenshots \u2014 describe what they show and which dimension they inform\n- Decorative or irrelevant images \u2014 ignore these\nWhen you extract content from an image, note its source like: \"(from sketch, Image 3)\" so the student knows where it came from.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, set unit_economics.found to true. Set content to null \u2014 the app extracts tool text separately.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, set tam_sam.found to true. Set content to null.\n- If you find a section starting with \"ENDURE Financial Model\" header, set financial_model.found to true. Set content to null.\nDo NOT copy tool output text into the content field. Just set found to true/false. Reference key numbers from tools in your dimension material, but keep it concise \u2014 cite specific figures, don't reproduce entire tool outputs.\n\nThe journal may contain embedded images marked as [IMAGE N] in the text, with the actual image following. These may be:\n- Handwritten notes or sketches \u2014 transcribe the key content and note it came from a handwritten image\n- Photos of whiteboards, sticky notes, or fieldwork \u2014 describe what you see and extract any readable text\n- Diagrams, prototypes, or screenshots \u2014 describe what they show and which dimension they inform\n- Decorative or irrelevant images \u2014 ignore these\nWhen you extract content from an image, note its source like: \"(from sketch, Image 3)\" so the student knows where it came from.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
     var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n- If a \"FINANCIAL MODEL DATA\" block is included, treat it as first-class viability evidence. Reference its 3-year trajectory, breakeven (or lack of one), most sensitive assumption, and top pressure-tests directly in viability.economics and viability.top_uncertainty. Quote specific numbers where useful. Do NOT recalculate \u2014 trust the numbers in the model. If the model shows the venture loses money for all three years, say so plainly.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
 
@@ -786,6 +786,7 @@
       tamSamResults: null,
       financialModelDetected: false,
       financialModelContent: null,
+      conceptImage: null,
       journalImages: [],
       ueInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
       tamInline: { questions: [], answers: [], currentAnswer: "", qIndex: 0 },
@@ -808,7 +809,7 @@
     // API HELPER
     // ═══════════════════════════════════════
     async function callClaude(userMsg, sys, maxTokens) {
-      maxTokens = maxTokens || 1500;
+      maxTokens = maxTokens || 4000;
       // userMsg can be a string or an array of content blocks (for multimodal)
       var content = typeof userMsg === "string" ? userMsg : userMsg;
       var payload = JSON.stringify({
@@ -836,8 +837,40 @@
           throw new Error("API error: " + res.status + " " + errBody);
         }
         var data = await res.json();
+        if (data.stop_reason === "max_tokens") {
+          console.warn("[callClaude] Response truncated (max_tokens). Length:", data.content[0].text.length);
+        }
+        console.log("[callClaude] stop_reason:", data.stop_reason, "length:", data.content[0].text.length);
         var text = data.content[0].text;
         text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+        // Extract JSON object/array if Claude added preamble or trailing text
+        var jsonStart = text.indexOf("{");
+        var jsonStartArr = text.indexOf("[");
+        if (jsonStart === -1 || (jsonStartArr !== -1 && jsonStartArr < jsonStart)) jsonStart = jsonStartArr;
+        if (jsonStart > 0) text = text.substring(jsonStart);
+        var lastBrace = text.lastIndexOf("}");
+        var lastBracket = text.lastIndexOf("]");
+        var jsonEnd = Math.max(lastBrace, lastBracket);
+        if (jsonEnd !== -1 && jsonEnd < text.length - 1) text = text.substring(0, jsonEnd + 1);
+        // If truncated, attempt to repair the JSON by closing open structures
+        if (data.stop_reason === "max_tokens") {
+          try { JSON.parse(text); } catch (e) {
+            console.warn("[callClaude] Attempting JSON repair on truncated response");
+            // Close any open string
+            var qCount = (text.match(/(?:^|[^\\])"/g) || []).length;
+            if (qCount % 2 !== 0) text += '"';
+            // Close open braces/brackets
+            var opens = 0, closes = 0, oB = 0, cB = 0;
+            for (var ci = 0; ci < text.length; ci++) {
+              if (text[ci] === "{") opens++;
+              else if (text[ci] === "}") closes++;
+              else if (text[ci] === "[") oB++;
+              else if (text[ci] === "]") cB++;
+            }
+            for (var ri = 0; ri < oB - cB; ri++) text += "]";
+            for (var ri2 = 0; ri2 < opens - closes; ri2++) text += "}";
+          }
+        }
         return text;
       }
     }
@@ -851,6 +884,7 @@
         if (saved) {
           try {
             var parsed = JSON.parse(saved);
+            parsed.error = "";
             if (parsed.phase !== "setup") {
               parsed.showResume = true;
               parsed._savedPhase = parsed.phase;
@@ -870,6 +904,10 @@
           var next = Object.assign({}, prev, partial);
           // Strip large binary data before persisting to sessionStorage
           var toSave = Object.assign({}, next, { journalImages: [] });
+          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
+            toSave = Object.assign({}, toSave, { conceptImage: null });
+          }
           sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
@@ -881,6 +919,10 @@
           dims[dim] = Object.assign({}, dims[dim], partial);
           var next = Object.assign({}, prev, { dimensions: dims });
           var toSave = Object.assign({}, next, { journalImages: [] });
+          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
+            toSave = Object.assign({}, toSave, { conceptImage: null });
+          }
           sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
@@ -901,6 +943,10 @@
           var last = h.pop();
           var next = Object.assign({}, prev, { history: h, phase: last.phase, subPhase: last.subPhase, error: "" });
           var toSave = Object.assign({}, next, { journalImages: [] });
+          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
+            toSave = Object.assign({}, toSave, { conceptImage: null });
+          }
           sessionStorage.setItem("va-state", JSON.stringify(toSave));
           return next;
         });
@@ -998,6 +1044,30 @@
         ev.target.value = "";
       }
 
+      function handleConceptImageUpload(ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var validTypes = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+        if (!validTypes.includes(file.type)) {
+          update({ error: "Please upload a PNG, JPG, or WebP image." });
+          ev.target.value = "";
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          update({ error: "Image is too large. Please use an image under 5 MB." });
+          ev.target.value = "";
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(fileEv) {
+          var dataUrl = fileEv.target.result;
+          var base64 = dataUrl.split(",")[1];
+          update({ conceptImage: { data: base64, media_type: file.type, name: file.name }, error: "" });
+        };
+        reader.readAsDataURL(file);
+        ev.target.value = "";
+      }
+
       // ── Journal parsing ──
       async function beginAssessment() {
         var journalText = S.journal.raw.trim();
@@ -1008,11 +1078,15 @@
           try {
             var contextText = "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nFull Journal:\n" + journalText;
 
-            // Build multimodal message if images are present
+            // Build multimodal message if images are present (cap at 10 to control input size)
             var context;
             if (hasImages) {
+              var imagesToSend = S.journalImages.slice(0, 10);
               var blocks = [{ type: "text", text: contextText }];
-              S.journalImages.forEach(function(img) {
+              if (S.journalImages.length > 10) {
+                blocks.push({ type: "text", text: "\n(Note: " + S.journalImages.length + " images found; showing first 10.)" });
+              }
+              imagesToSend.forEach(function(img) {
                 blocks.push({
                   type: "text",
                   text: "\n[IMAGE " + img.index + " follows:]"
@@ -1027,22 +1101,52 @@
               context = contextText;
             }
 
-            var raw = await callClaude(context, SYSTEM_JOURNAL_PARSE, 2000);
+            var parsePrompt = SYSTEM_JOURNAL_PARSE;
+            if (hasImages) {
+              parsePrompt += "\n\nIMPORTANT: This journal has many images. Be very concise in your material fields — summarize each image in ONE sentence max. Focus on extracting key facts, numbers, and quotes rather than describing images at length. Keep total response under 6000 characters.";
+            }
+            var raw = await callClaude(context, parsePrompt, 8000);
             var parsed = JSON.parse(raw.trim());
             // Pre-populate paste-in fields
             updateDim("desirability", { pasteIn: parsed.desirability.material || "" });
             updateDim("feasibility", { pasteIn: parsed.feasibility.material || "" });
             updateDim("viability", { pasteIn: parsed.viability.material || "" });
-            // Store tool detection results
+            // Store tool detection results — extract content directly from raw journal text
             var td = parsed.tools_detected || { unit_economics: { found: false }, tam_sam: { found: false }, financial_model: { found: false } };
+            var ueFound = !!(td.unit_economics && td.unit_economics.found);
+            var tamFound = !!(td.tam_sam && td.tam_sam.found);
+            var fmFound = !!(td.financial_model && td.financial_model.found);
+            // Extract tool content from raw text (more reliable than asking the model to copy it)
+            var ueContent = null, tamContent = null, fmContent = null;
+            var ueIdx = journalText.indexOf("ENDURE Unit Economics Analysis");
+            if (ueIdx !== -1) { ueFound = true; ueContent = journalText.substring(ueIdx); }
+            var tamIdx = journalText.indexOf("ENDURE Market Sizing Analysis");
+            if (tamIdx !== -1) { tamFound = true; tamContent = journalText.substring(tamIdx); }
+            var fmIdx = journalText.indexOf("ENDURE Financial Model");
+            if (fmIdx !== -1) { fmFound = true; fmContent = journalText.substring(fmIdx); }
+            // Trim extracted content: stop at the next tool header or end of text
+            function trimToolContent(content, startHeader) {
+              if (!content) return null;
+              var headers = ["ENDURE Unit Economics Analysis", "ENDURE Market Sizing Analysis", "ENDURE Financial Model"];
+              var cutoff = content.length;
+              headers.forEach(function(h) {
+                if (h === startHeader) return;
+                var idx = content.indexOf(h);
+                if (idx > 0 && idx < cutoff) cutoff = idx;
+              });
+              return content.substring(0, cutoff).trim();
+            }
+            ueContent = trimToolContent(ueContent, "ENDURE Unit Economics Analysis");
+            tamContent = trimToolContent(tamContent, "ENDURE Market Sizing Analysis");
+            fmContent = trimToolContent(fmContent, "ENDURE Financial Model");
             update({
               journal: { raw: journalText, parsed: parsed, provided: true },
-              unitEconomicsDetected: !!(td.unit_economics && td.unit_economics.found),
-              unitEconomicsContent: (td.unit_economics && td.unit_economics.content) || null,
-              tamSamDetected: !!(td.tam_sam && td.tam_sam.found),
-              tamSamContent: (td.tam_sam && td.tam_sam.content) || null,
-              financialModelDetected: !!(td.financial_model && td.financial_model.found),
-              financialModelContent: (td.financial_model && td.financial_model.content) || null,
+              unitEconomicsDetected: ueFound,
+              unitEconomicsContent: ueContent,
+              tamSamDetected: tamFound,
+              tamSamContent: tamContent,
+              financialModelDetected: fmFound,
+              financialModelContent: fmContent,
               phase: "desirability",
               subPhase: "paste",
               error: ""
@@ -1458,7 +1562,7 @@
               }
             }
             context += "\n\nInterview:\n" + qa;
-            var raw = await callClaude(context, synthesisPrompts[dim], 1500);
+            var raw = await callClaude(context, synthesisPrompts[dim], 6000);
             var parsed = JSON.parse(raw.trim());
             var assumptions = (parsed.assumptions || []).map(function(a) {
               return { id: a.id, text: a.text, certainty: null };
@@ -1614,7 +1718,7 @@
         update({ phase: "loading", loadingMsg: "Building your Venture Assessment Brief\u2026" });
         try {
           var context = buildBriefContext(synthAnswers || S.synthesisAnswers);
-          var raw = await callClaude(context, SYSTEM_FINAL_BRIEF, 3500);
+          var raw = await callClaude(context, SYSTEM_FINAL_BRIEF, 8000);
           var parsed = JSON.parse(raw.trim());
           update({ brief: parsed, phase: "brief", subPhase: "", error: "" });
         } catch (err) {
@@ -2058,6 +2162,23 @@
       }
 
       // ── PPTX EXPORT ──
+      // Strip control chars and ensure clean text for PPTX XML
+      function pptxSafe(text) {
+        if (!text) return "";
+        return String(text)
+          .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")  // strip control chars
+          .replace(/\r\n/g, "\n")  // normalize line endings
+          .replace(/\r/g, "\n");
+      }
+      // Sanitize a rich text array (array of arrays with {text, options})
+      function pptxSafeRich(rows) {
+        return rows.map(function(row) {
+          return row.map(function(part) {
+            return Object.assign({}, part, { text: pptxSafe(part.text) });
+          });
+        });
+      }
+
       function generatePPTX() {
         if (!S.brief) return;
         var b = S.brief;
@@ -2087,7 +2208,7 @@
 
         function slideTitle(slide, text, opts) {
           opts = opts || {};
-          slide.addText(text, {
+          slide.addText(pptxSafe(text), {
             x: opts.x || 0.6, y: opts.y || 0.4, w: opts.w || 12, h: 0.7,
             fontSize: opts.size || 28, fontFace: "Arial", color: GOLD, bold: true
           });
@@ -2095,8 +2216,8 @@
 
         function slideBody(slide, text, opts) {
           opts = opts || {};
-          slide.addText(text, {
-            x: opts.x || 0.6, y: opts.y || 1.3, w: opts.w || 11.8, h: opts.h || 5,
+          slide.addText(pptxSafe(text), {
+            x: opts.x || 0.6, y: opts.y || 1.3, w: opts.w || 11.4, h: opts.h || 5,
             fontSize: opts.size || 14, fontFace: "Arial", color: opts.color || CREAM,
             valign: opts.valign || "top", lineSpacingMultiple: 1.5, italic: !!opts.italic
           });
@@ -2104,7 +2225,7 @@
 
         // ── SLIDE 1: Title ──
         var s1 = addSlide();
-        s1.addText(S.projectName, { x: 0.6, y: 1.8, w: 12, h: 1.2, fontSize: 44, fontFace: "Arial", bold: true, color: CREAM });
+        s1.addText(pptxSafe(S.projectName), { x: 0.6, y: 1.8, w: 12, h: 1.2, fontSize: 44, fontFace: "Arial", bold: true, color: CREAM });
         if (S.teamMembers.trim()) {
           s1.addText(S.teamMembers, { x: 0.6, y: 3.1, w: 12, h: 0.5, fontSize: 16, fontFace: "Arial", color: MUTED });
         }
@@ -2115,32 +2236,62 @@
         // ── SLIDE 2: The Concept ──
         var s2 = addSlide();
         slideTitle(s2, "The Concept");
-        s2.addText(S.conceptRevised || S.projectDesc, {
-          x: 0.6, y: 1.4, w: 11.8, h: 2.5,
+        var hasConceptImg = S.conceptImage && S.conceptImage.data;
+        var s2TextW = hasConceptImg ? 6.5 : 11.4;
+        s2.addText(pptxSafe(S.conceptRevised || S.projectDesc), {
+          x: 0.6, y: 1.4, w: s2TextW, h: 2.5,
           fontSize: 20, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.6, valign: "top"
         });
+        if (hasConceptImg) {
+          s2.addImage({
+            data: "data:" + S.conceptImage.media_type + ";base64," + S.conceptImage.data,
+            x: 7.8, y: 1.2, w: 5, h: 3.5,
+            sizing: { type: "contain", w: 5, h: 3.5 }
+          });
+        }
         if (b.desirability && b.desirability.unmet_need) {
-          s2.addShape(pptx.ShapeType.rect, { x: 0.6, y: 4.2, w: 11.8, h: 0.02, fill: { color: MUTED } });
-          s2.addText(b.desirability.unmet_need, {
-            x: 0.6, y: 4.4, w: 11.8, h: 1.5,
+          s2.addShape(pptx.ShapeType.rect, { x: 0.6, y: hasConceptImg ? 5.0 : 4.2, w: 11.4, h: 0.02, fill: { color: MUTED } });
+          s2.addText(pptxSafe(b.desirability.unmet_need), {
+            x: 0.6, y: hasConceptImg ? 5.2 : 4.4, w: 11.4, h: 1.5,
             fontSize: 14, fontFace: "Arial", color: GOLD, italic: true, lineSpacingMultiple: 1.5, valign: "top"
           });
         }
         s2.notes = "Open with your concept statement. Then read the unmet need framing \u2014 this anchors everything that follows.";
+
+        // Helper: add labeled paragraphs to a slide using simple addText calls (avoids rich-text XML bugs)
+        function addLabeledBlock(slide, yStart, items) {
+          var y = yStart;
+          items.forEach(function(item) {
+            if (!item.text) return;
+            slide.addText(pptxSafe(item.label), {
+              x: 0.6, y: y, w: 11.4, h: 0.3,
+              fontSize: 12, fontFace: "Arial", color: GOLD, bold: true, valign: "top"
+            });
+            slide.addText(pptxSafe(item.text), {
+              x: 0.6, y: y + 0.3, w: 11.4, h: item.h || 1.2,
+              fontSize: 12, fontFace: "Arial", color: item.color || CREAM, italic: !!item.italic, valign: "top", lineSpacingMultiple: 1.4
+            });
+            y += (item.h || 1.2) + 0.4;
+          });
+        }
 
         // ── SLIDE 3: The Customer ──
         var s3 = addSlide();
         slideTitle(s3, "The Customer");
         var dAns = S.dimensions.desirability.answers;
         var dSyn = S.dimensions.desirability.synthesis;
-        var custText = [];
-        if (dAns[0]) custText.push([{ text: "Who: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[0].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (dAns[1]) custText.push([{ text: "Current behavior: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[1].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (dAns[2]) custText.push([{ text: "What they value: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dAns[2].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (dSyn && dSyn.synthesis) custText.push([{ text: "Insight: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: dSyn.synthesis.substring(0, 400), options: { fontSize: 13, fontFace: "Arial", color: CREAM, italic: true } }]);
-        if (custText.length > 0) {
-          s3.addText(custText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
+        var custItems = [];
+        if (dAns[0]) custItems.push({ label: "Who:", text: dAns[0].substring(0, 250) });
+        if (dAns[1]) custItems.push({ label: "Current behavior:", text: dAns[1].substring(0, 250) });
+        if (dAns[2]) custItems.push({ label: "What they value:", text: dAns[2].substring(0, 250) });
+        if (dSyn && dSyn.synthesis) custItems.push({ label: "Insight:", text: dSyn.synthesis.substring(0, 300), italic: true });
+        // Fallback to brief
+        if (custItems.length === 0 && b.desirability) {
+          if (b.desirability.insight) custItems.push({ label: "Customer insight:", text: b.desirability.insight.substring(0, 400), h: 1.5 });
+          if (b.desirability.evidence_summary) custItems.push({ label: "Evidence:", text: b.desirability.evidence_summary.substring(0, 300), italic: true });
+          if (b.desirability.top_uncertainty) custItems.push({ label: "Key uncertainty:", text: b.desirability.top_uncertainty.substring(0, 250) });
         }
+        addLabeledBlock(s3, 1.3, custItems);
         var dRC = S.dimensions.desirability.synthesis && S.dimensions.desirability.synthesis.reading_connection;
         s3.notes = "Describe the specific person you designed for. What do they currently do? What did you learn about what they actually value?" + (dRC ? "\n\nTheory connection: " + dRC.text : "");
 
@@ -2149,14 +2300,18 @@
         slideTitle(s4, "What We Tested");
         var fAns = S.dimensions.feasibility.answers;
         var fSyn = S.dimensions.feasibility.synthesis;
-        var testText = [];
-        if (fAns[0]) testText.push([{ text: "Experiment: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[0].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (fAns[1]) testText.push([{ text: "Prediction: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[1].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (fAns[2]) testText.push([{ text: "What happened: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fAns[2].substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (fSyn && fSyn.maturity) testText.push([{ text: "Maturity: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fSyn.maturity, options: { fontSize: 13, fontFace: "Arial", color: fSyn.maturity === "Concept" ? RED : fSyn.maturity === "Validated direction" ? GREEN : GOLD } }]);
-        if (testText.length > 0) {
-          s4.addText(testText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.8, paraSpaceAfter: 12 });
+        var testItems = [];
+        if (fAns[0]) testItems.push({ label: "Experiment:", text: fAns[0].substring(0, 250) });
+        if (fAns[1]) testItems.push({ label: "Prediction:", text: fAns[1].substring(0, 250) });
+        if (fAns[2]) testItems.push({ label: "What happened:", text: fAns[2].substring(0, 250) });
+        if (fSyn && fSyn.maturity) testItems.push({ label: "Maturity:", text: fSyn.maturity, color: fSyn.maturity === "Concept" ? RED : fSyn.maturity === "Validated direction" ? GREEN : GOLD, h: 0.4 });
+        // Fallback to brief
+        if (testItems.length === 0 && b.feasibility) {
+          if (b.feasibility.learning) testItems.push({ label: "What we learned:", text: b.feasibility.learning.substring(0, 400), h: 1.5 });
+          if (b.feasibility.before_after) testItems.push({ label: "Prediction vs reality:", text: b.feasibility.before_after.substring(0, 300) });
+          if (b.feasibility.maturity) testItems.push({ label: "Maturity:", text: b.feasibility.maturity, color: b.feasibility.maturity === "Concept" ? RED : b.feasibility.maturity === "Validated direction" ? GREEN : GOLD, h: 0.4 });
         }
+        addLabeledBlock(s4, 1.3, testItems);
         var fRC = S.dimensions.feasibility.synthesis && S.dimensions.feasibility.synthesis.reading_connection;
         s4.notes = "Walk through your experiment: what you predicted, what happened, and what you learned. Honest failure is strong evidence." + (fRC ? "\n\nTheory connection: " + fRC.text : "");
 
@@ -2164,27 +2319,27 @@
         var s5 = addSlide();
         slideTitle(s5, "The Economics");
         var vSyn = S.dimensions.viability.synthesis;
-        var econText = [];
-        // Prefer inline tool results when available
+        var econItems = [];
         if (S.unitEconomicsResults) {
           var ueR = S.unitEconomicsResults;
-          econText.push([{ text: "LTV:CAC Ratio: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: Number(ueR.ratio.value).toFixed(1) + "\u00D7 \u2014 " + ueR.ratio.interpretation, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-          if (ueR.gross_margin) econText.push([{ text: "Gross margin: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: fmtUE(ueR.gross_margin.margin_per_unit) + "/unit (" + Math.round(ueR.gross_margin.margin_percent) + "%)", options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        } else if (b.viability && b.viability.economics) {
-          econText.push([{ text: b.viability.economics.substring(0, 500), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+          econItems.push({ label: "LTV:CAC Ratio:", text: Number(ueR.ratio.value).toFixed(1) + "x - " + (ueR.ratio.interpretation || "").substring(0, 200) });
+          if (ueR.gross_margin) econItems.push({ label: "Gross margin:", text: fmtUE(ueR.gross_margin.margin_per_unit) + "/unit (" + Math.round(ueR.gross_margin.margin_percent) + "%)", h: 0.4 });
         }
         if (S.tamSamResults) {
           var tamR = S.tamSamResults;
-          econText.push([{ text: "TAM: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: tamR.tam.value, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-          econText.push([{ text: "Year-one target: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: tamR.year_one_target.value, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        } else if (vSyn && vSyn.tam_sam) {
-          econText.push([{ text: "Market size: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.description.substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-          if (vSyn.tam_sam.year_one) econText.push([{ text: "Year one: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: vSyn.tam_sam.year_one, options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
+          econItems.push({ label: "TAM:", text: (tamR.tam.value || "").substring(0, 200) });
+          econItems.push({ label: "Year-one target:", text: (tamR.year_one_target.value || "").substring(0, 200) });
         }
-        if (b.viability && b.viability.retention) econText.push([{ text: "Retention: ", options: { bold: true, fontSize: 13, fontFace: "Arial", color: GOLD } }, { text: b.viability.retention.substring(0, 300), options: { fontSize: 13, fontFace: "Arial", color: CREAM } }]);
-        if (econText.length > 0) {
-          s5.addText(econText, { x: 0.6, y: 1.3, w: 11.8, h: 5.2, valign: "top", lineSpacingMultiple: 1.6, paraSpaceAfter: 10 });
+        // Fallback to brief
+        if (econItems.length === 0 && b.viability) {
+          if (b.viability.economics) econItems.push({ label: "Economics:", text: b.viability.economics.substring(0, 400), h: 1.5 });
+          if (b.viability.market) econItems.push({ label: "Market:", text: b.viability.market.substring(0, 300) });
+        } else if (!S.tamSamResults && vSyn && vSyn.tam_sam) {
+          econItems.push({ label: "Market size:", text: (vSyn.tam_sam.description || "").substring(0, 250) });
+          if (vSyn.tam_sam.year_one) econItems.push({ label: "Year one:", text: vSyn.tam_sam.year_one.substring(0, 200) });
         }
+        if (b.viability && b.viability.retention) econItems.push({ label: "Retention:", text: b.viability.retention.substring(0, 250) });
+        addLabeledBlock(s5, 1.3, econItems);
         var vRC = S.dimensions.viability.synthesis && S.dimensions.viability.synthesis.reading_connection;
         s5.notes = "Present your unit economics, market size, and retention logic. If you have LTV:CAC ratio, lead with that." + (vRC ? "\n\nTheory connection: " + vRC.text : "");
 
@@ -2210,8 +2365,8 @@
           // Evidence from follow-ups
           var evidence = d.followUpAnswers[0] || "";
           if (evidence) {
-            s6.addText(evidence.substring(0, 250), {
-              x: 0.6, y: yPos + 0.45, w: 11.8, h: 0.9,
+            s6.addText(pptxSafe(evidence.substring(0, 200)), {
+              x: 0.6, y: yPos + 0.45, w: 11.4, h: 0.9,
               fontSize: 11, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.4, valign: "top"
             });
           }
@@ -2229,24 +2384,28 @@
         var highConf = allA.filter(function(a) { return a.certainty >= 60; });
         var lowConf = allA.filter(function(a) { return a.certainty < 60; });
 
+        // Truncate assumption text to ~80 chars to prevent overflow
+        function truncAssumption(text) { return text.length > 80 ? text.substring(0, 77) + "\u2026" : text; }
+        // Limit to top 3 each to fit on one slide
+        var maxItems = 3;
         var aY = 2.7;
         if (highConf.length > 0) {
           s7.addText("HIGHER CONFIDENCE", { x: 0.6, y: aY, w: 5, h: 0.3, fontSize: 9, fontFace: "Arial", color: GREEN, letterSpacing: 2, bold: true });
-          aY += 0.35;
-          highConf.forEach(function(a) {
-            s7.addText(a.certainty + "%  " + a.text, { x: 0.6, y: aY, w: 6, h: 0.35, fontSize: 11, fontFace: "Arial", color: CREAM });
-            s7.addText(DIMS[a.dim].label, { x: 6.8, y: aY, w: 2, h: 0.35, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
-            aY += 0.4;
+          aY += 0.4;
+          highConf.slice(0, maxItems).forEach(function(a) {
+            s7.addText(pptxSafe(a.certainty + "%  " + truncAssumption(a.text)), { x: 0.6, y: aY, w: 8, h: 0.4, fontSize: 10, fontFace: "Arial", color: CREAM });
+            s7.addText(DIMS[a.dim].label, { x: 9, y: aY, w: 2, h: 0.4, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
+            aY += 0.5;
           });
-          aY += 0.2;
+          aY += 0.15;
         }
         if (lowConf.length > 0) {
           s7.addText("LOWER CONFIDENCE", { x: 0.6, y: aY, w: 5, h: 0.3, fontSize: 9, fontFace: "Arial", color: RED, letterSpacing: 2, bold: true });
-          aY += 0.35;
-          lowConf.forEach(function(a) {
-            s7.addText(a.certainty + "%  " + a.text, { x: 0.6, y: aY, w: 6, h: 0.35, fontSize: 11, fontFace: "Arial", color: CREAM });
-            s7.addText(DIMS[a.dim].label, { x: 6.8, y: aY, w: 2, h: 0.35, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
-            aY += 0.4;
+          aY += 0.4;
+          lowConf.slice(0, maxItems).forEach(function(a) {
+            s7.addText(pptxSafe(a.certainty + "%  " + truncAssumption(a.text)), { x: 0.6, y: aY, w: 8, h: 0.4, fontSize: 10, fontFace: "Arial", color: CREAM });
+            s7.addText(DIMS[a.dim].label, { x: 9, y: aY, w: 2, h: 0.4, fontSize: 9, fontFace: "Arial", color: MUTED, italic: true });
+            aY += 0.5;
           });
         }
         s7.notes = "Walk through your highest and lowest confidence assumptions. Explain why the low-confidence ones matter \u2014 are they critical to your venture or manageable risks?";
@@ -2259,8 +2418,8 @@
           fontSize: 16, fontFace: "Arial", color: MUTED, italic: true
         });
         if (b.synthesis && b.synthesis.survival_estimate) {
-          s8.addText(b.synthesis.survival_estimate, {
-            x: 0.6, y: 2.4, w: 11.8, h: 3.5,
+          s8.addText(pptxSafe(b.synthesis.survival_estimate.substring(0, 600)), {
+            x: 0.6, y: 2.4, w: 11.4, h: 3.5,
             fontSize: 16, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.6, valign: "top"
           });
         }
@@ -2276,14 +2435,14 @@
         var nextY = 2.1;
         (b.next_steps || []).forEach(function(step, i) {
           s9.addText((i + 1) + ".", { x: 0.6, y: nextY, w: 0.5, h: 0.6, fontSize: 18, fontFace: "Arial", color: GOLD, bold: true, valign: "top" });
-          s9.addText(step, { x: 1.2, y: nextY, w: 11, h: 0.8, fontSize: 14, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.4, valign: "top" });
+          s9.addText(pptxSafe(step.substring(0, 250)), { x: 1.2, y: nextY, w: 10.8, h: 0.8, fontSize: 14, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.4, valign: "top" });
           nextY += 1.1;
         });
         // Closing thought from synthesis
         if (b.synthesis && b.synthesis.student_reflection) {
-          s9.addShape(pptx.ShapeType.rect, { x: 0.6, y: nextY + 0.2, w: 11.8, h: 0.02, fill: { color: MUTED } });
-          s9.addText(b.synthesis.student_reflection.substring(0, 400), {
-            x: 0.6, y: nextY + 0.5, w: 11.8, h: 2,
+          s9.addShape(pptx.ShapeType.rect, { x: 0.6, y: nextY + 0.2, w: 11.4, h: 0.02, fill: { color: MUTED } });
+          s9.addText(pptxSafe(b.synthesis.student_reflection.substring(0, 300)), {
+            x: 0.6, y: nextY + 0.5, w: 11.4, h: 2,
             fontSize: 12, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.5, valign: "top"
           });
         }
@@ -2398,6 +2557,38 @@
                   onChange: function(ev) { update({ projectDesc: ev.target.value }); },
                   placeholder: "We help [who] with [what problem] by [how]. Our solution works because [insight]\u2026"
                 })
+              ),
+              e("div", { className: "form-group" },
+                e("label", { className: "form-label" }, "Concept Image (Optional)"),
+                e("div", { className: "form-hint" }, "Upload a photo or rendering of your concept \u2014 a prototype, product sketch, or illustration. This will appear in your assessment brief and presentation deck."),
+                e("div", { style: { display: "flex", gap: 10, alignItems: "center" } },
+                  e("label", {
+                    className: "btn btn-ghost",
+                    style: { cursor: "pointer", fontSize: 12, padding: "8px 16px" }
+                  },
+                    e("input", {
+                      type: "file",
+                      accept: "image/png,image/jpeg,image/webp,image/gif",
+                      onChange: handleConceptImageUpload,
+                      style: { display: "none" }
+                    }),
+                    S.conceptImage ? "Replace Image" : "Upload Image"
+                  ),
+                  S.conceptImage ? e("span", { style: { fontSize: 12, color: "rgba(92,184,138,0.7)" } },
+                    "\u2713 " + S.conceptImage.name
+                  ) : null,
+                  S.conceptImage ? e("button", {
+                    className: "btn-back",
+                    style: { fontSize: 11, padding: "4px 10px", marginLeft: 4 },
+                    onClick: function() { update({ conceptImage: null }); }
+                  }, "Remove") : null
+                ),
+                S.conceptImage ? e("div", { style: { marginTop: 12 } },
+                  e("img", {
+                    src: "data:" + S.conceptImage.media_type + ";base64," + S.conceptImage.data,
+                    style: { maxWidth: 280, maxHeight: 180, borderRadius: 8, border: "1px solid rgba(232,227,216,0.1)" }
+                  })
+                ) : null
               ),
               e("div", { className: "form-group" },
                 e("label", { className: "form-label" }, "Full Journal (Optional)"),
@@ -3199,9 +3390,16 @@
             e("div", { className: "brief-section" },
               e("div", { className: "brief-section-title" }, "The Concept"),
               e("div", { className: "brief-card" },
+                S.conceptImage ? e("div", { style: { float: "right", marginLeft: 20, marginBottom: 10 } },
+                  e("img", {
+                    src: "data:" + S.conceptImage.media_type + ";base64," + S.conceptImage.data,
+                    style: { maxWidth: 260, maxHeight: 200, borderRadius: 8, display: "block" }
+                  })
+                ) : null,
                 e("div", { className: "brief-text", style: { fontSize: 16 } },
                   b.concept ? b.concept.revised : (S.conceptRevised || S.projectDesc)
-                )
+                ),
+                S.conceptImage ? e("div", { style: { clear: "both" } }) : null
               ),
               S.conceptRevised && S.conceptRevised !== S.projectDesc ? e("div", { className: "brief-card", style: { opacity: 0.6 } },
                 e("div", { className: "synthesis-label" }, "Original Concept"),

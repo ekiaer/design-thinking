@@ -476,7 +476,7 @@ Return ONLY valid JSON with no markdown, no explanation:
     async function callClaude(userMsg, sys) {
       var payload = JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1500,
+        max_tokens: 4000,
         system: sys,
         messages: [{ role: "user", content: userMsg }],
       });
@@ -500,6 +500,14 @@ Return ONLY valid JSON with no markdown, no explanation:
         const data = await res.json();
         var text = data.content[0].text;
         text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+        var jsonStart = text.indexOf("{");
+        var jsonStartArr = text.indexOf("[");
+        if (jsonStart === -1 || (jsonStartArr !== -1 && jsonStartArr < jsonStart)) jsonStart = jsonStartArr;
+        if (jsonStart > 0) text = text.substring(jsonStart);
+        var lastBrace = text.lastIndexOf("}");
+        var lastBracket = text.lastIndexOf("]");
+        var jsonEnd = Math.max(lastBrace, lastBracket);
+        if (jsonEnd !== -1 && jsonEnd < text.length - 1) text = text.substring(0, jsonEnd + 1);
         return text;
       }
     }
