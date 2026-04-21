@@ -808,16 +808,20 @@
     // ═══════════════════════════════════════
     // API HELPER
     // ═══════════════════════════════════════
-    async function callClaude(userMsg, sys, maxTokens) {
+    async function callClaude(userMsg, sys, maxTokens, useStream) {
       maxTokens = maxTokens || 4000;
+      // Stream for large responses to avoid Cloudflare's 100s edge timeout
+      if (useStream === undefined) useStream = maxTokens >= 6000;
       // userMsg can be a string or an array of content blocks (for multimodal)
       var content = typeof userMsg === "string" ? userMsg : userMsg;
-      var payload = JSON.stringify({
+      var payloadObj = {
         model: "claude-sonnet-4-6",
         max_tokens: maxTokens,
         system: sys,
         messages: [{ role: "user", content: content }]
-      });
+      };
+      if (useStream) payloadObj.stream = true;
+      var payload = JSON.stringify(payloadObj);
 
       var maxRetries = 3;
       var delay = 2000;
@@ -836,12 +840,48 @@
           var errBody = await res.text();
           throw new Error("API error: " + res.status + " " + errBody);
         }
-        var data = await res.json();
-        if (data.stop_reason === "max_tokens") {
-          console.warn("[callClaude] Response truncated (max_tokens). Length:", data.content[0].text.length);
+        var text, stopReason;
+        if (useStream) {
+          // Read SSE stream and accumulate text deltas
+          var reader = res.body.getReader();
+          var decoder = new TextDecoder();
+          var buffer = "";
+          text = "";
+          stopReason = null;
+          while (true) {
+            var readResult = await reader.read();
+            if (readResult.done) break;
+            buffer += decoder.decode(readResult.value, { stream: true });
+            var lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+            for (var li = 0; li < lines.length; li++) {
+              var line = lines[li].trim();
+              if (!line.startsWith("data:")) continue;
+              var jsonStr = line.substring(5).trim();
+              if (!jsonStr) continue;
+              try {
+                var evt = JSON.parse(jsonStr);
+                if (evt.type === "content_block_delta" && evt.delta && evt.delta.text) {
+                  text += evt.delta.text;
+                } else if (evt.type === "message_delta" && evt.delta && evt.delta.stop_reason) {
+                  stopReason = evt.delta.stop_reason;
+                }
+              } catch (e) { /* skip malformed chunks */ }
+            }
+          }
+          if (stopReason === "max_tokens") {
+            console.warn("[callClaude] Stream truncated (max_tokens). Length:", text.length);
+          }
+          console.log("[callClaude] stream stop_reason:", stopReason, "length:", text.length);
+        } else {
+          var data = await res.json();
+          stopReason = data.stop_reason;
+          if (stopReason === "max_tokens") {
+            console.warn("[callClaude] Response truncated (max_tokens). Length:", data.content[0].text.length);
+          }
+          console.log("[callClaude] stop_reason:", stopReason, "length:", data.content[0].text.length);
+          text = data.content[0].text;
         }
-        console.log("[callClaude] stop_reason:", data.stop_reason, "length:", data.content[0].text.length);
-        var text = data.content[0].text;
         text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
         // Extract JSON object/array if Claude added preamble or trailing text
         var jsonStart = text.indexOf("{");
@@ -853,7 +893,7 @@
         var jsonEnd = Math.max(lastBrace, lastBracket);
         if (jsonEnd !== -1 && jsonEnd < text.length - 1) text = text.substring(0, jsonEnd + 1);
         // If truncated, attempt to repair the JSON by closing open structures
-        if (data.stop_reason === "max_tokens") {
+        if (stopReason === "max_tokens") {
           try { JSON.parse(text); } catch (e) {
             console.warn("[callClaude] Attempting JSON repair on truncated response");
             // Close any open string

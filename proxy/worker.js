@@ -110,6 +110,15 @@ export default {
         body: JSON.stringify(body),
       });
 
+      // If streaming was requested, pass the SSE stream through directly
+      // so bytes flow to the client and Cloudflare's edge timeout doesn't trigger
+      if (body.stream === true) {
+        return corsResponse(origin, new Response(apiRes.body, {
+          status: apiRes.status,
+          headers: { "Content-Type": "text/event-stream" },
+        }));
+      }
+
       const apiBody = await apiRes.text();
       return corsResponse(origin, new Response(apiBody, {
         status: apiRes.status,
