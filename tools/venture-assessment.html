@@ -827,7 +827,7 @@
           headers: { "Content-Type": "application/json" },
           body: payload
         });
-        if (res.status === 529 && attempt < maxRetries) {
+        if ((res.status === 529 || res.status === 524 || res.status === 502 || res.status === 503 || res.status === 504) && attempt < maxRetries) {
           await new Promise(function(r) { setTimeout(r, delay); });
           delay *= 2;
           continue;
