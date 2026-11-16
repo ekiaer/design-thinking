@@ -665,13 +665,13 @@
       desirability: {
         label: "Desirability",
         pasteLabel: "Field Notes & Interview Excerpts",
-        pasteHint: "Paste any observations, interview quotes, or field notes from your customer research. Raw notes are fine.",
+        pasteHint: "Paste any observations, interview quotes, or field notes from your research with real people. Raw notes are fine.",
         heading: "Who is this really for?",
-        body: "Let\u2019s get specific about your customer \u2014 not a demographic segment, but a real person. We\u2019ll work from your field observations to a clear insight about what they need and why.",
+        body: "Let\u2019s get specific about the person you are designing for \u2014 not a group, but a real person. We\u2019ll work from your field observations to a clear insight about what they need and why.",
         ratings: [
-          { n: 1, label: "Significant limitations", desc: "You have real concerns about whether customers want this enough to change behavior." },
+          { n: 1, label: "Significant limitations", desc: "You have real concerns about whether people want this enough to change what they do." },
           { n: 2, label: "Manageable limitations", desc: "There\u2019s evidence of interest, but open questions remain about depth of need or willingness to switch." },
-          { n: 3, label: "Unique advantage", desc: "You have specific, validated evidence that a real customer segment has an unmet need your solution addresses better than alternatives." }
+          { n: 3, label: "Unique advantage", desc: "You have specific, validated evidence that real people have an unmet need your concept addresses better than what they do now." }
         ]
       },
       feasibility: {
@@ -688,14 +688,14 @@
       },
       viability: {
         label: "Viability",
-        pasteLabel: "Unit Economics & Market Sizing Output",
-        pasteHint: "Paste the output from the Unit Economics and/or Market Sizing tools if you have them. Otherwise, describe your revenue model and cost structure in your own words. If you haven't run those tools yet, we'll walk you through them next.",
+        pasteLabel: "Your Viability Answers",
+        pasteHint: "Paste your five viability answers from your journal (one unit, how many, the cost of one, which college number it changes, what that is worth) and your \u201cThis pays for itself if\u201d sentence. If you don't have them, we'll walk you through the questions next.",
         heading: "Does the math actually work?",
-        body: "Let\u2019s examine whether this venture can sustain itself economically \u2014 your unit economics, market size, retention logic, and what\u2019s hard for competitors to copy.",
+        body: "Let\u2019s examine whether this concept pays for itself \u2014 what one unit costs, which college number it changes, how far it could reach, and why the college would keep paying for it.",
         ratings: [
-          { n: 1, label: "Significant limitations", desc: "The economics are unclear, retention logic is unproven, or competitors could easily replicate this." },
-          { n: 2, label: "Manageable limitations", desc: "The model shows potential but rests on assumptions you haven\u2019t validated. Some competitive exposure." },
-          { n: 3, label: "Unique advantage", desc: "Unit economics look promising with tested assumptions, clear retention logic, and an evolutionary advantage that compounds over time." }
+          { n: 1, label: "Significant limitations", desc: "The numbers are unclear, it costs more than it brings in, or there is no clear reason the college would pay for it." },
+          { n: 2, label: "Manageable limitations", desc: "The numbers show potential but rest on guesses you haven\u2019t checked yet." },
+          { n: 3, label: "Unique advantage", desc: "It brings in more than it costs on numbers you have checked, and there is a clear reason the college would keep paying for it." }
         ]
       }
     };
@@ -706,37 +706,37 @@
     // SYSTEM PROMPTS
     // ═══════════════════════════════════════
 
-    var SYSTEM_DESIRABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the desirability of their hydration venture.\n\nBased on the student's project description and any field notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe one specific real person who would use this (not a segment)\n2. Ask what that person currently does to solve the problem (workarounds, habits, coping)\n3. Ask what that behavior reveals about what they actually value\n4. Ask what one thing they'd change about that person's experience and why\n\nBe concrete and reference their specific project. Questions should be answerable from observation and reflection.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+    var SYSTEM_DESIRABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the desirability of their concept for improving part of the college experience at Lewis & Clark.\n\nBased on the student's project description and any field notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe one specific real person who would use this (not a segment)\n2. Ask what that person currently does to solve the problem (workarounds, habits, coping)\n3. Ask what that behavior reveals about what they actually value\n4. Ask what one thing they'd change about that person's experience and why\n\nBe concrete and reference their specific project. Questions should be answerable from observation and reflection.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_FEASIBILITY_QUESTIONS = "You are a design thinking coach helping college students assess the feasibility of their hydration venture.\n\nBased on the student's project description and any experiment notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe the most important experiment or prototype test they ran and what they were trying to learn\n2. Ask what they predicted would happen and how confident they were (1\u201310)\n3. Ask what actually happened and where reality diverged from their prediction\n4. Ask what they'd do differently and what's the next experiment they'd run with another month\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+    var SYSTEM_FEASIBILITY_QUESTIONS = "You are a design thinking coach helping college students assess the feasibility of their concept for improving part of the college experience at Lewis & Clark.\n\nBased on the student's project description and any experiment notes they've shared, generate exactly 4 interview questions.\n\nThe questions should follow this arc:\n1. Ask them to describe the most important experiment or prototype test they ran and what they were trying to learn\n2. Ask what they predicted would happen and how confident they were (1\u201310)\n3. Ask what actually happened and where reality diverged from their prediction\n4. Ask what they'd do differently and what's the next experiment they'd run with another month\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their hydration venture.\n\nBased on the student's project description and any unit economics and market sizing data they've shared, generate exactly 3 interview questions.\n\nThe questions should cover:\n1. Which assumption in their unit economics they're most and least confident in, and why\n2. What would make a customer come back a second time and a tenth time \u2014 their repeat-use logic\n3. If a well-funded competitor entered tomorrow, what would be hardest for them to replicate\n\nBe concrete and reference their specific project.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
+    var SYSTEM_VIABILITY_QUESTIONS = "You are a design thinking coach helping college students assess the viability of their concept for improving part of the college experience at Lewis & Clark.\n\nIn this course a concept is viable if it brings in more money for the college than it costs to run.\n\nBased on the student's project description and any numbers they've shared (one unit, how many units a year, the cost of one unit, which college number it changes, what that is worth), generate exactly 3 interview questions.\n\nThe questions should cover:\n1. Which of their numbers they trust least and which they trust most, and why\n2. Why the college, or whoever would pay, would keep paying for this in its second year \u2014 what they would need to see\n3. What the college would do about this problem if their concept did not exist, and why theirs is a better use of the money\n\nBe concrete and reference their specific project. Use plain words.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"id\":1,\"text\":\"question text\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their hydration venture.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized customer insight (specific, not generic)\n2. An unmet need framing: \"[Customer] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the venture\n4. Honest gaps: what the student still doesn't know about this customer\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n6. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Geertz, \"Thick Description\" (1973): Seeing meaning behind behavior, not just the behavior itself. Connects when student describes observations, workarounds, or coping behaviors.\n   - Moon, \"Different\" (2010): Designing for the extreme user, not the average. Connects when student describes a specific person rather than a demographic.\n   - Fish, \"Interpretive Communities\" (1980): Meaning is socially constructed by communities. Connects when insight depends on a specific community's shared values.\n   - ANTH101 / Anthropology for Everyone: Ethnographic methods \u2014 participant observation, seeing big and small. Connects when student describes fieldwork or observation.\n   - Reader Response Theory (Rosenblatt, Iser, Fish): Product meaning is co-created with the user. Connects when student discusses how customers might experience the product differently than intended.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of customer insight\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Geertz\",\"title\":\"Thick Description\",\"year\":1973}]}}";
+    var SYSTEM_DESIRABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's desirability assessment for their concept for improving part of the college experience at Lewis & Clark.\n\nBased on their interview answers and any field notes, generate:\n1. A synthesized insight about the person they are designing for (specific, not generic)\n2. An unmet need framing: \"[Person] needs a way to [job-to-be-done] because [insight]\"\n3. 2\u20133 design implications for the concept\n4. Honest gaps: what the student still doesn't know about this person\n5. Extract 2\u20133 key assumptions their desirability argument rests on. These should be plain-language statements that could be true or false.\n6. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Geertz, \"Thick Description\" (1973): Seeing meaning behind behavior, not just the behavior itself. Connects when student describes observations, workarounds, or coping behaviors.\n   - Moon, \"Different\" (2010): Designing for the extreme user, not the average. Connects when student describes a specific person rather than a demographic.\n   - Fish, \"Interpretive Communities\" (1980): Meaning is socially constructed by communities. Connects when insight depends on a specific community's shared values.\n   - ANTH101 / Anthropology for Everyone: Ethnographic methods \u2014 participant observation, seeing big and small. Connects when student describes fieldwork or observation.\n   - Reader Response Theory (Rosenblatt, Iser, Fish): Product meaning is co-created with the user. Connects when student discusses how customers might experience the product differently than intended.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct, intellectually honest. Celebrate honest uncertainty. Reference the student's own words and evidence. Do not invent evidence they didn't provide. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of insight about the person\",\"unmet_need\":\"[Person] needs a way to [X] because [Y]\",\"design_implications\":[\"...\",\"...\"],\"gaps\":\"what they still don't know\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Geertz\",\"title\":\"Thick Description\",\"year\":1973}]}}";
 
-    var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their hydration venture.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to business feasibility\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Tetlock, \"Superforecasting\" (2015): Probabilistic thinking, calibrating confidence, updating beliefs with evidence. Connects when student describes experiment predictions, confidence levels, and how results changed their thinking.\n   - Edmondson, \"The Fearless Organization\" (2018): Psychological safety enables honest failure. Teams that can't admit mistakes can't learn. Connects when student describes what surprised them, what went wrong, or what they'd do differently.\n   - d.school / IDEO / Double Diamond: Design thinking as iterative process. Prototyping as learning, not just building. Connects when student describes their prototyping approach or iteration cycle.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Tetlock\",\"title\":\"Superforecasting\",\"year\":2015}]}}";
+    var SYSTEM_FEASIBILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's feasibility assessment for their concept for improving part of the college experience at Lewis & Clark.\n\nBased on their interview answers and any experiment notes, generate:\n1. A structured before/after comparison: what they predicted vs what happened\n2. Key learning synthesis in plain language\n3. A prototype maturity indicator: one of \"Concept\", \"Early test\", or \"Validated direction\"\n4. 2\u20133 questions the student still can't answer\n5. One paragraph connecting their findings to whether this can actually be run at Lewis & Clark\n6. Extract 2\u20133 key assumptions their feasibility argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Tetlock, \"Superforecasting\" (2015): Probabilistic thinking, calibrating confidence, updating beliefs with evidence. Connects when student describes experiment predictions, confidence levels, and how results changed their thinking.\n   - Edmondson, \"The Fearless Organization\" (2018): Psychological safety enables honest failure. Teams that can't admit mistakes can't learn. Connects when student describes what surprised them, what went wrong, or what they'd do differently.\n   - d.school / IDEO / Double Diamond: Design thinking as iterative process. Prototyping as learning, not just building. Connects when student describes their prototyping approach or iteration cycle.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nTone: warm, direct. Celebrate honest failure \u2014 a student who learned from a failed experiment is doing better work than one who never tested anything. Reference their own evidence.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of learning synthesis\",\"before_after\":\"what they predicted vs what happened\",\"maturity\":\"Concept|Early test|Validated direction\",\"gaps\":\"questions they can't answer yet\",\"feasibility_paragraph\":\"connecting findings to feasibility\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Tetlock\",\"title\":\"Superforecasting\",\"year\":2015}]}}";
 
-    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their hydration venture.\n\nBased on their interview answers and any unit economics and market sizing data provided in context, generate:\n1. Assessment of their economic logic (reference their CAC/LTV/COGS if provided \u2014 use the specific numbers from Unit Economics tool output if available)\n2. TAM/SAM analysis in plain language (use the specific numbers from Market Sizing tool output if available)\n3. Repeat-use / retention logic analysis\n4. Protectability assessment \u2014 not IP, but evolutionary advantage\n5. Key economic assumptions that still need validation\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Brand, \"Pace Layers\" / \"The Clock of the Long Now\" (1999): Different parts of a system change at different speeds. Connects when student discusses how their venture would evolve over time, or why competitors can't easily replicate what they're building.\n   - Johnson, \"Where Good Ideas Come From\" (2010): Ideas emerge from networks, not isolation. The adjacent possible. Connects when student discusses distribution strategy, partnerships, or how their idea builds on existing platforms.\n   - Moon, \"Different\" (2010): Competitive differentiation comes from doing less, not more. Connects when student discusses competitive advantage or why their approach differs from incumbents.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nIf Unit Economics and/or Market Sizing data is provided in context, incorporate those specific numbers into your synthesis.\n\nTone: warm, direct. No jargon \u2014 no \"TAM/SAM/SOM\" labels in the output, just plain language about market size.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph of economic logic\",\"tam_sam\":{\"description\":\"plain language market size analysis\",\"year_one\":\"realistic year-one estimate\",\"key_assumption\":\"biggest market size assumption\"},\"retention\":\"retention logic analysis\",\"protectability\":\"what's hard to copy\",\"gaps\":\"assumptions needing validation\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Brand\",\"title\":\"The Clock of the Long Now\",\"year\":1999}]}}";
+    var SYSTEM_VIABILITY_SYNTHESIS = "You are a design thinking coach synthesizing a student's viability assessment for their concept for improving part of the college experience at Lewis & Clark.\n\nIn this course a concept is viable if it brings in more money for the college than it costs to run.\n\nBased on their interview answers and any 'does it pay for itself' and reach data provided in context, generate:\n1. Assessment of whether it pays for itself: units a year, the cost of one unit, the college number it changes, money in against money out. Use the specific numbers from the data if available.\n2. Reach in plain language: how many people at Lewis & Clark, and who else could use it (use the reach data if available)\n3. Why whoever pays would keep paying in the second year\n4. What the college would do without it, and why this concept is the better use of the money\n5. Key assumptions that still need checking\n6. Extract 2\u20133 key assumptions their viability argument rests on.\n7. A reading connection \u2014 a 2-3 sentence bridge between what the student described and one or two course readings that are most relevant. Pick from this list based on what BEST fits what the student actually said (don't force a connection):\n   - Brand, \"Pace Layers\" / \"The Clock of the Long Now\" (1999): Different parts of a system change at different speeds. Connects when student discusses how fast a college can change, whose budget the concept sits in, or how it would evolve over time.\n   - Johnson, \"Where Good Ideas Come From\" (2010): Ideas emerge from networks, not isolation. The adjacent possible. Connects when student discusses partners, or how their idea builds on what already exists on campus.\n   - Moon, \"Different\" (2010): Differentiation comes from doing less, not more. Connects when student discusses why their approach differs from what the college already offers.\n   Rules for the reading connection: Be specific to what the student said. Reference their actual words or observations. Keep it to 2-3 sentences. Cite 1-2 readings maximum. Tone: \"What you just described is an example of...\" not \"You should have read...\" If nothing connects naturally, set reading_connection to null.\n\nIf 'does it pay for itself' and/or reach data is provided in context, use those specific numbers in your synthesis.\n\nTone: warm, direct. Plain words. No jargon.\n\nReturn ONLY valid JSON with no markdown:\n{\"synthesis\":\"paragraph on whether it pays for itself\",\"tam_sam\":{\"description\":\"plain language reach: how many at Lewis & Clark, and who else could use it\",\"year_one\":\"realistic first-year reach\",\"key_assumption\":\"biggest assumption about reach\"},\"retention\":\"why whoever pays would keep paying in the second year\",\"protectability\":\"what the college would do without it, and why this is the better use of the money\",\"gaps\":\"assumptions needing checking\",\"assumptions\":[{\"id\":1,\"text\":\"plain language assumption\"}],\"reading_connection\":{\"text\":\"2-3 sentence connection to the student's specific work\",\"sources\":[{\"author\":\"Brand\",\"title\":\"The Clock of the Long Now\",\"year\":1999}]}}";
 
     var SYSTEM_FOLLOWUP = "You are a design thinking coach. A student just rated their venture's performance on one dimension and you need to ask two follow-up questions.\n\nIMPORTANT RULES:\n- Never tell the student what rating to give or suggest they should change it\n- If they rated high (3), probe for evidence they might be overlooking. Be respectfully skeptical.\n- If they rated low (1), explore what specifically they're uncertain about. Affirm that recognizing limitations is strong thinking.\n- If they rated medium (2), ask what would move them to a 1 or a 3.\n- Reference their specific answers and assumptions from the interview.\n- Keep questions to one sentence each.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this venture exist in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
+    var SYSTEM_SYNTHESIS_QUESTIONS = "You are a design thinking coach helping a student integrate their assessment across Desirability, Feasibility, and Viability.\n\nYou have full context from all three dimensions. Generate exactly 2 synthesis questions:\n\n1. Ask about tensions and reinforcements across the three dimensions. Example framing: \"Where do your three assessments reinforce each other, and where do they create tension?\" Be specific to their project.\n\n2. Ask for their honest probability estimate: \"If you had to place a bet \u2014 will this concept be running at Lewis & Clark in two years? Not 'should it,' but given everything you know and don't know, what's your honest probability, and what would change it?\" Adapt this to their specific situation.\n\nReturn ONLY valid JSON with no markdown:\n{\"questions\":[{\"text\":\"question\",\"hint\":\"brief guidance\"}]}";
 
-    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a hydration venture.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, set unit_economics.found to true. Set content to null \u2014 the app extracts tool text separately.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, set tam_sam.found to true. Set content to null.\n- If you find a section starting with \"ENDURE Financial Model\" header, set financial_model.found to true. Set content to null.\nDo NOT copy tool output text into the content field. Just set found to true/false. Reference key numbers from tools in your dimension material, but keep it concise \u2014 cite specific figures, don't reproduce entire tool outputs.\n\nThe journal may contain embedded images marked as [IMAGE N] in the text, with the actual image following. These may be:\n- Handwritten notes or sketches \u2014 transcribe the key content and note it came from a handwritten image\n- Photos of whiteboards, sticky notes, or fieldwork \u2014 describe what you see and extract any readable text\n- Diagrams, prototypes, or screenshots \u2014 describe what they show and which dimension they inform\n- Decorative or irrelevant images \u2014 ignore these\nWhen you extract content from an image, note its source like: \"(from sketch, Image 3)\" so the student knows where it came from.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
+    var SYSTEM_JOURNAL_PARSE = "You help design thinking students organize their semester journal for a venture assessment.\n\nThe student will provide their full journal \u2014 weekly entries with observations, research, experiments, interviews, reflections, and ideas about a concept for improving part of the college experience at Lewis & Clark.\n\nParse the journal and extract material relevant to each of three dimensions:\n\n1. DESIRABILITY \u2014 anything about customers, user needs, interviews, observations of behavior, evidence of demand, customer willingness to pay or switch, field notes about real people\n2. FEASIBILITY \u2014 anything about how the product works, prototypes, experiments run, technical requirements, accuracy/quality standards, what they learned from testing, manufacturing, development challenges\n3. VIABILITY \u2014 anything about what it costs to run, who would pay for it, which college number it changes (new students enrolled, students who stay, students who graduate), whether it pays for itself, business model, pricing, market size, competitors, distribution channels, revenue, costs, go-to-market strategy, competitive advantage, unit economics\n\nAdditionally, scan for outputs from ENDURE tools:\n- If you find a section starting with \"ENDURE Unit Economics Analysis\" header, set unit_economics.found to true. Set content to null \u2014 the app extracts tool text separately.\n- If you find a section starting with \"ENDURE Market Sizing Analysis\" header, set tam_sam.found to true. Set content to null.\n- If you find a section starting with \"ENDURE Financial Model\" header, set financial_model.found to true. Set content to null.\nDo NOT copy tool output text into the content field. Just set found to true/false. Reference key numbers from tools in your dimension material, but keep it concise \u2014 cite specific figures, don't reproduce entire tool outputs.\n\nThe journal may contain embedded images marked as [IMAGE N] in the text, with the actual image following. These may be:\n- Handwritten notes or sketches \u2014 transcribe the key content and note it came from a handwritten image\n- Photos of whiteboards, sticky notes, or fieldwork \u2014 describe what you see and extract any readable text\n- Diagrams, prototypes, or screenshots \u2014 describe what they show and which dimension they inform\n- Decorative or irrelevant images \u2014 ignore these\nWhen you extract content from an image, note its source like: \"(from sketch, Image 3)\" so the student knows where it came from.\n\nRules:\n- Use the student's own language. Don't rewrite or polish \u2014 extract and organize.\n- Some material belongs in multiple dimensions. Include it where it's most relevant, and briefly note cross-references.\n- Preserve specific details: names, numbers, URLs, dates, quotes from interviews.\n- If a dimension has little or no relevant material, say so honestly. Don't fabricate content.\n- Organize chronologically within each dimension so the student can see how their thinking evolved.\n\nReturn ONLY valid JSON with no markdown:\n{\"desirability\":{\"summary\":\"2-3 sentence overview of what's here\",\"material\":\"Extracted journal content, organized chronologically, in the student's own words. Use line breaks between distinct entries.\"},\"feasibility\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"viability\":{\"summary\":\"2-3 sentence overview\",\"material\":\"Extracted content...\"},\"cross_cutting\":\"1-2 sentences noting themes that span multiple dimensions\",\"tools_detected\":{\"unit_economics\":{\"found\":true,\"content\":\"extracted text or null\"},\"tam_sam\":{\"found\":true,\"content\":\"extracted text or null\"},\"financial_model\":{\"found\":true,\"content\":\"extracted text or null\"}}}";
 
-    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's hydration venture.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n- If a \"FINANCIAL MODEL DATA\" block is included, treat it as first-class viability evidence. Reference its 3-year trajectory, breakeven (or lack of one), most sensitive assumption, and top pressure-tests directly in viability.economics and viability.top_uncertainty. Quote specific numbers where useful. Do NOT recalculate \u2014 trust the numbers in the model. If the model shows the venture loses money for all three years, say so plainly.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized customer insight paragraph\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"economic logic paragraph, referencing unit economics if provided\",\n    \"market\": \"market size analysis in plain language\",\n    \"retention\": \"retention logic text\",\n    \"protectability\": \"what's hard to replicate\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
+    var SYSTEM_FINAL_BRIEF = "You are generating a Venture Assessment Brief for a design thinking student's concept for improving part of the college experience at Lewis & Clark.\n\nYou have full context: project description, all interview Q&A across three dimensions (Desirability, Feasibility, Viability), AI-generated syntheses, student self-ratings with evidence, assumption certainty ratings, and synthesis reflections.\n\nGenerate a complete, professional assessment document.\n\nRULES:\n- Reference the student's own words and evidence throughout. Use quotes where impactful.\n- Do NOT invent evidence the student didn't provide. If they have gaps, name them.\n- Do NOT use ENDURE framework labels. No jargon.\n- Do NOT tell the student their ratings are wrong.\n- Celebrate honest uncertainty and self-awareness.\n- Tone: warm, direct, intellectually honest. Like a smart advisor who respects the student.\n- If a \"FINANCIAL MODEL DATA\" block is included, treat it as first-class viability evidence. Reference its 3-year trajectory, breakeven (or lack of one), most sensitive assumption, and top pressure-tests directly in viability.economics and viability.top_uncertainty. Quote specific numbers where useful. Do NOT recalculate \u2014 trust the numbers in the model. If the model shows the venture loses money for all three years, say so plainly.\n\nReturn ONLY valid JSON with no markdown:\n{\n  \"concept\": {\n    \"revised\": \"the student's revised concept statement (clean it up lightly if needed)\",\n    \"evolution\": \"1-2 sentences on how the concept evolved through the assessment process\"\n  },\n  \"desirability\": {\n    \"insight\": \"synthesized insight about the person they are designing for\",\n    \"unmet_need\": \"the unmet need statement\",\n    \"implications\": \"design implications text\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"what the student said about their rating, in their words (lightly cleaned up)\",\n    \"top_uncertainty\": \"the critical uncertainty they named\"\n  },\n  \"feasibility\": {\n    \"learning\": \"experiment learning synthesis paragraph\",\n    \"before_after\": \"prediction vs reality summary\",\n    \"maturity\": \"Concept|Early test|Validated direction\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical feasibility uncertainty\"\n  },\n  \"viability\": {\n    \"economics\": \"does it pay for itself: money in against money out, using the student's own numbers if provided\",\n    \"market\": \"reach in plain language: how many at Lewis & Clark, and who else could use it\",\n    \"retention\": \"why whoever pays would keep paying in the second year\",\n    \"protectability\": \"what the college would do without it, and why this is the better use of the money\",\n    \"gaps\": \"honest gaps text\",\n    \"evidence_summary\": \"student's evidence in their words\",\n    \"top_uncertainty\": \"critical viability uncertainty\"\n  },\n  \"synthesis\": {\n    \"student_reflection\": \"the student's own synthesis, lightly cleaned up\",\n    \"survival_estimate\": \"their probability estimate and reasoning\",\n    \"tensions\": \"where dimensions create tension\",\n    \"reinforcements\": \"where dimensions reinforce each other\"\n  },\n  \"uncertainty_map\": {\n    \"commentary\": \"2-3 sentences interpreting their overall uncertainty pattern and where to focus next\"\n  },\n  \"next_steps\": [\"specific experiment or research action 1\", \"specific action 2\", \"specific action 3\"],\n  \"theoretical_foundations\": {\n    \"desirability\": \"1 short paragraph connecting the student's specific desirability work to a course reading\",\n    \"feasibility\": \"1 short paragraph connecting feasibility work to a course reading\",\n    \"viability\": \"1 short paragraph connecting viability work to a course reading\"\n  }\n}\n\nFor the theoretical_foundations section, write 3 short paragraphs (one per dimension) connecting the student's specific work to course readings. Reference the student's actual observations, experiments, and analysis \u2014 not generic reading summaries. Keep each paragraph to 2-3 sentences. Cite author and title naturally within the text. Pick from these readings based on what best fits what the student actually did:\n\nDESIRABILITY: Geertz \u2014 Thick Description (seeing meaning behind behavior); Moon \u2014 Different (designing for the extreme user); Fish \u2014 Interpretive Communities (meaning is socially constructed); ANTH101 (ethnographic methods); Reader Response Theory (meaning co-created with user).\nFEASIBILITY: Tetlock \u2014 Superforecasting (probabilistic thinking, updating beliefs); Edmondson \u2014 The Fearless Organization (psychological safety, honest failure); d.school/IDEO/Double Diamond (iterative prototyping).\nVIABILITY: Brand \u2014 Pace Layers / Clock of the Long Now (different speeds of change); Johnson \u2014 Where Good Ideas Come From (adjacent possible, networks); Moon \u2014 Different (competitive differentiation by doing less).\nSYNTHESIS: Martin \u2014 The Opposable Mind (integrative thinking, holding tension); Brand \u2014 Pace Layers (what endures vs changes); Doblin \u2014 A Short Grandiose Theory of Design (D/F/V mirrors Doblin's three modalities).\n\nIf nothing connects naturally to a dimension, write a brief honest note instead of forcing a citation.";
 
     var SYSTEM_CONCEPT_FOLLOWUP = "You are a design thinking coach. A student has just completed a full Desirability, Feasibility, and Viability assessment of their venture and has revised (or kept) their concept statement.\n\nOriginal concept: \"{original}\"\nRevised concept: \"{revised}\"\n\nAsk ONE follow-up question (not two, just one) that helps the student articulate what changed and why. If the concepts are identical, ask why the original framing held up through the assessment. If they changed, ask which part of D/F/V drove the revision.\n\nThis is a metacognitive moment. The goal is reflection, not correction.\n\nKeep the question to 1\u20132 sentences. Be warm and specific.\n\nReturn ONLY valid JSON with no markdown:\n{\"question\":\"your question here\"}";
 
     // ── INLINE TOOL PROMPTS ──
 
-    var SYSTEM_UE_INLINE_QUESTIONS = "You help design thinking students analyze unit economics for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.\nGenerate exactly 5 interview questions covering three areas:\n- COGS (Cost of Goods Sold): 2 questions about production costs, materials, packaging, shipping, supplier pricing, and per-unit manufacturing\n- CAC (Customer Acquisition Cost): 1-2 questions about how they find and convert customers\n- LTV (Lifetime Value): 1-2 questions about revenue per customer, repeat purchases, retention\nBe concrete and specific to their idea — reference the actual product, customer, channel.\nQuestions should be answerable without real data yet (educated estimates are fine).\nStart with COGS questions, then CAC, then LTV. Keep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"COGS\",\"hint\":\"short guidance for student\"}]}";
+    var SYSTEM_UE_INLINE_QUESTIONS = "You help college students work out whether their concept pays for itself. The concept improves part of the college experience at Lewis & Clark College. The students are new to economics, so use plain words.\nAsk exactly 5 questions, one for each of these, in this order:\n1. UNIT: what one unit of their idea is. A unit is one use of the idea by one person (for example one student for a year, one mentor and one student, one event someone attends).\n2. HOW MANY: how many units in one year at Lewis & Clark, as a low guess and a high guess.\n3. COST: what it takes to run for a year (people's time, space, software, supplies), so the cost of one unit can be worked out. Running costs only, not the cost of building it.\n4. NUMBER: which college number the idea changes (new students enrolled, students who stay, students who graduate, jobs after graduation, gifts to the college, or costs saved) and how many more students a year, low and high.\n5. WORTH: how much money that is for the college in a year, or, if the idea is not about tuition, why the college would still pay for it.\nBe concrete and specific to their idea. Questions should be answerable with rough estimates. If the student's description or notes already answer a question, ask them to confirm or improve that answer. Keep each question to one or two short sentences.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"UNIT\",\"hint\":\"short guidance for the student\"}]}\nThe focus values, in order, are: UNIT, HOW MANY, COST, NUMBER, WORTH.";
 
-    var SYSTEM_UE_INLINE_ANALYSIS = "You analyze startup unit economics through the ENDURE framework for a design thinking class.\nThese students are building physical products (bottles, sensors, supplements), so production and distribution costs are critical.\nENDURE dimensions: Environmental Scanning (E), Network Orchestration (N), Disruptive Experimentation (D), Unmet Needs Research (U), Resilience Building (R), Evolution Enablement (E).\n\nBased on the project and interview:\n1. Estimate COGS (Cost of Goods Sold) per unit — materials, manufacturing, packaging, shipping/fulfillment\n2. Calculate gross margin per unit (revenue minus COGS)\n3. Build LTV on GROSS MARGIN, not raw revenue — this is the real value of a customer\n4. Estimate CAC range\n5. Calculate the LTV:CAC ratio using margin-based LTV\n6. Pick 2–3 ENDURE dimensions most relevant to their economics\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"cogs\":{\"per_unit\":number,\"breakdown\":[{\"item\":\"materials/manufacturing/packaging/shipping/other\",\"cost\":number,\"note\":\"brief explanation\"}],\"assumptions\":[\"...\",\"...\"]},\n  \"gross_margin\":{\"revenue_per_unit\":number,\"cogs_per_unit\":number,\"margin_per_unit\":number,\"margin_percent\":number,\"interpretation\":\"one sentence on whether this margin is healthy for their category\"},\n  \"cac\":{\"low\":number,\"high\":number,\"assumptions\":[\"...\",\"...\",\"...\"]},\n  \"ltv\":{\"low\":number,\"high\":number,\"basis\":\"margin-based — built on gross profit, not revenue\",\"assumptions\":[\"...\",\"...\",\"...\"]},\n  \"ratio\":{\"value\":number,\"interpretation\":\"one sentence on viability — note this uses margin-based LTV\",\"benchmark\":\"industry context\"},\n  \"endure\":[{\"dimension\":\"full name\",\"letter\":\"single letter\",\"insight\":\"2-3 sentences connecting this dimension to their unit economics\",\"impact\":\"COGS|CAC|LTV|Margin|Both\"}],\n  \"brief\":\"2-3 paragraph written brief covering production costs, margins, acquisition costs, and strategic risks. Highlight where margin pressure or scale effects could change the picture.\"\n}";
+    var SYSTEM_UE_INLINE_ANALYSIS = "You work out whether a student's concept pays for itself for Lewis & Clark College. The test: it is viable if the money it brings in for the college in a year is more than what it costs to run for a year. The students are new to economics. Use plain words. Never use the terms CAC, LTV, COGS, gross margin, TAM or SAM.\n\nBased on the project and interview:\n1. State the unit in one plain sentence.\n2. Estimate units a year at Lewis & Clark as a low and a high number.\n3. Estimate the cost of one unit as a low and a high number, with a short breakdown (people's time, space, software, supplies, other). Running costs only, not the cost of building it.\n4. Money out a year = units times the cost of one unit, low and high.\n5. Name the one college number the concept changes, and estimate how many more students a year (low and high) enrol, stay or graduate because of it. Be sceptical: use the student's estimate as an anchor, but say so if it looks optimistic.\n6. Money in a year = those students times what one student is worth to the college. Use about $25,500 in tuition a year for one undergraduate unless the student gives a better figure or the students concerned clearly pay less (for example students on full-tuition scholarships). If the concept is not about tuition (gifts, costs saved, or no dollar figure), estimate money in from the student's own reasoning, or set low and high to 0 and explain in basis what the college would have to believe.\n7. Write the sentence that starts 'This pays for itself if' and give a verdict: 'Yes' if money in is above money out even at the low end, 'Only at the high end' if it depends on the optimistic numbers, 'Not yet' if money out is above money in or there is no money in.\n8. Write a 2-3 paragraph brief in plain words: what the numbers say, which one number matters most, and what the student should check next. Show the arithmetic.\n\nUse the student's numbers where they gave them. Do not invent evidence. All amounts are US dollars per year, written as plain numbers with no symbols or commas.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"unit\":{\"description\":\"one plain sentence\"},\n  \"units_per_year\":{\"low\":number,\"high\":number,\"basis\":\"one sentence on where the count comes from\"},\n  \"cost_per_unit\":{\"low\":number,\"high\":number,\"breakdown\":[{\"item\":\"people's time/space/software/supplies/other\",\"cost\":number,\"note\":\"brief explanation\"}],\"assumptions\":[\"...\",\"...\"]},\n  \"money_out\":{\"low\":number,\"high\":number},\n  \"number_changed\":{\"name\":\"New students enrolled|Students who stay|Students who graduate|Jobs after graduation|Gifts to the college|Costs saved\",\"students_low\":number,\"students_high\":number,\"reasoning\":\"one or two sentences, including whether the estimate looks optimistic\"},\n  \"money_in\":{\"low\":number,\"high\":number,\"per_student\":number,\"basis\":\"one sentence on the figure used and why\"},\n  \"pays_for_itself\":{\"sentence\":\"This pays for itself if ...\",\"verdict\":\"Yes|Only at the high end|Not yet\",\"interpretation\":\"one sentence in plain words\"},\n  \"brief\":\"2-3 paragraph plain-language brief\"\n}";
 
-    var SYSTEM_TAM_INLINE_QUESTIONS = "You help design thinking students estimate market size for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.\nGenerate exactly 4 interview questions covering three areas:\n- TAM (Total Addressable Market): 1 question about the total potential users/buyers in their target geography and category — who could theoretically buy this?\n- SAM (Serviceable Addressable Market): 1-2 questions about what realistic segment they can actually reach — geographic, demographic, or channel constraints that narrow the TAM\n- TARGET (Year-One Target): 1 question about their realistic first-year reach given their starting position, channels, and capacity\n\nBe concrete and specific to their idea — reference the actual product, customer, market.\nQuestions should be answerable without real data yet (educated estimates and reasoning are fine).\nStart with TAM questions, then SAM, then TARGET. Keep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"TAM\",\"hint\":\"short guidance for student\"}]}";
+    var SYSTEM_TAM_INLINE_QUESTIONS = "You help college students think about how far their concept could reach. The concept improves part of the college experience at Lewis & Clark College. Use plain words. Do not use the terms TAM or SAM.\nGenerate exactly 4 interview questions covering three areas, in this order:\n- AT L&C: 1 question about who at Lewis & Clark could use this, and how many of them would really use it in the first year\n- BEYOND L&C: 1-2 questions about which other colleges, programmes or organisations have the same need, and what would have to change for the concept to work there\n- OWNER: 1 question about who should own and run it (the college, the student, or an outside organisation) and what it would cost to build before it can run\n\nBe concrete and specific to their idea. Questions should be answerable with rough estimates and reasoning.\nKeep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"AT L&C\",\"hint\":\"short guidance for student\"}]}\nThe focus values are: AT L&C, BEYOND L&C, OWNER.";
 
-    var SYSTEM_TAM_INLINE_ANALYSIS = "You analyze startup market sizing through the ENDURE framework for a design thinking class.\nThese students are building early-stage ventures (physical products, apps, services), so realistic estimation matters more than precision.\n\nBased on the project and interview:\n1. Estimate the Total Addressable Market (TAM) — the entire potential market if every possible customer bought\n2. Estimate the Serviceable Addressable Market (SAM) — the segment they can realistically reach given geography, channels, and positioning\n3. Estimate a Year-One Target — what they could actually achieve in their first year given starting resources\n4. Provide a reality check — is this a niche play, a mid-market opportunity, or a mass-market bet?\n5. Write a 2-3 paragraph market logic brief\n\nUse specific numbers when possible. Show your reasoning through assumptions.\nIf the student gave estimates, use those as anchors but pressure-test them.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"tam\": {\"value\": \"human-readable size (e.g. ~2.5M college athletes)\", \"description\": \"1-2 sentences explaining the TAM scope\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"sam\": {\"value\": \"human-readable size (e.g. ~15K athletes in Pacific NW D3)\", \"description\": \"1-2 sentences explaining the narrowing\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"year_one_target\": {\"value\": \"human-readable target (e.g. 200-400 customers)\", \"description\": \"1-2 sentences on why this is realistic\"},\n  \"reality_check\": \"1-2 sentences — is this a niche play, mid-market opportunity, or mass-market bet? What does the size imply about strategy?\",\n  \"brief\": \"2-3 paragraph market logic brief covering total opportunity, realistic segment, year-one path, and what the sizing implies about go-to-market strategy and competitive dynamics.\"\n}";
+    var SYSTEM_TAM_INLINE_ANALYSIS = "You work out how far a student's concept could reach, for a design thinking class. The concept improves part of the college experience at Lewis & Clark College. Realistic estimates matter more than precision. Use plain words. Do not use the terms TAM or SAM in any text you write.\n\nBased on the project and interview:\n1. Estimate everyone who could use it, at Lewis & Clark and at other colleges, programmes or organisations with the same need (the JSON key for this is tam)\n2. Estimate how many could use it at Lewis & Clark alone (the JSON key for this is sam)\n3. Estimate a realistic first-year reach, given where the student is starting from\n4. Say who should own and run it (the college, the student, or an outside organisation), why, and roughly what it would cost to build before it can run (the JSON key for this is reality_check)\n5. Write a 2-3 paragraph brief on reach\n\nUse specific numbers when possible. Show your reasoning through assumptions.\nIf the student gave estimates, use those as anchors but test them.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"tam\": {\"value\": \"human-readable size (e.g. ~40,000 first-years at small private colleges in the West)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"sam\": {\"value\": \"human-readable size (e.g. ~410 new students a year at Lewis & Clark)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"year_one_target\": {\"value\": \"human-readable target (e.g. 60-100 students)\", \"description\": \"1-2 sentences on why this is realistic\"},\n  \"reality_check\": \"2-3 sentences: who should own and run it, why, and a rough cost to build\",\n  \"brief\": \"2-3 paragraph brief covering reach at Lewis & Clark, reach beyond it, what would have to change elsewhere, and who should own it\"\n}";
 
     // ═══════════════════════════════════════
     // INITIAL STATE
@@ -805,6 +805,8 @@
       showResume: false
     };
 
+    var COURSE_CONTEXT = "COURSE CONTEXT (Fall 2026): The students are undergraduates at Lewis & Clark College, a small private liberal arts college in Portland, Oregon. Each student has developed one concept that would improve part of the college experience. Most work alone. They tested an 'adcept' (the concept written as an ad) in three rounds with real people; treat those rounds as their experiments. The viability test in this course is net benefit to the college: a concept is viable if it brings in more money for the college than it costs to run. Who should own it (the college, the student, an outside organisation) is a later question.\n\nREFERENCE NUMBERS (use these only when the student has no better figure, and say that they are course reference figures, not this year's audited numbers):\n- About 1,970 undergraduates in 2025-26.\n- 413 students in the Fall 2026 incoming class; the college's budget assumed about 520.\n- One undergraduate pays about $25,500 a year in tuition on average, after scholarships (a 2024-25 figure; newer students pay somewhat less, and students on full-tuition scholarships pay far less).\n- Of the 482 first-years who entered in Fall 2024, 400 came back for a second year.\n- About 74% graduate within six years.\n- 421 varsity athletes, about one undergraduate in five.\n- The undergraduate college projects a $7.4 million deficit for the year ending May 2027 (reported by the student newspaper in October 2026).\n\nLANGUAGE: These students are new to economics. Use plain words: 'unit' for one use of the idea by one person, 'the cost of one unit', 'money in', 'money out'. Do not use the terms CAC, LTV, COGS, TAM, SAM, gross margin or go-to-market. Call it a concept, not a venture or a startup.";
+
     // ═══════════════════════════════════════
     // API HELPER
     // ═══════════════════════════════════════
@@ -817,7 +819,7 @@
       var payloadObj = {
         model: "claude-sonnet-4-6",
         max_tokens: maxTokens,
-        system: sys,
+        system: sys + "\n\n" + COURSE_CONTEXT,
         messages: [{ role: "user", content: content }]
       };
       if (useStream) payloadObj.stream = true;
@@ -1221,7 +1223,9 @@
         update(u);
       }
 
-      var fmtUE = function(n) { return n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n; };
+      var fmtUE = function(n) { n = Number(n) || 0; return "$" + Math.round(n).toLocaleString("en-US"); };
+      var fmtRange = function(o) { if (!o) return ""; return fmtUE(o.low) + " \u2013 " + fmtUE(o.high); };
+      var numRange = function(lo, hi) { lo = Number(lo) || 0; hi = Number(hi) || 0; return lo === hi ? String(lo) : lo + " \u2013 " + hi; };
 
       // ── Viability detection gate ──
       function startViabilityFlow() {
@@ -1255,10 +1259,12 @@
       // ── UE inline interview ──
       async function startUeInlineInterview() {
         pushHistory();
-        update({ phase: "loading", loadingMsg: "Preparing unit economics questions\u2026" });
+        update({ phase: "loading", loadingMsg: "Preparing your five questions\u2026" });
         try {
           var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
-          var raw = await callClaude(context, SYSTEM_UE_INLINE_QUESTIONS, 800);
+          var ueNotes = (S.dimensions.viability.pasteIn || "").trim();
+          if (ueNotes) context += "\n\nStudent's viability notes:\n" + ueNotes.substring(0, 3000);
+          var raw = await callClaude(context, SYSTEM_UE_INLINE_QUESTIONS, 1000);
           var parsed = JSON.parse(raw.trim());
           updateInline("ueInline", { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "" });
           update({ phase: "viability", subPhase: "ue-interview", error: "" });
@@ -1276,13 +1282,15 @@
         } else {
           // Generate UE analysis
           pushHistory();
-          update({ phase: "loading", loadingMsg: "Building your unit economics model\u2026" });
+          update({ phase: "loading", loadingMsg: "Working out whether it pays for itself\u2026" });
           try {
             var qa = ue.questions.map(function(q, i) {
               return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
             }).join("\n\n");
             var raw = await callClaude(
-              "Project: " + S.projectName + "\nDescription: " + S.projectDesc + "\n\nInterview:\n" + qa,
+              "Project: " + S.projectName + "\nDescription: " + S.projectDesc +
+                ((S.dimensions.viability.pasteIn || "").trim() ? "\n\nStudent's viability notes:\n" + S.dimensions.viability.pasteIn.trim().substring(0, 3000) : "") +
+                "\n\nInterview:\n" + qa,
               SYSTEM_UE_INLINE_ANALYSIS
             );
             var parsed = JSON.parse(raw.trim());
@@ -1305,7 +1313,7 @@
       // ── TAM inline interview ──
       async function startTamInlineInterview() {
         pushHistory();
-        update({ phase: "loading", loadingMsg: "Preparing market sizing questions\u2026" });
+        update({ phase: "loading", loadingMsg: "Preparing reach questions\u2026" });
         try {
           var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
           var raw = await callClaude(context, SYSTEM_TAM_INLINE_QUESTIONS, 800);
@@ -1326,7 +1334,7 @@
         } else {
           // Generate TAM analysis
           pushHistory();
-          update({ phase: "loading", loadingMsg: "Sizing your market\u2026" });
+          update({ phase: "loading", loadingMsg: "Working out how far it could reach\u2026" });
           try {
             var qa = tam.questions.map(function(q, i) {
               return "Q" + (i + 1) + " [" + q.focus + "]: " + q.text + "\nA: " + newAnswers[i];
@@ -1376,46 +1384,51 @@
       function buildUeInlinePlainText() {
         if (!S.unitEconomicsResults) return "";
         var r = S.unitEconomicsResults;
+        var p = r.pays_for_itself || {};
         var lines = [];
         lines.push("ENDURE Unit Economics Analysis — " + S.projectName.toUpperCase());
         lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
         lines.push("");
         lines.push("═══════════════════════════════════════");
-        lines.push("LTV : CAC RATIO — " + Number(r.ratio.value).toFixed(1) + "x");
-        lines.push(r.ratio.interpretation);
-        lines.push(r.ratio.benchmark);
-        if (r.cogs) {
+        lines.push("DOES IT PAY FOR ITSELF? — " + (p.verdict || "Not worked out"));
+        if (p.sentence) lines.push(p.sentence);
+        if (p.interpretation) lines.push(p.interpretation);
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        if (r.unit && r.unit.description) lines.push("ONE UNIT: " + r.unit.description);
+        if (r.units_per_year) {
+          lines.push("UNITS A YEAR AT LEWIS & CLARK: " + numRange(r.units_per_year.low, r.units_per_year.high));
+          if (r.units_per_year.basis) lines.push("  — " + r.units_per_year.basis);
+        }
+        if (r.cost_per_unit) {
           lines.push("");
-          lines.push("───────────────────────────────────────");
-          lines.push("COST OF GOODS SOLD: " + fmtUE(r.cogs.per_unit) + " per unit");
-          if (r.cogs.breakdown) {
-            r.cogs.breakdown.forEach(function(b) {
+          lines.push("COST OF ONE UNIT: " + fmtRange(r.cost_per_unit));
+          if (r.cost_per_unit.breakdown) {
+            r.cost_per_unit.breakdown.forEach(function(b) {
               lines.push("  — " + b.item + ": " + fmtUE(b.cost) + (b.note ? " (" + b.note + ")" : ""));
             });
           }
-          if (r.cogs.assumptions) {
-            r.cogs.assumptions.forEach(function(a) { lines.push("  — " + a); });
+          if (r.cost_per_unit.assumptions) {
+            r.cost_per_unit.assumptions.forEach(function(a) { lines.push("  — " + a); });
           }
         }
-        if (r.gross_margin) {
-          lines.push("");
-          lines.push("GROSS MARGIN: " + fmtUE(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)");
-          lines.push("  Revenue " + fmtUE(r.gross_margin.revenue_per_unit) + " – COGS " + fmtUE(r.gross_margin.cogs_per_unit));
-          lines.push(r.gross_margin.interpretation);
+        if (r.money_out) lines.push("MONEY OUT PER YEAR: " + fmtRange(r.money_out));
+        lines.push("");
+        lines.push("───────────────────────────────────────");
+        if (r.number_changed) {
+          lines.push("THE COLLEGE NUMBER IT CHANGES: " + (r.number_changed.name || ""));
+          lines.push("  " + numRange(r.number_changed.students_low, r.number_changed.students_high) + " more students a year");
+          if (r.number_changed.reasoning) lines.push("  — " + r.number_changed.reasoning);
+        }
+        if (r.money_in) {
+          lines.push("MONEY IN PER YEAR: " + fmtRange(r.money_in));
+          if (r.money_in.basis) lines.push("  — " + r.money_in.basis);
         }
         lines.push("");
         lines.push("───────────────────────────────────────");
-        lines.push("CUSTOMER ACQUISITION COST: " + fmtUE(r.cac.low) + " – " + fmtUE(r.cac.high));
-        r.cac.assumptions.forEach(function(a) { lines.push("  — " + a); });
+        lines.push("BRIEF");
         lines.push("");
-        lines.push("LIFETIME VALUE: " + fmtUE(r.ltv.low) + " – " + fmtUE(r.ltv.high));
-        if (r.ltv.basis) { lines.push("  (" + r.ltv.basis + ")"); }
-        r.ltv.assumptions.forEach(function(a) { lines.push("  — " + a); });
-        lines.push("");
-        lines.push("───────────────────────────────────────");
-        lines.push("STRATEGIC BRIEF");
-        lines.push("");
-        lines.push(r.brief);
+        lines.push(r.brief || "");
         lines.push("");
         lines.push("═══════════════════════════════════════");
         return lines.join("\n");
@@ -1437,32 +1450,35 @@
         children.push(para(S.projectName, { bold: true, after: 40 }));
         children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
         children.push(divider());
-        children.push(heading("LTV : CAC Ratio", 2));
-        children.push(para(Number(r.ratio.value).toFixed(1) + "\u00D7", { bold: true }));
-        children.push(para(r.ratio.interpretation));
-        children.push(para(r.ratio.benchmark, { italic: true, color: "666666" }));
-        if (r.cogs) {
-          children.push(divider()); children.push(heading("Cost of Goods Sold", 2));
-          children.push(para(fmtUE(r.cogs.per_unit) + " per unit", { bold: true }));
-          if (r.cogs.breakdown) r.cogs.breakdown.forEach(function(b) { children.push(bullet(b.item + ": " + fmtUE(b.cost) + (b.note ? " (" + b.note + ")" : ""))); });
-          if (r.cogs.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.cogs.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
+        var p = r.pays_for_itself || {};
+        children.push(heading("Does It Pay for Itself?", 2));
+        children.push(para(p.verdict || "Not worked out", { bold: true }));
+        if (p.sentence) children.push(para(p.sentence));
+        if (p.interpretation) children.push(para(p.interpretation, { italic: true, color: "666666" }));
+        children.push(divider()); children.push(heading("One Unit, and How Many", 2));
+        if (r.unit && r.unit.description) children.push(para(r.unit.description));
+        if (r.units_per_year) {
+          children.push(para(numRange(r.units_per_year.low, r.units_per_year.high) + " units a year at Lewis & Clark", { bold: true }));
+          if (r.units_per_year.basis) children.push(para(r.units_per_year.basis, { italic: true, color: "666666" }));
         }
-        if (r.gross_margin) {
-          children.push(divider()); children.push(heading("Gross Margin", 2));
-          children.push(para(fmtUE(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)", { bold: true }));
-          children.push(para(r.gross_margin.interpretation));
+        if (r.cost_per_unit) {
+          children.push(divider()); children.push(heading("Cost of One Unit", 2));
+          children.push(para(fmtRange(r.cost_per_unit), { bold: true }));
+          if (r.cost_per_unit.breakdown) r.cost_per_unit.breakdown.forEach(function(b) { children.push(bullet(b.item + ": " + fmtUE(b.cost) + (b.note ? " (" + b.note + ")" : ""))); });
+          if (r.cost_per_unit.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.cost_per_unit.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
         }
-        children.push(divider()); children.push(heading("Customer Acquisition Cost", 2));
-        children.push(para(fmtUE(r.cac.low) + " \u2013 " + fmtUE(r.cac.high), { bold: true }));
-        children.push(para("Assumptions:", { bold: true, after: 60 }));
-        r.cac.assumptions.forEach(function(a) { children.push(bullet(a)); });
-        children.push(divider()); children.push(heading("Lifetime Value", 2));
-        children.push(para(fmtUE(r.ltv.low) + " \u2013 " + fmtUE(r.ltv.high), { bold: true }));
-        if (r.ltv.basis) children.push(para(r.ltv.basis, { italic: true, color: "666666" }));
-        children.push(para("Assumptions:", { bold: true, after: 60 }));
-        r.ltv.assumptions.forEach(function(a) { children.push(bullet(a)); });
-        children.push(divider()); children.push(heading("Strategic Brief", 2));
-        children.push(para(r.brief));
+        if (r.money_out) children.push(para("Money out per year: " + fmtRange(r.money_out), { bold: true }));
+        if (r.number_changed) {
+          children.push(divider()); children.push(heading("The College Number It Changes", 2));
+          children.push(para((r.number_changed.name || "") + ": " + numRange(r.number_changed.students_low, r.number_changed.students_high) + " more students a year", { bold: true }));
+          if (r.number_changed.reasoning) children.push(para(r.number_changed.reasoning));
+        }
+        if (r.money_in) {
+          children.push(para("Money in per year: " + fmtRange(r.money_in), { bold: true }));
+          if (r.money_in.basis) children.push(para(r.money_in.basis, { italic: true, color: "666666" }));
+        }
+        children.push(divider()); children.push(heading("Brief", 2));
+        children.push(para(r.brief || ""));
         children.push(divider());
         children.push(para("Generated with ENDURE Unit Economics \u00B7 " + dateStr, { italic: true, color: "999999" }));
         var doc = new D.Document({ sections: [{ properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } }, children: children }] });
@@ -1481,28 +1497,28 @@
         lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
         lines.push("");
         lines.push("═══════════════════════════════════════");
-        lines.push("TOTAL ADDRESSABLE MARKET (TAM)");
+        lines.push("EVERYONE WHO COULD USE IT");
         lines.push(r.tam.value);
         lines.push(r.tam.description);
         if (r.tam.assumptions) r.tam.assumptions.forEach(function(a) { lines.push("  — " + a); });
         lines.push("");
         lines.push("───────────────────────────────────────");
-        lines.push("SERVICEABLE ADDRESSABLE MARKET (SAM)");
+        lines.push("AT LEWIS & CLARK");
         lines.push(r.sam.value);
         lines.push(r.sam.description);
         if (r.sam.assumptions) r.sam.assumptions.forEach(function(a) { lines.push("  — " + a); });
         lines.push("");
         lines.push("───────────────────────────────────────");
-        lines.push("YEAR-ONE TARGET");
+        lines.push("FIRST-YEAR REACH");
         lines.push(r.year_one_target.value);
         lines.push(r.year_one_target.description);
         lines.push("");
         lines.push("───────────────────────────────────────");
-        lines.push("REALITY CHECK");
+        lines.push("WHO SHOULD OWN IT");
         lines.push(r.reality_check);
         lines.push("");
         lines.push("───────────────────────────────────────");
-        lines.push("MARKET LOGIC BRIEF");
+        lines.push("REACH BRIEF");
         lines.push("");
         lines.push(r.brief);
         lines.push("");
@@ -1526,21 +1542,21 @@
         children.push(para(S.projectName, { bold: true, after: 40 }));
         children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
         children.push(divider());
-        children.push(heading("Total Addressable Market (TAM)", 2));
+        children.push(heading("Everyone Who Could Use It", 2));
         children.push(para(r.tam.value, { bold: true })); children.push(para(r.tam.description));
         if (r.tam.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.tam.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
         children.push(divider());
-        children.push(heading("Serviceable Addressable Market (SAM)", 2));
+        children.push(heading("At Lewis & Clark", 2));
         children.push(para(r.sam.value, { bold: true })); children.push(para(r.sam.description));
         if (r.sam.assumptions) { children.push(para("Assumptions:", { bold: true, after: 60 })); r.sam.assumptions.forEach(function(a) { children.push(bullet(a)); }); }
         children.push(divider());
-        children.push(heading("Year-One Target", 2));
+        children.push(heading("First-Year Reach", 2));
         children.push(para(r.year_one_target.value, { bold: true })); children.push(para(r.year_one_target.description));
         children.push(divider());
-        children.push(heading("Reality Check", 2));
+        children.push(heading("Who Should Own It", 2));
         children.push(para(r.reality_check));
         children.push(divider());
-        children.push(heading("Market Logic Brief", 2));
+        children.push(heading("Reach Brief", 2));
         children.push(para(r.brief));
         children.push(divider());
         children.push(para("Generated with ENDURE Market Sizing \u00B7 " + dateStr, { italic: true, color: "999999" }));
@@ -1601,14 +1617,14 @@
             // Enrich viability context with UE/TAM data
             if (dim === "viability") {
               if (S.unitEconomicsResults) {
-                context += "\n\nUnit Economics Data:\n" + buildUeInlinePlainText();
+                context += "\n\nDoes-it-pay-for-itself data:\n" + buildUeInlinePlainText();
               } else if (S.unitEconomicsContent) {
-                context += "\n\nUnit Economics Data:\n" + S.unitEconomicsContent;
+                context += "\n\nDoes-it-pay-for-itself data:\n" + S.unitEconomicsContent;
               }
               if (S.tamSamResults) {
-                context += "\n\nMarket Sizing Data:\n" + buildTamInlinePlainText();
+                context += "\n\nReach data:\n" + buildTamInlinePlainText();
               } else if (S.tamSamContent) {
-                context += "\n\nMarket Sizing Data:\n" + S.tamSamContent;
+                context += "\n\nReach data:\n" + S.tamSamContent;
               }
               if (S.financialModelContent) {
                 context += "\n\nFinancial Model Data:\n" + S.financialModelContent;
@@ -1820,20 +1836,20 @@
 
         // Include inline tool data
         if (S.unitEconomicsResults) {
-          lines.push("=== UNIT ECONOMICS DATA ===");
+          lines.push("=== DOES IT PAY FOR ITSELF DATA ===");
           lines.push(buildUeInlinePlainText());
           lines.push("");
         } else if (S.unitEconomicsContent) {
-          lines.push("=== UNIT ECONOMICS DATA ===");
+          lines.push("=== DOES IT PAY FOR ITSELF DATA ===");
           lines.push(S.unitEconomicsContent);
           lines.push("");
         }
         if (S.tamSamResults) {
-          lines.push("=== MARKET SIZING DATA ===");
+          lines.push("=== REACH DATA ===");
           lines.push(buildTamInlinePlainText());
           lines.push("");
         } else if (S.tamSamContent) {
-          lines.push("=== MARKET SIZING DATA ===");
+          lines.push("=== REACH DATA ===");
           lines.push(S.tamSamContent);
           lines.push("");
         }
@@ -1893,7 +1909,7 @@
         L.push("DESIRABILITY    [" + ratingDots(dr) + " " + DIMS.desirability.ratings[dr - 1].label + "]");
         L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
         L.push("");
-        L.push("Customer Insight:");
+        L.push("Insight:");
         L.push(b.desirability.insight);
         L.push("");
         L.push("Unmet Need:");
@@ -1929,12 +1945,12 @@
         L.push("VIABILITY       [" + ratingDots(vr) + " " + DIMS.viability.ratings[vr - 1].label + "]");
         L.push("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
         L.push("");
-        L.push("Economic Logic:");
+        L.push("Does it pay for itself:");
         L.push(b.viability.economics);
         L.push("");
-        L.push("Market Size: " + b.viability.market);
-        L.push("Retention: " + b.viability.retention);
-        L.push("Protectability: " + b.viability.protectability);
+        L.push("Reach: " + b.viability.market);
+        L.push("Why it keeps getting funded: " + b.viability.retention);
+        L.push("Why this and not the alternative: " + b.viability.protectability);
         L.push("Gaps: " + b.viability.gaps);
         L.push("Top Uncertainty: " + b.viability.top_uncertainty);
         L.push("");
@@ -2115,7 +2131,8 @@
             var fields = dimFields[dim];
             fields.forEach(function(field) {
               if (section[field]) {
-                var label = field.replace(/_/g, " ").replace(/^\w/, function(c) { return c.toUpperCase(); });
+                var fieldLabels = { insight: "Insight", economics: "Does it pay for itself", market: "Reach", retention: "Why it keeps getting funded", protectability: "Why this and not the alternative" };
+                var label = fieldLabels[field] || field.replace(/_/g, " ").replace(/^\w/, function(c) { return c.toUpperCase(); });
                 if (field === "gaps" || field === "top_uncertainty") {
                   children.push(para(label + ": " + section[field], { italic: true, color: "666666" }));
                 } else {
@@ -2330,7 +2347,7 @@
 
         // ── SLIDE 3: The Customer ──
         var s3 = addSlide();
-        slideTitle(s3, "The Customer");
+        slideTitle(s3, "The Person");
         var dAns = S.dimensions.desirability.answers;
         var dSyn = S.dimensions.desirability.synthesis;
         var custItems = [];
@@ -2340,7 +2357,7 @@
         if (dSyn && dSyn.synthesis) custItems.push({ label: "Insight:", text: dSyn.synthesis.substring(0, 300), italic: true });
         // Fallback to brief
         if (custItems.length === 0 && b.desirability) {
-          if (b.desirability.insight) custItems.push({ label: "Customer insight:", text: b.desirability.insight.substring(0, 400), h: 1.5 });
+          if (b.desirability.insight) custItems.push({ label: "Insight:", text: b.desirability.insight.substring(0, 400), h: 1.5 });
           if (b.desirability.evidence_summary) custItems.push({ label: "Evidence:", text: b.desirability.evidence_summary.substring(0, 300), italic: true });
           if (b.desirability.top_uncertainty) custItems.push({ label: "Key uncertainty:", text: b.desirability.top_uncertainty.substring(0, 250) });
         }
@@ -2370,31 +2387,32 @@
 
         // ── SLIDE 5: The Economics ──
         var s5 = addSlide();
-        slideTitle(s5, "The Economics");
+        slideTitle(s5, "Does It Pay for Itself?");
         var vSyn = S.dimensions.viability.synthesis;
         var econItems = [];
         if (S.unitEconomicsResults) {
           var ueR = S.unitEconomicsResults;
-          econItems.push({ label: "LTV:CAC Ratio:", text: Number(ueR.ratio.value).toFixed(1) + "x - " + (ueR.ratio.interpretation || "").substring(0, 200) });
-          if (ueR.gross_margin) econItems.push({ label: "Gross margin:", text: fmtUE(ueR.gross_margin.margin_per_unit) + "/unit (" + Math.round(ueR.gross_margin.margin_percent) + "%)", h: 0.4 });
+          var pfiR = ueR.pays_for_itself || {};
+          econItems.push({ label: "Verdict:", text: ((pfiR.verdict || "") + " - " + (pfiR.sentence || "")).substring(0, 260) });
+          econItems.push({ label: "Money in / out:", text: fmtRange(ueR.money_in) + " in, " + fmtRange(ueR.money_out) + " out, a year", h: 0.4 });
         }
         if (S.tamSamResults) {
           var tamR = S.tamSamResults;
-          econItems.push({ label: "TAM:", text: (tamR.tam.value || "").substring(0, 200) });
-          econItems.push({ label: "Year-one target:", text: (tamR.year_one_target.value || "").substring(0, 200) });
+          econItems.push({ label: "Could reach:", text: (tamR.tam.value || "").substring(0, 200) });
+          econItems.push({ label: "First year:", text: (tamR.year_one_target.value || "").substring(0, 200) });
         }
         // Fallback to brief
         if (econItems.length === 0 && b.viability) {
           if (b.viability.economics) econItems.push({ label: "Economics:", text: b.viability.economics.substring(0, 400), h: 1.5 });
-          if (b.viability.market) econItems.push({ label: "Market:", text: b.viability.market.substring(0, 300) });
+          if (b.viability.market) econItems.push({ label: "Reach:", text: b.viability.market.substring(0, 300) });
         } else if (!S.tamSamResults && vSyn && vSyn.tam_sam) {
-          econItems.push({ label: "Market size:", text: (vSyn.tam_sam.description || "").substring(0, 250) });
-          if (vSyn.tam_sam.year_one) econItems.push({ label: "Year one:", text: vSyn.tam_sam.year_one.substring(0, 200) });
+          econItems.push({ label: "Reach:", text: (vSyn.tam_sam.description || "").substring(0, 250) });
+          if (vSyn.tam_sam.year_one) econItems.push({ label: "First year:", text: vSyn.tam_sam.year_one.substring(0, 200) });
         }
-        if (b.viability && b.viability.retention) econItems.push({ label: "Retention:", text: b.viability.retention.substring(0, 250) });
+        if (b.viability && b.viability.retention) econItems.push({ label: "Why it keeps getting funded:", text: b.viability.retention.substring(0, 250) });
         addLabeledBlock(s5, 1.3, econItems);
         var vRC = S.dimensions.viability.synthesis && S.dimensions.viability.synthesis.reading_connection;
-        s5.notes = "Present your unit economics, market size, and retention logic. If you have LTV:CAC ratio, lead with that." + (vRC ? "\n\nTheory connection: " + vRC.text : "");
+        s5.notes = "Lead with your \u201cThis pays for itself if\u201d sentence. Then show what one unit costs, which college number it changes, and how far it could reach." + (vRC ? "\n\nTheory connection: " + vRC.text : "");
 
         // ── SLIDE 6: Our Assessment ──
         var s6 = addSlide();
@@ -2461,12 +2479,12 @@
             aY += 0.5;
           });
         }
-        s7.notes = "Walk through your highest and lowest confidence assumptions. Explain why the low-confidence ones matter \u2014 are they critical to your venture or manageable risks?";
+        s7.notes = "Walk through your highest and lowest confidence assumptions. Explain why the low-confidence ones matter \u2014 are they critical to your concept or manageable risks?";
 
         // ── SLIDE 8: The Honest Bet ──
         var s8 = addSlide();
         slideTitle(s8, "The Honest Bet");
-        s8.addText("Will this venture exist in two years?", {
+        s8.addText("Will this be running at Lewis & Clark in two years?", {
           x: 0.6, y: 1.5, w: 11.8, h: 0.6,
           fontSize: 16, fontFace: "Arial", color: MUTED, italic: true
         });
@@ -2575,9 +2593,9 @@
               )
             ) : null,
             e("div", { className: "eyebrow" }, "Venture Assessment"),
-            e("h1", { className: "intro-heading" }, "How strong is your venture \u2014 ", e("em", null, "honestly"), "?"),
+            e("h1", { className: "intro-heading" }, "How strong is your concept \u2014 ", e("em", null, "honestly"), "?"),
             e("p", { className: "intro-body" },
-              "This tool walks you through three dimensions of your venture \u2014 Desirability, Feasibility, and Viability \u2014 " +
+              "This tool walks you through three dimensions of your concept \u2014 Desirability, Feasibility, and Viability \u2014 " +
               "and produces an assessment brief you can submit. Be honest. The quality of your reasoning matters more than the strength of your idea."
             ),
             e("div", { className: "card" },
@@ -2587,11 +2605,11 @@
                   className: "form-input",
                   value: S.projectName,
                   onChange: function(ev) { update({ projectName: ev.target.value }); },
-                  placeholder: "Your venture name"
+                  placeholder: "Your concept name"
                 })
               ),
               e("div", { className: "form-group" },
-                e("label", { className: "form-label" }, "Team Members"),
+                e("label", { className: "form-label" }, "Your Name"),
                 e("div", { className: "form-hint" }, "Optional"),
                 e("input", {
                   className: "form-input",
@@ -2602,7 +2620,7 @@
               ),
               e("div", { className: "form-group" },
                 e("label", { className: "form-label" }, "Your Concept Statement"),
-                e("div", { className: "form-hint" }, "Describe your venture in 2\u20133 sentences. Who is it for? What does it do? What problem does it solve? Write the version you believe right now \u2014 you\u2019ll have a chance to revise it at the end."),
+                e("div", { className: "form-hint" }, "Describe your concept in 2\u20133 sentences. Who is it for? What does it do? What problem does it solve? Write the version you believe right now \u2014 you\u2019ll have a chance to revise it at the end."),
                 e("textarea", {
                   className: "form-input",
                   rows: 5,
@@ -2780,9 +2798,9 @@
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
-            e("div", { className: "dim-heading" }, "Your Unit Economics"),
-            e("div", { className: "dim-body" }, "We found your Unit Economics analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Does It Pay for Itself?"),
+            e("div", { className: "dim-heading" }, "Your Numbers"),
+            e("div", { className: "dim-body" }, "We found an earlier analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
             renderConceptRef(),
             e("div", { className: "card" },
               e("div", { style: { whiteSpace: "pre-wrap", fontSize: 13, color: "rgba(232,227,216,0.55)", lineHeight: "1.6" } },
@@ -2811,7 +2829,7 @@
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Does It Pay for Itself?"),
             renderConceptRef(),
             e("div", { className: "progress-track" },
               ue.questions.map(function(_, i) {
@@ -2821,7 +2839,7 @@
                 return e("div", { key: i, className: cls });
               })
             ),
-            e("div", { className: "focus-badge" }, q.focus + " Driver"),
+            e("div", { className: "focus-badge" }, q.focus),
             e("div", { className: "q-text" }, q.text),
             q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
             e("textarea", {
@@ -2838,7 +2856,7 @@
                 className: "btn",
                 onClick: submitUeInlineAnswer,
                 disabled: !ue.currentAnswer.trim()
-              }, ue.qIndex + 1 < ue.questions.length ? "Next \u2192" : "Generate Model \u2192"),
+              }, ue.qIndex + 1 < ue.questions.length ? "Next \u2192" : "Work It Out \u2192"),
               e("span", { className: "q-counter" }, (ue.qIndex + 1) + " of " + ue.questions.length)
             )
           )
@@ -2849,22 +2867,26 @@
       function renderUeResults() {
         var r = S.unitEconomicsResults;
         if (!r) return renderLoading();
-        var ratioColor = r.ratio.value >= 3 ? "#5CB88A" : r.ratio.value >= 2 ? "#D4A853" : "#E07558";
+        var pfi = r.pays_for_itself || {};
+        var ratioColor = pfi.verdict === "Yes" ? "#5CB88A" : pfi.verdict === "Only at the high end" ? "#D4A853" : "#E07558";
         return e("div", null,
           renderHeader(),
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Unit Economics"),
-            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "Unit Economics Analysis"),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Does It Pay for Itself?"),
+            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "Does It Pay for Itself?"),
             e("div", { className: "results-sub", style: { fontSize: 12, color: "rgba(232,227,216,0.3)", marginBottom: 24 } },
               "This output will be included in your final brief automatically."
             ),
-            // Key metric: LTV:CAC
+            // Key result: does it pay for itself?
             e("div", { className: "card", style: { textAlign: "center", padding: 28, marginBottom: 20 } },
-              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "rgba(232,227,216,0.4)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 } }, "LTV : CAC Ratio"),
-              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 36, fontWeight: 600, color: ratioColor } }, Number(r.ratio.value).toFixed(1) + "\u00D7"),
-              e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 6 } }, r.ratio.interpretation)
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "rgba(232,227,216,0.4)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 } }, "Does it pay for itself?"),
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 30, fontWeight: 600, color: ratioColor } }, pfi.verdict || "Not worked out"),
+              pfi.sentence ? e("div", { style: { fontSize: 15, color: "rgba(232,227,216,0.75)", marginTop: 10 } }, pfi.sentence) : null,
+              e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 8 } },
+                "Money in: " + fmtRange(r.money_in) + " a year · Money out: " + fmtRange(r.money_out) + " a year"),
+              pfi.interpretation ? e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 6 } }, pfi.interpretation) : null
             ),
             // Export
             e("div", { className: "actions", style: { marginBottom: 24 } },
@@ -2879,7 +2901,7 @@
                 }
               }, S.ueCopied ? "Copied!" : "Copy Text")
             ),
-            e("button", { className: "btn", onClick: continueAfterUeResults }, "Continue to Market Sizing \u2192")
+            e("button", { className: "btn", onClick: continueAfterUeResults }, "Continue to Reach \u2192")
           )
         );
       }
@@ -2919,9 +2941,9 @@
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
-            e("div", { className: "dim-heading" }, "Your Market Sizing"),
-            e("div", { className: "dim-body" }, "We found your Market Sizing analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Reach"),
+            e("div", { className: "dim-heading" }, "Your Reach"),
+            e("div", { className: "dim-body" }, "We found an earlier reach analysis in your journal. Review it below \u2014 this data will be included in your final brief."),
             renderConceptRef(),
             e("div", { className: "card" },
               e("div", { style: { whiteSpace: "pre-wrap", fontSize: 13, color: "rgba(232,227,216,0.55)", lineHeight: "1.6" } },
@@ -2950,7 +2972,7 @@
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Reach"),
             renderConceptRef(),
             e("div", { className: "progress-track" },
               tam.questions.map(function(_, i) {
@@ -2960,7 +2982,7 @@
                 return e("div", { key: i, className: cls });
               })
             ),
-            e("div", { className: "focus-badge" }, q.focus + " Sizing"),
+            e("div", { className: "focus-badge" }, q.focus),
             e("div", { className: "q-text" }, q.text),
             q.hint ? e("div", { className: "q-hint" }, q.hint) : null,
             e("textarea", {
@@ -2993,31 +3015,31 @@
           e("main", { className: "main" },
             renderStepBar(),
             renderBackButton(),
-            e("div", { className: "eyebrow" }, "Viability \u2014 Market Sizing"),
-            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "Market Sizing Analysis"),
+            e("div", { className: "eyebrow" }, "Viability \u2014 Reach"),
+            e("div", { className: "results-title", style: { fontFamily: "'Playfair Display', serif", fontSize: 28, marginBottom: 4 } }, "How Far Could It Reach?"),
             e("div", { className: "results-sub", style: { fontSize: 12, color: "rgba(232,227,216,0.3)", marginBottom: 24 } },
               "This output will be included in your final brief automatically."
             ),
             // Key metrics
             e("div", { className: "metrics-grid", style: { marginBottom: 20 } },
               e("div", { className: "metric-card" },
-                e("div", { className: "metric-type", style: { color: "#7EB8DA" } }, "TAM"),
+                e("div", { className: "metric-type", style: { color: "#7EB8DA" } }, "Everywhere"),
                 e("div", { className: "metric-value" }, r.tam.value),
                 e("div", { className: "metric-desc" }, r.tam.description)
               ),
               e("div", { className: "metric-card" },
-                e("div", { className: "metric-type", style: { color: "#B89ADE" } }, "SAM"),
+                e("div", { className: "metric-type", style: { color: "#B89ADE" } }, "At L&C"),
                 e("div", { className: "metric-value" }, r.sam.value),
                 e("div", { className: "metric-desc" }, r.sam.description)
               )
             ),
             e("div", { className: "card", style: { marginBottom: 20 } },
-              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#D4A853", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "Year-One Target"),
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#D4A853", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "First-Year Reach"),
               e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 20, fontWeight: 600, color: "#E8E3D8", marginBottom: 6 } }, r.year_one_target.value),
               e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)" } }, r.year_one_target.description)
             ),
             r.reality_check ? e("div", { style: { background: "rgba(224,117,88,0.04)", border: "1px solid rgba(224,117,88,0.15)", borderRadius: 8, padding: 20, marginBottom: 20 } },
-              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#E07558", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "Reality Check"),
+              e("div", { style: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 600, color: "#E07558", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 } }, "Who Should Own It"),
               e("div", { style: { fontSize: 14, color: "rgba(232,227,216,0.6)", lineHeight: "1.6" } }, r.reality_check)
             ) : null,
             // Export
@@ -3129,15 +3151,15 @@
         // TAM/SAM (viability)
         if (syn.tam_sam) {
           cards.push(e("div", { key: "tam", className: "synthesis-card" },
-            e("div", { className: "synthesis-label" }, "Market Size"),
+            e("div", { className: "synthesis-label" }, "Reach"),
             e("div", { className: "synthesis-text" }, syn.tam_sam.description),
-            syn.tam_sam.year_one ? e("div", { className: "synthesis-text", style: { marginTop: 8 } }, "Year one estimate: " + syn.tam_sam.year_one) : null
+            syn.tam_sam.year_one ? e("div", { className: "synthesis-text", style: { marginTop: 8 } }, "First year: " + syn.tam_sam.year_one) : null
           ));
         }
         // Retention (viability)
         if (syn.retention) {
           cards.push(e("div", { key: "ret", className: "synthesis-card" },
-            e("div", { className: "synthesis-label" }, "Retention Logic"),
+            e("div", { className: "synthesis-label" }, "Why It Keeps Getting Funded"),
             e("div", { className: "synthesis-text" }, syn.retention)
           ));
         }
@@ -3517,11 +3539,11 @@
                   e("div", { className: "brief-text" }, b.viability.economics)
                 ),
                 e("div", { className: "brief-card" },
-                  e("div", { className: "synthesis-label" }, "Market Size"),
+                  e("div", { className: "synthesis-label" }, "Reach"),
                   e("div", { className: "brief-text" }, b.viability.market)
                 ),
                 e("div", { className: "brief-card" },
-                  e("div", { className: "synthesis-label" }, "Retention & Protectability"),
+                  e("div", { className: "synthesis-label" }, "Why It Keeps Getting Funded, and Why This"),
                   e("div", { className: "brief-text" }, b.viability.retention + "\n\n" + b.viability.protectability)
                 ),
                 e("div", { className: "brief-card" },
