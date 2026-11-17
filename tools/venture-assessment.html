@@ -654,6 +654,20 @@
     // CONFIG
     // ═══════════════════════════════════════
     var API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
+
+    // Progress is kept in this browser so a student can stop and come back.
+    // It is dropped after 14 days, and "Start Fresh" clears it at once.
+    var VA_KEY = "va-state-fall2026";
+    var VA_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+    function vaClear() { try { localStorage.removeItem(VA_KEY); localStorage.removeItem(VA_KEY + "-at"); } catch (err) { /* storage unavailable */ } }
+    function vaSave(json) { try { localStorage.setItem(VA_KEY, json); localStorage.setItem(VA_KEY + "-at", String(Date.now())); } catch (err) { /* storage full or unavailable */ } }
+    function vaLoad() {
+      try {
+        var at = Number(localStorage.getItem(VA_KEY + "-at") || 0);
+        if (!at || Date.now() - at > VA_MAX_AGE_MS) { vaClear(); return null; }
+        return localStorage.getItem(VA_KEY);
+      } catch (err) { return null; }
+    }
     var e = React.createElement;
     var useState = React.useState;
     var useEffect = React.useEffect;
@@ -730,13 +744,13 @@
 
     // ── INLINE TOOL PROMPTS ──
 
-    var SYSTEM_UE_INLINE_QUESTIONS = "You help college students work out whether their concept pays for itself. The concept improves part of the college experience at Lewis & Clark College. The students are new to economics, so use plain words.\nAsk exactly 5 questions, one for each of these, in this order:\n1. UNIT: what one unit of their idea is. A unit is one use of the idea by one person (for example one student for a year, one mentor and one student, one event someone attends).\n2. HOW MANY: how many units in one year at Lewis & Clark, as a low guess and a high guess.\n3. COST: what it takes to run for a year (people's time, space, software, supplies), so the cost of one unit can be worked out. Running costs only, not the cost of building it.\n4. NUMBER: which college number the idea changes (new students enrolled, students who stay, students who graduate, jobs after graduation, gifts to the college, or costs saved) and how many more students a year, low and high.\n5. WORTH: how much money that is for the college in a year, or, if the idea is not about tuition, why the college would still pay for it.\nBe concrete and specific to their idea. Questions should be answerable with rough estimates. If the student's description or notes already answer a question, ask them to confirm or improve that answer. Keep each question to one or two short sentences.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"UNIT\",\"hint\":\"short guidance for the student\"}]}\nThe focus values, in order, are: UNIT, HOW MANY, COST, NUMBER, WORTH.";
+    var SYSTEM_UE_INLINE_QUESTIONS = "You help college students work out whether their concept pays for itself. The concept improves part of the college experience at Lewis & Clark College. The students are new to economics, so use plain words.\nFive things are needed, in this order:\n1. UNIT: what one unit of their idea is. A unit is one use of the idea by one person (for example one student for a year, one mentor and one student, one event someone attends).\n2. HOW MANY: how many units in one year at Lewis & Clark, as a low guess and a high guess.\n3. COST: what it takes to run for a year (people's time, space, software, supplies), so the cost of one unit can be worked out. Running costs only, not the cost of building it.\n4. NUMBER: which college number the idea changes (new students enrolled, students who stay, students who graduate, jobs after graduation, gifts to the college, or costs saved) and how many more students a year, low and high.\n5. WORTH: how much money that is for the college in a year, or, if the idea is not about tuition, why the college would still pay for it.\n\nRead the student's viability notes first, if there are any. Do not make the student type again what they have already written.\n- If the notes already answer all five with numbers, ask exactly ONE question with focus CONFIRM: say their five answers back to them in two or three short sentences, using their numbers, and ask what, if anything, they would change now.\n- If the notes answer some of the five, ask only about the ones that are missing or unclear.\n- If there are no notes, ask all five.\nAsk at most 5 questions. Be concrete and specific to their idea. Questions should be answerable with rough estimates.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"UNIT\",\"hint\":\"short guidance for the student\"}]}\nThe focus values are: UNIT, HOW MANY, COST, NUMBER, WORTH, CONFIRM.";
 
-    var SYSTEM_UE_INLINE_ANALYSIS = "You work out whether a student's concept pays for itself for Lewis & Clark College. The test: it is viable if the money it brings in for the college in a year is more than what it costs to run for a year. The students are new to economics. Use plain words. Never use the terms CAC, LTV, COGS, gross margin, TAM or SAM.\n\nBased on the project and interview:\n1. State the unit in one plain sentence.\n2. Estimate units a year at Lewis & Clark as a low and a high number.\n3. Estimate the cost of one unit as a low and a high number, with a short breakdown (people's time, space, software, supplies, other). Running costs only, not the cost of building it.\n4. Money out a year = units times the cost of one unit, low and high.\n5. Name the one college number the concept changes, and estimate how many more students a year (low and high) enrol, stay or graduate because of it. Be sceptical: use the student's estimate as an anchor, but say so if it looks optimistic.\n6. Money in a year = those students times what one student is worth to the college. Use about $25,500 in tuition a year for one undergraduate unless the student gives a better figure or the students concerned clearly pay less (for example students on full-tuition scholarships). If the concept is not about tuition (gifts, costs saved, or no dollar figure), estimate money in from the student's own reasoning, or set low and high to 0 and explain in basis what the college would have to believe.\n7. Write the sentence that starts 'This pays for itself if' and give a verdict: 'Yes' if money in is above money out even at the low end, 'Only at the high end' if it depends on the optimistic numbers, 'Not yet' if money out is above money in or there is no money in.\n8. Write a 2-3 paragraph brief in plain words: what the numbers say, which one number matters most, and what the student should check next. Show the arithmetic.\n\nUse the student's numbers where they gave them. Do not invent evidence. All amounts are US dollars per year, written as plain numbers with no symbols or commas.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"unit\":{\"description\":\"one plain sentence\"},\n  \"units_per_year\":{\"low\":number,\"high\":number,\"basis\":\"one sentence on where the count comes from\"},\n  \"cost_per_unit\":{\"low\":number,\"high\":number,\"breakdown\":[{\"item\":\"people's time/space/software/supplies/other\",\"cost\":number,\"note\":\"brief explanation\"}],\"assumptions\":[\"...\",\"...\"]},\n  \"money_out\":{\"low\":number,\"high\":number},\n  \"number_changed\":{\"name\":\"New students enrolled|Students who stay|Students who graduate|Jobs after graduation|Gifts to the college|Costs saved\",\"students_low\":number,\"students_high\":number,\"reasoning\":\"one or two sentences, including whether the estimate looks optimistic\"},\n  \"money_in\":{\"low\":number,\"high\":number,\"per_student\":number,\"basis\":\"one sentence on the figure used and why\"},\n  \"pays_for_itself\":{\"sentence\":\"This pays for itself if ...\",\"verdict\":\"Yes|Only at the high end|Not yet\",\"interpretation\":\"one sentence in plain words\"},\n  \"brief\":\"2-3 paragraph plain-language brief\"\n}";
+    var SYSTEM_UE_INLINE_ANALYSIS = "You work out whether a student's concept pays for itself for Lewis & Clark College. The test: it is viable if the money it brings in for the college in a year is more than what it costs to run for a year. The students are new to economics. Use plain words. Never use the terms CAC, LTV, COGS, gross margin, TAM or SAM.\n\nBased on the project and interview:\n1. State the unit in one plain sentence.\n2. Estimate units a year at Lewis & Clark as a low and a high number.\n3. Estimate the cost of one unit as a low and a high number, with a short breakdown (people's time, space, software, supplies, other). Running costs only, not the cost of building it.\n4. Money out a year = units times the cost of one unit, low and high.\n5. Name the one college number the concept changes, and estimate how many more students a year (low and high) enrol, stay or graduate because of it. Be sceptical: use the student's estimate as an anchor, but say so if it looks optimistic.\n6. Money in a year = those students times what one student is worth to the college. Use about $25,500 in tuition a year for one undergraduate unless the student gives a better figure or the students concerned clearly pay less (for example students on full-tuition scholarships). If the concept is not about tuition (gifts, costs saved, or no dollar figure), estimate money in from the student's own reasoning, or set low and high to 0 and explain in basis what the college would have to believe.\n7. Write the sentence that starts 'This pays for itself if' and give a verdict: 'Yes' if money in is above money out even at the low end, 'Only at the high end' if it depends on the optimistic numbers, 'Not yet' if money out is above money in or there is no money in. In interpretation, say how many more students a year it needs to break even, and say plainly that the student's count of students is an estimate that has not been tested yet.\n8. Write a 2-3 paragraph brief in plain words: what the numbers say, which one number matters most, and what the student should check next. Show the arithmetic.\n\nUse the student's numbers where they gave them. Do not invent evidence. If the interview is a single CONFIRM question, take the numbers from the student's viability notes, adjusted by anything they changed in their answer. All amounts are US dollars per year, written as plain numbers with no symbols or commas.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"unit\":{\"description\":\"one plain sentence\"},\n  \"units_per_year\":{\"low\":number,\"high\":number,\"basis\":\"one sentence on where the count comes from\"},\n  \"cost_per_unit\":{\"low\":number,\"high\":number,\"breakdown\":[{\"item\":\"people's time/space/software/supplies/other\",\"cost\":number,\"note\":\"brief explanation\"}],\"assumptions\":[\"...\",\"...\"]},\n  \"money_out\":{\"low\":number,\"high\":number},\n  \"number_changed\":{\"name\":\"New students enrolled|Students who stay|Students who graduate|Jobs after graduation|Gifts to the college|Costs saved\",\"students_low\":number,\"students_high\":number,\"reasoning\":\"one or two sentences, including whether the estimate looks optimistic\"},\n  \"money_in\":{\"low\":number,\"high\":number,\"per_student\":number,\"basis\":\"one sentence on the figure used and why\"},\n  \"pays_for_itself\":{\"sentence\":\"This pays for itself if ...\",\"verdict\":\"Yes|Only at the high end|Not yet\",\"interpretation\":\"one or two plain sentences: how many more students a year it needs to break even, and that the student count is an untested estimate\"},\n  \"brief\":\"2-3 paragraph plain-language brief\"\n}";
 
-    var SYSTEM_TAM_INLINE_QUESTIONS = "You help college students think about how far their concept could reach. The concept improves part of the college experience at Lewis & Clark College. Use plain words. Do not use the terms TAM or SAM.\nGenerate exactly 4 interview questions covering three areas, in this order:\n- AT L&C: 1 question about who at Lewis & Clark could use this, and how many of them would really use it in the first year\n- BEYOND L&C: 1-2 questions about which other colleges, programmes or organisations have the same need, and what would have to change for the concept to work there\n- OWNER: 1 question about who should own and run it (the college, the student, or an outside organisation) and what it would cost to build before it can run\n\nBe concrete and specific to their idea. Questions should be answerable with rough estimates and reasoning.\nKeep each question to one sentence.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"AT L&C\",\"hint\":\"short guidance for student\"}]}\nThe focus values are: AT L&C, BEYOND L&C, OWNER.";
+    var SYSTEM_TAM_INLINE_QUESTIONS = "You help college students think about how far their concept could reach. The concept improves part of the college experience at Lewis & Clark College. Use plain words. Do not use the terms TAM or SAM.\nGenerate exactly 2 interview questions, in this order:\n- REACH: 1 question asking who at Lewis & Clark could use this and how many would really use it in the first year, and which other colleges, programmes or organisations have the same need\n- OWNER: 1 question asking who should own and run it (the college, the student, or an outside organisation) and roughly what it would cost to build before it can run\n\nBe concrete and specific to their idea. Questions should be answerable with rough estimates and reasoning. If the student's notes already say something about reach or ownership, refer to it and ask them to build on it.\nReturn ONLY valid JSON with no markdown, no explanation:\n{\"questions\":[{\"id\":1,\"text\":\"question\",\"focus\":\"REACH\",\"hint\":\"short guidance for student\"}]}\nThe focus values are: REACH, OWNER.";
 
-    var SYSTEM_TAM_INLINE_ANALYSIS = "You work out how far a student's concept could reach, for a design thinking class. The concept improves part of the college experience at Lewis & Clark College. Realistic estimates matter more than precision. Use plain words. Do not use the terms TAM or SAM in any text you write.\n\nBased on the project and interview:\n1. Estimate everyone who could use it, at Lewis & Clark and at other colleges, programmes or organisations with the same need (the JSON key for this is tam)\n2. Estimate how many could use it at Lewis & Clark alone (the JSON key for this is sam)\n3. Estimate a realistic first-year reach, given where the student is starting from\n4. Say who should own and run it (the college, the student, or an outside organisation), why, and roughly what it would cost to build before it can run (the JSON key for this is reality_check)\n5. Write a 2-3 paragraph brief on reach\n\nUse specific numbers when possible. Show your reasoning through assumptions.\nIf the student gave estimates, use those as anchors but test them.\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"tam\": {\"value\": \"human-readable size (e.g. ~40,000 first-years at small private colleges in the West)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"sam\": {\"value\": \"human-readable size (e.g. ~410 new students a year at Lewis & Clark)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"year_one_target\": {\"value\": \"human-readable target (e.g. 60-100 students)\", \"description\": \"1-2 sentences on why this is realistic\"},\n  \"reality_check\": \"2-3 sentences: who should own and run it, why, and a rough cost to build\",\n  \"brief\": \"2-3 paragraph brief covering reach at Lewis & Clark, reach beyond it, what would have to change elsewhere, and who should own it\"\n}";
+    var SYSTEM_TAM_INLINE_ANALYSIS = "You work out how far a student's concept could reach, for a design thinking class. The concept improves part of the college experience at Lewis & Clark College. Realistic estimates matter more than precision. Use plain words. Do not use the terms TAM or SAM in any text you write.\n\nBased on the project and interview:\n1. Estimate everyone who could use it, at Lewis & Clark and at other colleges, programmes or organisations with the same need (the JSON key for this is tam)\n2. Estimate how many could use it at Lewis & Clark alone (the JSON key for this is sam)\n3. Estimate a realistic first-year reach, given where the student is starting from\n4. Say who should own and run it (the college, the student, or an outside organisation), why, and roughly what it would cost to build before it can run (the JSON key for this is reality_check)\n5. Write a 2-3 paragraph brief on reach\n\nUse specific numbers when possible. Show your reasoning through assumptions.\nIf the student gave estimates, use those as anchors but test them.\nAny figure for other colleges is a rough estimate: say so, show the arithmetic (number of colleges times students per college), and keep it consistent with Lewis & Clark's own size (about 413 new students a year and about 1,970 undergraduates).\n\nReturn ONLY valid JSON with no markdown, no explanation:\n{\n  \"tam\": {\"value\": \"human-readable size (e.g. ~40,000 first-years at small private colleges in the West)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"sam\": {\"value\": \"human-readable size (e.g. ~410 new students a year at Lewis & Clark)\", \"description\": \"1-2 sentences on who is counted\", \"assumptions\": [\"assumption 1\", \"assumption 2\"]},\n  \"year_one_target\": {\"value\": \"human-readable target (e.g. 60-100 students)\", \"description\": \"1-2 sentences on why this is realistic\"},\n  \"reality_check\": \"2-3 sentences: who should own and run it, why, and a rough cost to build\",\n  \"brief\": \"2-3 paragraph brief covering reach at Lewis & Clark, reach beyond it, what would have to change elsewhere, and who should own it\"\n}";
 
     // ═══════════════════════════════════════
     // INITIAL STATE
@@ -805,7 +819,7 @@
       showResume: false
     };
 
-    var COURSE_CONTEXT = "COURSE CONTEXT (Fall 2026): The students are undergraduates at Lewis & Clark College, a small private liberal arts college in Portland, Oregon. Each student has developed one concept that would improve part of the college experience. Most work alone. They tested an 'adcept' (the concept written as an ad) in three rounds with real people; treat those rounds as their experiments. The viability test in this course is net benefit to the college: a concept is viable if it brings in more money for the college than it costs to run. Who should own it (the college, the student, an outside organisation) is a later question.\n\nREFERENCE NUMBERS (use these only when the student has no better figure, and say that they are course reference figures, not this year's audited numbers):\n- About 1,970 undergraduates in 2025-26.\n- 413 students in the Fall 2026 incoming class; the college's budget assumed about 520.\n- One undergraduate pays about $25,500 a year in tuition on average, after scholarships (a 2024-25 figure; newer students pay somewhat less, and students on full-tuition scholarships pay far less).\n- Of the 482 first-years who entered in Fall 2024, 400 came back for a second year.\n- About 74% graduate within six years.\n- 421 varsity athletes, about one undergraduate in five.\n- The undergraduate college projects a $7.4 million deficit for the year ending May 2027 (reported by the student newspaper in October 2026).\n\nLANGUAGE: These students are new to economics. Use plain words: 'unit' for one use of the idea by one person, 'the cost of one unit', 'money in', 'money out'. Do not use the terms CAC, LTV, COGS, TAM, SAM, gross margin or go-to-market. Call it a concept, not a venture or a startup.";
+    var COURSE_CONTEXT = "COURSE CONTEXT (Fall 2026): The students are undergraduates at Lewis & Clark College, a small private liberal arts college in Portland, Oregon. Each student has developed one concept that would improve part of the college experience. Most work alone. They tested an 'adcept' (the concept written as an ad) in three rounds with real people; treat those rounds as their experiments. The viability test in this course is net benefit to the college: a concept is viable if it brings in more money for the college than it costs to run. Who should own it (the college, the student, an outside organisation) is a later question.\n\nREFERENCE NUMBERS (use these only when the student has no better figure, and say that they are course reference figures, not this year's audited numbers):\n- About 1,970 undergraduates in 2025-26.\n- 413 students in the Fall 2026 incoming class. The college's budget had assumed about 520, a plan that was missed by about 107 students. 520 is not a class size, so never write a range such as 413 to 520.\n- One undergraduate pays about $25,500 a year in tuition on average, after scholarships (a 2024-25 figure; newer students pay somewhat less, and students on full-tuition scholarships pay far less).\n- Of the 482 first-years who entered in Fall 2024, 400 came back for a second year.\n- About 74% graduate within six years.\n- 421 varsity athletes, about one undergraduate in five.\n- The undergraduate college projects a $7.4 million deficit for the year ending May 2027 (reported by the student newspaper in October 2026).\n\nESTIMATES: When you give a figure that comes neither from the student nor from the reference numbers above (for example how many colleges or students there are elsewhere), call it a rough estimate, show the arithmetic behind it, and tell the student to check it.\n\nLANGUAGE: These students are new to economics. Use plain words: 'unit' for one use of the idea by one person, 'the cost of one unit', 'money in', 'money out'. Do not use the terms CAC, LTV, COGS, TAM, SAM, gross margin or go-to-market. Call it a concept, not a venture or a startup.";
 
     // ═══════════════════════════════════════
     // API HELPER
@@ -922,11 +936,17 @@
     // ═══════════════════════════════════════
     function App() {
       var stateHook = useState(function() {
-        var saved = sessionStorage.getItem("va-state");
+        var saved = vaLoad();
         if (saved) {
           try {
             var parsed = JSON.parse(saved);
             parsed.error = "";
+            if (parsed.phase === "loading") {
+              var savedHistory = (parsed.history || []).slice();
+              var lastScreen = savedHistory.pop();
+              if (lastScreen) { parsed.phase = lastScreen.phase; parsed.subPhase = lastScreen.subPhase; parsed.history = savedHistory; }
+              else { parsed.phase = "setup"; }
+            }
             if (parsed.phase !== "setup") {
               parsed.showResume = true;
               parsed._savedPhase = parsed.phase;
@@ -944,13 +964,13 @@
       function update(partial) {
         setS(function(prev) {
           var next = Object.assign({}, prev, partial);
-          // Strip large binary data before persisting to sessionStorage
+          // Strip large binary data before persisting to browser storage
           var toSave = Object.assign({}, next, { journalImages: [] });
-          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          // Strip concept image if over ~500KB base64 to avoid browser storage limits
           if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
             toSave = Object.assign({}, toSave, { conceptImage: null });
           }
-          sessionStorage.setItem("va-state", JSON.stringify(toSave));
+          vaSave(JSON.stringify(toSave));
           return next;
         });
       }
@@ -961,11 +981,11 @@
           dims[dim] = Object.assign({}, dims[dim], partial);
           var next = Object.assign({}, prev, { dimensions: dims });
           var toSave = Object.assign({}, next, { journalImages: [] });
-          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          // Strip concept image if over ~500KB base64 to avoid browser storage limits
           if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
             toSave = Object.assign({}, toSave, { conceptImage: null });
           }
-          sessionStorage.setItem("va-state", JSON.stringify(toSave));
+          vaSave(JSON.stringify(toSave));
           return next;
         });
       }
@@ -985,11 +1005,11 @@
           var last = h.pop();
           var next = Object.assign({}, prev, { history: h, phase: last.phase, subPhase: last.subPhase, error: "" });
           var toSave = Object.assign({}, next, { journalImages: [] });
-          // Strip concept image if over ~500KB base64 to avoid sessionStorage limits
+          // Strip concept image if over ~500KB base64 to avoid browser storage limits
           if (toSave.conceptImage && toSave.conceptImage.data && toSave.conceptImage.data.length > 500000) {
             toSave = Object.assign({}, toSave, { conceptImage: null });
           }
-          sessionStorage.setItem("va-state", JSON.stringify(toSave));
+          vaSave(JSON.stringify(toSave));
           return next;
         });
       }
@@ -1004,7 +1024,7 @@
       }
 
       function startFresh() {
-        sessionStorage.removeItem("va-state");
+        vaClear();
         setS(INITIAL_STATE);
       }
 
@@ -1224,7 +1244,7 @@
       }
 
       var fmtUE = function(n) { n = Number(n) || 0; return "$" + Math.round(n).toLocaleString("en-US"); };
-      var fmtRange = function(o) { if (!o) return ""; return fmtUE(o.low) + " \u2013 " + fmtUE(o.high); };
+      var fmtRange = function(o) { if (!o) return ""; if (Number(o.low) === Number(o.high)) return fmtUE(o.low); return fmtUE(o.low) + " \u2013 " + fmtUE(o.high); };
       var numRange = function(lo, hi) { lo = Number(lo) || 0; hi = Number(hi) || 0; return lo === hi ? String(lo) : lo + " \u2013 " + hi; };
 
       // ── Viability detection gate ──
@@ -1316,6 +1336,8 @@
         update({ phase: "loading", loadingMsg: "Preparing reach questions\u2026" });
         try {
           var context = "Project: " + S.projectName + "\nDescription: " + S.projectDesc;
+          var tamNotes = (S.dimensions.viability.pasteIn || "").trim();
+          if (tamNotes) context += "\n\nStudent's viability notes:\n" + tamNotes.substring(0, 3000);
           var raw = await callClaude(context, SYSTEM_TAM_INLINE_QUESTIONS, 800);
           var parsed = JSON.parse(raw.trim());
           updateInline("tamInline", { questions: parsed.questions, qIndex: 0, answers: [], currentAnswer: "" });
@@ -1393,6 +1415,7 @@
         lines.push("DOES IT PAY FOR ITSELF? — " + (p.verdict || "Not worked out"));
         if (p.sentence) lines.push(p.sentence);
         if (p.interpretation) lines.push(p.interpretation);
+        lines.push("Note: the number of students is an estimate, not evidence yet.");
         lines.push("");
         lines.push("───────────────────────────────────────");
         if (r.unit && r.unit.description) lines.push("ONE UNIT: " + r.unit.description);
@@ -1455,6 +1478,7 @@
         children.push(para(p.verdict || "Not worked out", { bold: true }));
         if (p.sentence) children.push(para(p.sentence));
         if (p.interpretation) children.push(para(p.interpretation, { italic: true, color: "666666" }));
+        children.push(para("Note: the number of students is an estimate, not evidence yet.", { italic: true, color: "666666" }));
         children.push(divider()); children.push(heading("One Unit, and How Many", 2));
         if (r.unit && r.unit.description) children.push(para(r.unit.description));
         if (r.units_per_year) {
@@ -2240,6 +2264,16 @@
           .replace(/\r\n/g, "\n")  // normalize line endings
           .replace(/\r/g, "\n");
       }
+      // Shorten text at a sentence or word boundary so a slide never cuts mid-word
+      function clip(text, max) {
+        text = String(text || "").trim();
+        if (text.length <= max) return text;
+        var cut = text.substring(0, max);
+        var sentence = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("? "), cut.lastIndexOf("! "));
+        if (sentence > max * 0.5) return cut.substring(0, sentence + 1);
+        var space = cut.lastIndexOf(" ");
+        return (space > 0 ? cut.substring(0, space) : cut).replace(/[\s,;:\u2014-]+$/, "") + "\u2026";
+      }
       // Sanitize a rich text array (array of arrays with {text, options})
       function pptxSafeRich(rows) {
         return rows.map(function(row) {
@@ -2265,7 +2299,7 @@
         var GREEN = "5CB88A";
         var RED = "E07558";
 
-        pptx.defineLayout({ name: "WIDE", w: 13.33, h: 7.5 });
+        pptx.defineLayout({ name: "WIDE", width: 13.33, height: 7.5 });
         pptx.layout = "WIDE";
 
         function addSlide(titleText) {
@@ -2333,15 +2367,19 @@
           var y = yStart;
           items.forEach(function(item) {
             if (!item.text) return;
+            var text = pptxSafe(item.text);
+            // About 125 characters fit on one 12pt line across 11.4in; a line is about 0.24in tall
+            var lines = Math.max(1, Math.ceil(text.length / 125));
+            var h = Math.max(0.34, lines * 0.24 + 0.1);
             slide.addText(pptxSafe(item.label), {
               x: 0.6, y: y, w: 11.4, h: 0.3,
               fontSize: 12, fontFace: "Arial", color: GOLD, bold: true, valign: "top"
             });
-            slide.addText(pptxSafe(item.text), {
-              x: 0.6, y: y + 0.3, w: 11.4, h: item.h || 1.2,
+            slide.addText(text, {
+              x: 0.6, y: y + 0.3, w: 11.4, h: h,
               fontSize: 12, fontFace: "Arial", color: item.color || CREAM, italic: !!item.italic, valign: "top", lineSpacingMultiple: 1.4
             });
-            y += (item.h || 1.2) + 0.4;
+            y += 0.3 + h + 0.22;
           });
         }
 
@@ -2351,15 +2389,15 @@
         var dAns = S.dimensions.desirability.answers;
         var dSyn = S.dimensions.desirability.synthesis;
         var custItems = [];
-        if (dAns[0]) custItems.push({ label: "Who:", text: dAns[0].substring(0, 250) });
-        if (dAns[1]) custItems.push({ label: "Current behavior:", text: dAns[1].substring(0, 250) });
-        if (dAns[2]) custItems.push({ label: "What they value:", text: dAns[2].substring(0, 250) });
-        if (dSyn && dSyn.synthesis) custItems.push({ label: "Insight:", text: dSyn.synthesis.substring(0, 300), italic: true });
+        if (dAns[0]) custItems.push({ label: "Who:", text: clip(dAns[0], 250) });
+        if (dAns[1]) custItems.push({ label: "Current behavior:", text: clip(dAns[1], 250) });
+        if (dAns[2]) custItems.push({ label: "What they value:", text: clip(dAns[2], 250) });
+        if (dSyn && dSyn.synthesis) custItems.push({ label: "Insight:", text: clip(dSyn.synthesis, 300), italic: true });
         // Fallback to brief
         if (custItems.length === 0 && b.desirability) {
-          if (b.desirability.insight) custItems.push({ label: "Insight:", text: b.desirability.insight.substring(0, 400), h: 1.5 });
-          if (b.desirability.evidence_summary) custItems.push({ label: "Evidence:", text: b.desirability.evidence_summary.substring(0, 300), italic: true });
-          if (b.desirability.top_uncertainty) custItems.push({ label: "Key uncertainty:", text: b.desirability.top_uncertainty.substring(0, 250) });
+          if (b.desirability.insight) custItems.push({ label: "Insight:", text: clip(b.desirability.insight, 400), h: 1.5 });
+          if (b.desirability.evidence_summary) custItems.push({ label: "Evidence:", text: clip(b.desirability.evidence_summary, 300), italic: true });
+          if (b.desirability.top_uncertainty) custItems.push({ label: "Key uncertainty:", text: clip(b.desirability.top_uncertainty, 250) });
         }
         addLabeledBlock(s3, 1.3, custItems);
         var dRC = S.dimensions.desirability.synthesis && S.dimensions.desirability.synthesis.reading_connection;
@@ -2367,18 +2405,18 @@
 
         // ── SLIDE 4: What We Tested ──
         var s4 = addSlide();
-        slideTitle(s4, "What We Tested");
+        slideTitle(s4, "What I Tested");
         var fAns = S.dimensions.feasibility.answers;
         var fSyn = S.dimensions.feasibility.synthesis;
         var testItems = [];
-        if (fAns[0]) testItems.push({ label: "Experiment:", text: fAns[0].substring(0, 250) });
-        if (fAns[1]) testItems.push({ label: "Prediction:", text: fAns[1].substring(0, 250) });
-        if (fAns[2]) testItems.push({ label: "What happened:", text: fAns[2].substring(0, 250) });
+        if (fAns[0]) testItems.push({ label: "Experiment:", text: clip(fAns[0], 250) });
+        if (fAns[1]) testItems.push({ label: "Prediction:", text: clip(fAns[1], 250) });
+        if (fAns[2]) testItems.push({ label: "What happened:", text: clip(fAns[2], 250) });
         if (fSyn && fSyn.maturity) testItems.push({ label: "Maturity:", text: fSyn.maturity, color: fSyn.maturity === "Concept" ? RED : fSyn.maturity === "Validated direction" ? GREEN : GOLD, h: 0.4 });
         // Fallback to brief
         if (testItems.length === 0 && b.feasibility) {
-          if (b.feasibility.learning) testItems.push({ label: "What we learned:", text: b.feasibility.learning.substring(0, 400), h: 1.5 });
-          if (b.feasibility.before_after) testItems.push({ label: "Prediction vs reality:", text: b.feasibility.before_after.substring(0, 300) });
+          if (b.feasibility.learning) testItems.push({ label: "What I learned:", text: clip(b.feasibility.learning, 400), h: 1.5 });
+          if (b.feasibility.before_after) testItems.push({ label: "Prediction vs reality:", text: clip(b.feasibility.before_after, 300) });
           if (b.feasibility.maturity) testItems.push({ label: "Maturity:", text: b.feasibility.maturity, color: b.feasibility.maturity === "Concept" ? RED : b.feasibility.maturity === "Validated direction" ? GREEN : GOLD, h: 0.4 });
         }
         addLabeledBlock(s4, 1.3, testItems);
@@ -2393,30 +2431,30 @@
         if (S.unitEconomicsResults) {
           var ueR = S.unitEconomicsResults;
           var pfiR = ueR.pays_for_itself || {};
-          econItems.push({ label: "Verdict:", text: ((pfiR.verdict || "") + " - " + (pfiR.sentence || "")).substring(0, 260) });
+          econItems.push({ label: "Verdict:", text: clip(((pfiR.verdict || "") + " - " + (pfiR.sentence || "")), 240) });
           econItems.push({ label: "Money in / out:", text: fmtRange(ueR.money_in) + " in, " + fmtRange(ueR.money_out) + " out, a year", h: 0.4 });
         }
         if (S.tamSamResults) {
           var tamR = S.tamSamResults;
-          econItems.push({ label: "Could reach:", text: (tamR.tam.value || "").substring(0, 200) });
-          econItems.push({ label: "First year:", text: (tamR.year_one_target.value || "").substring(0, 200) });
+          econItems.push({ label: "Could reach:", text: clip((tamR.tam.value || ""), 200) });
+          econItems.push({ label: "First year:", text: clip((tamR.year_one_target.value || ""), 200) });
         }
         // Fallback to brief
         if (econItems.length === 0 && b.viability) {
-          if (b.viability.economics) econItems.push({ label: "Economics:", text: b.viability.economics.substring(0, 400), h: 1.5 });
-          if (b.viability.market) econItems.push({ label: "Reach:", text: b.viability.market.substring(0, 300) });
+          if (b.viability.economics) econItems.push({ label: "Economics:", text: clip(b.viability.economics, 400), h: 1.5 });
+          if (b.viability.market) econItems.push({ label: "Reach:", text: clip(b.viability.market, 300) });
         } else if (!S.tamSamResults && vSyn && vSyn.tam_sam) {
-          econItems.push({ label: "Reach:", text: (vSyn.tam_sam.description || "").substring(0, 250) });
-          if (vSyn.tam_sam.year_one) econItems.push({ label: "First year:", text: vSyn.tam_sam.year_one.substring(0, 200) });
+          econItems.push({ label: "Reach:", text: clip((vSyn.tam_sam.description || ""), 250) });
+          if (vSyn.tam_sam.year_one) econItems.push({ label: "First year:", text: clip(vSyn.tam_sam.year_one, 200) });
         }
-        if (b.viability && b.viability.retention) econItems.push({ label: "Why it keeps getting funded:", text: b.viability.retention.substring(0, 250) });
+        if (b.viability && b.viability.retention) econItems.push({ label: "Why it keeps getting funded:", text: clip(b.viability.retention, 200) });
         addLabeledBlock(s5, 1.3, econItems);
         var vRC = S.dimensions.viability.synthesis && S.dimensions.viability.synthesis.reading_connection;
         s5.notes = "Lead with your \u201cThis pays for itself if\u201d sentence. Then show what one unit costs, which college number it changes, and how far it could reach." + (vRC ? "\n\nTheory connection: " + vRC.text : "");
 
         // ── SLIDE 6: Our Assessment ──
         var s6 = addSlide();
-        slideTitle(s6, "Our Assessment");
+        slideTitle(s6, "My Assessment");
         var ratingLabels = { 1: "Significant limitations", 2: "Manageable limitations", 3: "Unique advantage" };
         var ratingColors = { 1: RED, 2: GOLD, 3: GREEN };
         var yPos = 1.5;
@@ -2436,7 +2474,7 @@
           // Evidence from follow-ups
           var evidence = d.followUpAnswers[0] || "";
           if (evidence) {
-            s6.addText(pptxSafe(evidence.substring(0, 200)), {
+            s6.addText(pptxSafe(clip(evidence, 200)), {
               x: 0.6, y: yPos + 0.45, w: 11.4, h: 0.9,
               fontSize: 11, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.4, valign: "top"
             });
@@ -2447,7 +2485,7 @@
 
         // ── SLIDE 7: Certainty & Uncertainty ──
         var s7 = addSlide();
-        slideTitle(s7, "What We\u2019re Certain and Uncertain About");
+        slideTitle(s7, "What I\u2019m Sure and Unsure About");
         // Average confidence
         s7.addText(avg + "%", { x: 0.6, y: 1.3, w: 3, h: 0.8, fontSize: 36, fontFace: "Arial", color: GOLD, bold: true });
         s7.addText("average confidence across " + allA.length + " assumptions", { x: 0.6, y: 2.0, w: 5, h: 0.4, fontSize: 11, fontFace: "Arial", color: MUTED });
@@ -2456,7 +2494,7 @@
         var lowConf = allA.filter(function(a) { return a.certainty < 60; });
 
         // Truncate assumption text to ~80 chars to prevent overflow
-        function truncAssumption(text) { return text.length > 80 ? text.substring(0, 77) + "\u2026" : text; }
+        function truncAssumption(text) { return clip(text, 95); }
         // Limit to top 3 each to fit on one slide
         var maxItems = 3;
         var aY = 2.7;
@@ -2489,7 +2527,7 @@
           fontSize: 16, fontFace: "Arial", color: MUTED, italic: true
         });
         if (b.synthesis && b.synthesis.survival_estimate) {
-          s8.addText(pptxSafe(b.synthesis.survival_estimate.substring(0, 600)), {
+          s8.addText(pptxSafe(clip(b.synthesis.survival_estimate, 600)), {
             x: 0.6, y: 2.4, w: 11.4, h: 3.5,
             fontSize: 16, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.6, valign: "top"
           });
@@ -2498,22 +2536,22 @@
 
         // ── SLIDE 9: What We'd Do Next ──
         var s9 = addSlide();
-        slideTitle(s9, "What We\u2019d Do Next");
-        s9.addText("If we had another semester, here\u2019s where we\u2019d focus:", {
+        slideTitle(s9, "What I\u2019d Do Next");
+        s9.addText("If I had another semester, here\u2019s where I\u2019d focus:", {
           x: 0.6, y: 1.3, w: 11.8, h: 0.5,
           fontSize: 13, fontFace: "Arial", color: MUTED, italic: true
         });
         var nextY = 2.1;
         (b.next_steps || []).forEach(function(step, i) {
           s9.addText((i + 1) + ".", { x: 0.6, y: nextY, w: 0.5, h: 0.6, fontSize: 18, fontFace: "Arial", color: GOLD, bold: true, valign: "top" });
-          s9.addText(pptxSafe(step.substring(0, 250)), { x: 1.2, y: nextY, w: 10.8, h: 0.8, fontSize: 14, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.4, valign: "top" });
+          s9.addText(pptxSafe(clip(step, 250)), { x: 1.2, y: nextY, w: 10.8, h: 0.8, fontSize: 14, fontFace: "Arial", color: CREAM, lineSpacingMultiple: 1.4, valign: "top" });
           nextY += 1.1;
         });
         // Closing thought from synthesis
         if (b.synthesis && b.synthesis.student_reflection) {
           s9.addShape(pptx.ShapeType.rect, { x: 0.6, y: nextY + 0.2, w: 11.4, h: 0.02, fill: { color: MUTED } });
-          s9.addText(pptxSafe(b.synthesis.student_reflection.substring(0, 300)), {
-            x: 0.6, y: nextY + 0.5, w: 11.4, h: 2,
+          s9.addText(pptxSafe(clip(b.synthesis.student_reflection, 300)), {
+            x: 0.6, y: nextY + 0.5, w: 11.4, h: 0.9,
             fontSize: 12, fontFace: "Arial", color: MUTED, italic: true, lineSpacingMultiple: 1.5, valign: "top"
           });
         }
@@ -2596,7 +2634,8 @@
             e("h1", { className: "intro-heading" }, "How strong is your concept \u2014 ", e("em", null, "honestly"), "?"),
             e("p", { className: "intro-body" },
               "This tool walks you through three dimensions of your concept \u2014 Desirability, Feasibility, and Viability \u2014 " +
-              "and produces an assessment brief you can submit. Be honest. The quality of your reasoning matters more than the strength of your idea."
+              "and produces an assessment brief you can submit. Be honest. The quality of your reasoning matters more than the strength of your idea. " +
+              "Allow about an hour. Your progress is saved in this browser for 14 days, so you can stop and come back on the same computer."
             ),
             e("div", { className: "card" },
               e("div", { className: "form-group" },
@@ -2886,7 +2925,8 @@
               pfi.sentence ? e("div", { style: { fontSize: 15, color: "rgba(232,227,216,0.75)", marginTop: 10 } }, pfi.sentence) : null,
               e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 8 } },
                 "Money in: " + fmtRange(r.money_in) + " a year · Money out: " + fmtRange(r.money_out) + " a year"),
-              pfi.interpretation ? e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 6 } }, pfi.interpretation) : null
+              pfi.interpretation ? e("div", { style: { fontSize: 13, color: "rgba(232,227,216,0.45)", marginTop: 6 } }, pfi.interpretation) : null,
+              e("div", { style: { fontSize: 12, color: "rgba(232,227,216,0.35)", marginTop: 10, fontStyle: "italic" } }, "The number of students is your estimate. It is not evidence yet.")
             ),
             // Export
             e("div", { className: "actions", style: { marginBottom: 24 } },
