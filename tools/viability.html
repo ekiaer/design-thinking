@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ENDURE · Unit Economics</title>
+  <title>ENDURE · One Unit and What It Costs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -34,7 +34,6 @@
       letter-spacing: -1px;
     }
     .header-sub {
-      font-family: 'Inter', sans-serif;
       font-size: 12px;
       font-weight: 300;
       color: rgba(232,227,216,0.4);
@@ -43,45 +42,82 @@
     }
 
     .main {
-      max-width: 740px;
+      max-width: 780px;
       margin: 0 auto;
-      padding: 56px 40px 80px;
+      padding: 48px 40px 80px;
     }
 
-    /* ── INTRO ── */
     .eyebrow {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 11px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #D4A853;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .intro-heading {
       font-family: 'Playfair Display', serif;
-      font-size: 46px;
+      font-size: 44px;
       line-height: 1.1;
       font-weight: 400;
-      color: #E8E3D8;
       margin-bottom: 22px;
     }
     .intro-body {
-      font-size: 15px;
-      color: rgba(232,227,216,0.55);
-      max-width: 520px;
+      color: rgba(232,227,216,0.6);
+      max-width: 560px;
       line-height: 1.75;
-      margin-bottom: 48px;
+      margin-bottom: 16px;
+    }
+    .step-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      line-height: 1.25;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .step-body {
+      font-size: 14px;
+      color: rgba(232,227,216,0.58);
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 26px;
     }
 
-    /* ── FORM ── */
+    /* ── STEP BAR ── */
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 40px;
+    }
+    .step-seg { flex: 1; }
+    .step-line {
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(232,227,216,0.08);
+      margin-bottom: 8px;
+    }
+    .step-seg.active .step-line { background: #D4A853; }
+    .step-seg.done .step-line { background: rgba(212,168,83,0.35); }
+    .step-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.25);
+    }
+    .step-seg.active .step-name { color: #D4A853; }
+    .step-seg.done .step-name { color: rgba(212,168,83,0.5); }
+
+    /* ── CARDS AND FORMS ── */
     .card {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(232,227,216,0.08);
       border-radius: 8px;
-      padding: 32px;
-      margin-bottom: 32px;
+      padding: 28px;
+      margin-bottom: 24px;
     }
-    .form-group { margin-bottom: 24px; }
+    .card.quiet { background: rgba(255,255,255,0.015); }
+    .form-group { margin-bottom: 22px; }
     .form-group:last-child { margin-bottom: 0; }
     .form-label {
       display: block;
@@ -89,30 +125,226 @@
       font-size: 10px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: rgba(212,168,83,0.75);
+      color: rgba(212,168,83,0.8);
       margin-bottom: 8px;
     }
     .form-hint {
-      font-size: 12px;
-      color: rgba(232,227,216,0.35);
+      font-size: 12.5px;
+      color: rgba(232,227,216,0.42);
       margin-bottom: 8px;
-      font-style: italic;
     }
     .form-input {
       width: 100%;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(232,227,216,0.1);
+      border: 1px solid rgba(232,227,216,0.12);
       border-radius: 4px;
       color: #E8E3D8;
       font-family: 'Inter', sans-serif;
       font-size: 15px;
-      padding: 12px 14px;
+      padding: 11px 13px;
       outline: none;
       transition: border-color 0.2s;
       resize: vertical;
     }
-    .form-input:focus { border-color: rgba(212,168,83,0.45); }
-    .form-input::placeholder { color: rgba(232,227,216,0.2); }
+    .form-input:focus { border-color: rgba(212,168,83,0.55); }
+    .form-input::placeholder { color: rgba(232,227,216,0.22); }
+    select.form-input { appearance: none; -webkit-appearance: none; cursor: pointer; }
+    select.form-input option { background: #0D1117; color: #E8E3D8; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .nudge {
+      font-size: 13px;
+      color: #E0A458;
+      background: rgba(224,164,88,0.07);
+      border-left: 2px solid rgba(224,164,88,0.5);
+      padding: 10px 14px;
+      border-radius: 0 4px 4px 0;
+      margin-top: 10px;
+    }
+
+    .sentence {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      line-height: 1.4;
+      color: #E8E3D8;
+      border-left: 3px solid #D4A853;
+      padding: 6px 0 6px 18px;
+      margin-bottom: 24px;
+    }
+    .sentence.empty { color: rgba(232,227,216,0.28); font-style: italic; }
+    .sentence-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.65);
+      margin-bottom: 8px;
+    }
+
+    .examples { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .examples li { font-size: 13.5px; color: rgba(232,227,216,0.62); }
+    .examples b { color: #D4A853; font-weight: 500; }
+
+    .ref-table { width: 100%; border-collapse: collapse; }
+    .ref-table td {
+      padding: 7px 0;
+      font-size: 13px;
+      color: rgba(232,227,216,0.55);
+      border-bottom: 1px solid rgba(232,227,216,0.05);
+      vertical-align: top;
+    }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .ref-table td:first-child {
+      font-family: 'IBM Plex Mono', monospace;
+      color: #E8E3D8;
+      white-space: nowrap;
+      padding-right: 18px;
+    }
+    .fine {
+      font-size: 11.5px;
+      color: rgba(232,227,216,0.32);
+      margin-top: 10px;
+    }
+
+    /* ── CHOICE CARDS ── */
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .choices.six { grid-template-columns: 1fr 1fr 1fr; }
+    .choice {
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(232,227,216,0.1);
+      border-radius: 8px;
+      padding: 20px;
+      color: inherit;
+      font-family: inherit;
+      font-size: 13.5px;
+      line-height: 1.55;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .choice:hover { border-color: rgba(212,168,83,0.4); }
+    .choice.on { border-color: #D4A853; background: rgba(212,168,83,0.07); }
+    .choice-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      color: #E8E3D8;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .choices.six .choice-title { font-size: 16px; }
+    .choice-body { color: rgba(232,227,216,0.55); }
+    .choice-then {
+      margin-top: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      color: rgba(212,168,83,0.75);
+    }
+
+    /* ── COST LINES ── */
+    .stage {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(232,227,216,0.08);
+      border-radius: 8px;
+      padding: 22px 22px 18px;
+      margin-bottom: 16px;
+    }
+    .stage-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+    .stage-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(212,168,83,0.6);
+    }
+    .stage-name { font-family: 'Playfair Display', serif; font-size: 21px; }
+    .stage-total {
+      margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: rgba(232,227,216,0.5);
+    }
+    .stage-q { font-size: 13px; color: rgba(232,227,216,0.55); margin-bottom: 2px; }
+    .stage-eg { font-size: 12px; color: rgba(232,227,216,0.32); font-style: italic; margin-bottom: 14px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: transparent;
+      border: 1px dashed rgba(212,168,83,0.35);
+      color: rgba(212,168,83,0.85);
+      border-radius: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .chip:hover { background: rgba(212,168,83,0.08); border-color: rgba(212,168,83,0.7); }
+
+    .line {
+      display: grid;
+      grid-template-columns: 116px 1fr 84px 84px 28px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .line .form-input { padding: 8px 10px; font-size: 14px; }
+    .line-wrap { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(232,227,216,0.05); }
+    .line-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .line-foot-label { font-size: 12px; color: rgba(232,227,216,0.4); }
+    .seg { display: inline-flex; border: 1px solid rgba(232,227,216,0.14); border-radius: 4px; overflow: hidden; }
+    .seg button {
+      background: transparent;
+      border: none;
+      color: rgba(232,227,216,0.45);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.03em;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .seg button.on { background: rgba(212,168,83,0.16); color: #D4A853; }
+    .x-btn {
+      background: transparent;
+      border: none;
+      color: rgba(232,227,216,0.3);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .x-btn:hover { color: #E07558; }
+    .col-heads {
+      display: grid;
+      grid-template-columns: 116px 1fr 84px 84px 28px;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(232,227,216,0.3);
+      margin-bottom: 6px;
+    }
+
+    .tally {
+      position: sticky;
+      bottom: 0;
+      background: #131922;
+      border: 1px solid rgba(212,168,83,0.25);
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 24px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .tally-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.65);
+      margin-bottom: 3px;
+    }
+    .tally-val { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #E8E3D8; }
 
     /* ── BUTTONS ── */
     .btn {
@@ -124,390 +356,138 @@
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.1em;
-      padding: 13px 28px;
+      padding: 13px 26px;
       cursor: pointer;
       text-transform: uppercase;
       transition: opacity 0.15s, transform 0.1s;
     }
     .btn:hover { opacity: 0.88; transform: translateY(-1px); }
-    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
     .btn-ghost {
       background: transparent;
-      color: rgba(232,227,216,0.5);
-      border: 1px solid rgba(232,227,216,0.12);
+      color: rgba(232,227,216,0.55);
+      border: 1px solid rgba(232,227,216,0.14);
     }
     .btn-ghost:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
-
-    /* ── INTERVIEW ── */
-    .progress-track {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 52px;
-    }
-    .progress-seg {
-      height: 3px;
-      flex: 1;
-      border-radius: 2px;
-      background: rgba(232,227,216,0.08);
-      transition: background 0.3s;
-    }
-    .progress-seg.active { background: #D4A853; }
-    .progress-seg.done { background: rgba(212,168,83,0.35); }
-
-    .focus-badge {
-      display: inline-block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #D4A853;
-      border: 1px solid rgba(212,168,83,0.25);
-      border-radius: 20px;
-      padding: 4px 12px;
-      margin-bottom: 18px;
-    }
-    .q-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      line-height: 1.3;
-      font-weight: 400;
-      color: #E8E3D8;
-      margin-bottom: 10px;
-    }
-    .q-hint {
-      font-size: 13px;
-      color: rgba(232,227,216,0.38);
-      font-style: italic;
-      margin-bottom: 28px;
-    }
-    .q-counter {
-      font-size: 12px;
-      color: rgba(232,227,216,0.28);
-      align-self: center;
-    }
-
-    /* ── RESOURCES ── */
-    .resources-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: rgba(232,227,216,0.28);
-      letter-spacing: 0.05em;
-      padding: 0;
-      margin-bottom: 8px;
-      transition: color 0.2s;
-    }
-    .resources-toggle:hover { color: rgba(212,168,83,0.6); }
-    .resources-toggle .arrow { display: inline-block; transition: transform 0.2s; margin-right: 4px; font-size: 9px; }
-    .resources-toggle .arrow.open { transform: rotate(90deg); }
-    .resources-list {
-      list-style: none;
-      margin: 0 0 24px 0;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.02);
-      border-left: 2px solid rgba(212,168,83,0.15);
-      border-radius: 0 4px 4px 0;
-    }
-    .resources-list li {
-      margin-bottom: 8px;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-    .resources-list li:last-child { margin-bottom: 0; }
-    .resources-list a {
-      color: rgba(212,168,83,0.65);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(212,168,83,0.15);
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .resources-list a:hover { color: #D4A853; border-color: rgba(212,168,83,0.5); }
-    .resources-list .res-desc {
-      color: rgba(232,227,216,0.3);
-      font-size: 11px;
-      display: block;
-      margin-top: 1px;
-    }
-
-    /* ── LOADING ── */
-    .loading-wrap {
-      padding: 100px 0;
-      text-align: center;
-    }
-    .spinner {
-      width: 38px; height: 38px;
-      border: 2px solid rgba(212,168,83,0.12);
-      border-top-color: #D4A853;
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-      margin: 0 auto 24px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(212,168,83,0.55);
-    }
+    .btn-ghost.copied { color: #5CB88A; border-color: rgba(92,184,138,0.35); }
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .error-msg { color: #E07558; font-size: 13px; margin-bottom: 16px; }
 
     /* ── RESULTS ── */
-    .results-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 34px;
-      font-weight: 400;
-      color: #E8E3D8;
-      margin-bottom: 4px;
-    }
+    .results-title { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 400; margin-bottom: 4px; }
     .results-sub {
-      font-size: 13px;
+      font-size: 12px;
       color: rgba(232,227,216,0.35);
-      margin-bottom: 40px;
+      margin-bottom: 32px;
       font-family: 'IBM Plex Mono', monospace;
       letter-spacing: 0.05em;
     }
-
-    .ratio-card {
+    .verdict-card {
       background: rgba(212,168,83,0.05);
-      border: 1px solid rgba(212,168,83,0.18);
+      border: 1px solid rgba(212,168,83,0.2);
       border-radius: 8px;
-      padding: 40px;
+      padding: 34px;
       text-align: center;
       margin-bottom: 24px;
     }
-    .ratio-label {
+    .verdict-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(212,168,83,0.65);
-      margin-bottom: 14px;
+      color: rgba(212,168,83,0.7);
+      margin-bottom: 12px;
     }
-    .ratio-value {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 72px;
-      font-weight: 600;
-      line-height: 1;
-      margin-bottom: 14px;
-    }
-    .ratio-interp {
-      font-size: 14px;
-      color: rgba(232,227,216,0.55);
-      max-width: 400px;
-      margin: 0 auto 6px;
-    }
-    .ratio-bench {
-      font-size: 12px;
-      color: rgba(232,227,216,0.28);
-      font-style: italic;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .margin-card {
-      background: rgba(212,168,83,0.04);
-      border: 1px solid rgba(212,168,83,0.12);
-      border-radius: 8px;
-      padding: 26px;
-      margin-bottom: 40px;
-    }
-    .margin-bar {
-      height: 8px;
-      border-radius: 4px;
-      background: rgba(232,227,216,0.06);
-      margin: 14px 0 10px;
-      overflow: hidden;
-    }
-    .margin-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: #D4A853;
-      transition: width 0.6s ease;
-    }
-    .margin-interp {
-      font-size: 13px;
-      color: rgba(232,227,216,0.45);
-      font-style: italic;
-    }
-    .cogs-breakdown {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 14px;
-    }
-    .cogs-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 13px;
-      color: rgba(232,227,216,0.5);
-    }
-    .cogs-item-name { flex: 1; }
-    .cogs-item-cost {
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 500;
-      color: rgba(232,227,216,0.7);
-      margin-left: 12px;
-    }
-    .cogs-item-note {
-      font-size: 11px;
-      color: rgba(232,227,216,0.3);
-      display: block;
-      margin-top: 1px;
-    }
-    .metric-card {
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(232,227,216,0.07);
-      border-radius: 8px;
-      padding: 26px;
-    }
-    .metric-type {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-    .type-cogs { color: #7B93DB; }
-    .type-cac { color: #E07558; }
-    .type-ltv { color: #5CB88A; }
-    .type-margin { color: #D4A853; }
-    .metric-range {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 26px;
-      font-weight: 500;
-      color: #E8E3D8;
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
-    .assumptions { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-    .assumption {
-      font-size: 12px;
-      color: rgba(232,227,216,0.38);
-      display: flex;
-      gap: 8px;
-    }
-    .assumption::before { content: '\2014'; color: rgba(232,227,216,0.18); flex-shrink: 0; }
-
+    .verdict-value { font-family: 'Playfair Display', serif; font-size: 40px; line-height: 1.15; margin-bottom: 16px; }
+    .verdict-sentence { font-size: 17px; color: #E8E3D8; max-width: 520px; margin: 0 auto 12px; line-height: 1.5; }
+    .verdict-note { font-size: 13px; color: rgba(232,227,216,0.5); max-width: 520px; margin: 0 auto; }
     .section-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(212,168,83,0.6);
-      margin-bottom: 16px;
+      color: rgba(212,168,83,0.65);
+      margin: 32px 0 14px;
     }
-
-    .endure-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
-    .endure-card {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(232,227,216,0.06);
-      border-left: 3px solid rgba(212,168,83,0.5);
-      border-radius: 0 6px 6px 0;
-      padding: 18px 22px;
+    .answer {
       display: grid;
-      grid-template-columns: 36px 1fr auto;
-      gap: 18px;
-      align-items: start;
-    }
-    .e-letter {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px;
-      font-weight: 700;
-      color: #D4A853;
-      opacity: 0.55;
-      line-height: 1;
-      padding-top: 2px;
-    }
-    .e-dim {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(212,168,83,0.55);
-      margin-bottom: 6px;
-    }
-    .e-insight {
-      font-size: 13px;
-      color: rgba(232,227,216,0.68);
-      line-height: 1.55;
-    }
-    .impact-pill {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 3px;
-      background: rgba(212,168,83,0.08);
-      color: rgba(212,168,83,0.6);
-      white-space: nowrap;
-    }
-
-    .brief-card {
+      grid-template-columns: 34px 1fr;
+      gap: 14px;
       background: rgba(255,255,255,0.025);
       border: 1px solid rgba(232,227,216,0.07);
       border-radius: 8px;
-      padding: 30px;
-      margin-bottom: 36px;
+      padding: 18px 22px;
+      margin-bottom: 10px;
     }
-    .brief-text {
-      font-size: 14px;
-      color: rgba(232,227,216,0.62);
-      line-height: 1.85;
-      white-space: pre-wrap;
+    .answer-num { font-family: 'Playfair Display', serif; font-size: 28px; color: #D4A853; opacity: 0.6; line-height: 1; }
+    .answer-q {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.6);
+      margin-bottom: 5px;
     }
-
-    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-
-    .error-msg {
-      color: #E07558;
+    .answer-a { font-size: 16px; color: #E8E3D8; line-height: 1.45; }
+    .answer-how { font-size: 12.5px; color: rgba(232,227,216,0.45); margin-top: 5px; }
+    .breakdown { list-style: none; margin-top: 4px; }
+    .breakdown li {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
       font-size: 13px;
-      margin-bottom: 16px;
+      color: rgba(232,227,216,0.6);
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(232,227,216,0.05);
+    }
+    .breakdown li:last-child { border-bottom: none; }
+    .breakdown .amt { font-family: 'IBM Plex Mono', monospace; color: rgba(232,227,216,0.8); white-space: nowrap; }
+    .breakdown .tag { color: rgba(232,227,216,0.35); font-size: 11.5px; }
+    .breakdown li.stage-row {
+      color: #D4A853;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding-top: 12px;
+    }
+    .own-prefix { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 10px; }
+    .paste-note {
+      font-size: 13px;
+      color: rgba(232,227,216,0.55);
+      margin: 18px 0 0;
+      max-width: 600px;
     }
 
-    /* ── COPY BUTTON ── */
-    .btn-copy {
-      background: transparent;
-      color: rgba(232,227,216,0.5);
-      border: 1px solid rgba(232,227,216,0.12);
-    }
-    .btn-copy:hover { background: rgba(255,255,255,0.04); opacity: 1; color: #E8E3D8; }
-    .btn-copy.copied { color: #5CB88A; border-color: rgba(92,184,138,0.3); }
-
-    /* ── PRINT ── */
     @media print {
       body { background: #fff; color: #111; }
-      .header { border-color: #ddd; background: #fff; }
-      .logo-mark { color: #222; }
-      .eyebrow, .section-label, .ratio-label, .metric-type, .e-dim { color: #555; }
+      .header { border-color: #ddd; }
+      .logo-mark, .answer-num, .breakdown li.stage-row { color: #333; }
       .no-print { display: none !important; }
-      .ratio-card { background: #f8f6f0; border-color: #ddd; }
-      .metric-card, .endure-card, .brief-card, .margin-card { background: #f8f6f0; border-color: #ddd; }
-      .margin-bar { background: #ddd; }
-      .margin-bar-fill { background: #666; }
-      .cogs-item, .cogs-item-cost { color: #333; }
-      .cogs-item-note { color: #666; }
-      .margin-interp { color: #444; }
-      .ratio-value, .metric-range { color: #111; }
-      .ratio-interp, .e-insight, .brief-text, .assumption { color: #333; }
-      .endure-card { border-left-color: #666; }
-      .intro-heading, .results-title { color: #111; }
+      .verdict-card, .answer, .card { background: #f8f6f0; border-color: #ddd; }
+      .eyebrow, .section-label, .verdict-label, .answer-q, .header-sub, .results-sub { color: #555; }
+      .verdict-value, .verdict-sentence, .answer-a, .results-title, .own-prefix { color: #111 !important; }
+      .verdict-note, .answer-how, .breakdown li, .breakdown .amt, .breakdown .tag, .paste-note, .fine { color: #333; }
+      .form-input::placeholder { color: transparent; }
+      .form-input { color: #111; border-color: #bbb; background: #fff; }
     }
 
-    @media (max-width: 600px) {
-      .main { padding: 32px 20px 60px; }
+    @media (max-width: 640px) {
+      .header { padding: 16px 20px; }
+      .main { padding: 30px 18px 60px; }
       .intro-heading { font-size: 32px; }
-      .metrics-grid { grid-template-columns: 1fr; }
-      .ratio-value { font-size: 48px; }
-      .endure-card { grid-template-columns: 28px 1fr; }
-      .impact-pill { grid-column: 2; }
+      .step-heading { font-size: 25px; }
+      .step-name { display: none; }
+      .choices, .choices.six { grid-template-columns: 1fr; }
+      .col-heads { display: none; }
+      .line { grid-template-columns: 1fr 1fr 28px; }
+      .line .line-p { grid-column: 1 / 3; }
+      .line .line-what { grid-column: 1 / 4; grid-row: 2; }
+      .line .line-low { grid-row: 3; }
+      .line .line-high { grid-row: 3; }
+      .line .x-btn { grid-column: 3; grid-row: 1; }
+      .tally { grid-template-columns: 1fr 1fr; }
+      .verdict-value { font-size: 32px; }
+      .verdict-card { padding: 26px 18px; }
     }
   </style>
 </head>
@@ -516,668 +496,766 @@
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
 
   <script>
-    // ── CONFIG ──
-    // Cloudflare Worker proxy URL — replace with your deployed worker URL
-    const API_PROXY_URL = "https://endure-proxy.ekiaer.workers.dev";
+    // ════════════════════════════════════════════════════════════════
+    // ONE UNIT AND WHAT IT COSTS  ·  ELI 102, Fall 2026
+    //
+    // A worksheet, not an interview: nothing here calls an AI or a server.
+    // Everything the student types stays in their browser.
+    //
+    // The text it produces starts with "ENDURE Unit Economics Analysis".
+    // The Venture Assessment looks for that exact header in a journal and
+    // skips its own five questions when it finds it. Do not change it.
+    // ════════════════════════════════════════════════════════════════
 
-    const SYSTEM_QUESTIONS = `You help design thinking students analyze unit economics for early-stage startup ideas — especially physical products like bottles, sensors, and supplements.
-Generate exactly 7 interview questions covering three areas:
-- COGS (Cost of Goods Sold): 2-3 questions about production costs, materials, packaging, shipping, supplier pricing, and per-unit manufacturing
-- CAC (Customer Acquisition Cost): 2 questions about how they find and convert customers
-- LTV (Lifetime Value): 2 questions about revenue per customer, repeat purchases, retention
-Be concrete and specific to their idea — reference the actual product, customer, channel.
-Questions should be answerable without real data yet (educated estimates are fine).
-Start with COGS questions, then CAC, then LTV. Keep each question to one sentence.
-Return ONLY valid JSON with no markdown, no explanation:
-{"questions":[{"id":1,"text":"question","focus":"COGS","hint":"short guidance for student"}]}`;
-
-    const SYSTEM_ANALYSIS = `You analyze startup unit economics through the ENDURE framework for a design thinking class.
-These students are building physical products (bottles, sensors, supplements), so production and distribution costs are critical.
-ENDURE dimensions: Environmental Scanning (E), Network Orchestration (N), Disruptive Experimentation (D), Unmet Needs Research (U), Resilience Building (R), Evolution Enablement (E).
-
-Based on the project and interview:
-1. Estimate COGS (Cost of Goods Sold) per unit — materials, manufacturing, packaging, shipping/fulfillment
-2. Calculate gross margin per unit (revenue minus COGS)
-3. Build LTV on GROSS MARGIN, not raw revenue — this is the real value of a customer
-4. Estimate CAC range
-5. Calculate the LTV:CAC ratio using margin-based LTV
-6. Pick 2–3 ENDURE dimensions most relevant to their economics
-
-Return ONLY valid JSON with no markdown, no explanation:
-{
-  "cogs":{"per_unit":number,"breakdown":[{"item":"materials/manufacturing/packaging/shipping/other","cost":number,"note":"brief explanation"}],"assumptions":["...","..."]},
-  "gross_margin":{"revenue_per_unit":number,"cogs_per_unit":number,"margin_per_unit":number,"margin_percent":number,"interpretation":"one sentence on whether this margin is healthy for their category"},
-  "cac":{"low":number,"high":number,"assumptions":["...","...","..."]},
-  "ltv":{"low":number,"high":number,"basis":"margin-based — built on gross profit, not revenue","assumptions":["...","...","..."]},
-  "ratio":{"value":number,"interpretation":"one sentence on viability — note this uses margin-based LTV","benchmark":"industry context"},
-  "endure":[{"dimension":"full name","letter":"single letter","insight":"2-3 sentences connecting this dimension to their unit economics","impact":"COGS|CAC|LTV|Margin|Both"}],
-  "brief":"2-3 paragraph written brief covering production costs, margins, acquisition costs, and strategic risks. Highlight where margin pressure or scale effects could change the picture."
-}`;
-
-    const fmt = (n) => n >= 1000 ? "$" + (n / 1000).toFixed(0) + "k" : "$" + n;
-    const ratioColor = (r) => r >= 3 ? "#5CB88A" : r >= 2 ? "#D4A853" : "#E07558";
-
-    const RESOURCES = {
-      COGS: [
-        {
-          title: "How to Calculate Cost of Goods Sold",
-          url: "https://www.investopedia.com/terms/c/cogs.asp",
-          desc: "What goes into COGS and why it matters for pricing"
-        },
-        {
-          title: "Understanding Unit Economics for Physical Products",
-          url: "https://www.shopify.com/blog/unit-economics",
-          desc: "Shopify\u2019s guide to per-unit costs for product businesses"
-        },
-        {
-          title: "Gross Margin Explained",
-          url: "https://www.investopedia.com/terms/g/grossmargin.asp",
-          desc: "Why the gap between revenue and production cost is everything"
-        }
-      ],
-      CAC: [
-        {
-          title: "How to Calculate Customer Acquisition Cost",
-          url: "https://blog.hubspot.com/service/what-does-cac-stand-for",
-          desc: "Clear breakdown of CAC components with examples"
-        },
-        {
-          title: "Customer Acquisition Cost: The One Metric That Can Determine Your Company's Fate",
-          url: "https://www.forentrepreneurs.com/startup-killer/",
-          desc: "David Skok on why CAC matters for early ventures"
-        },
-        {
-          title: "Startup Financial Models \u2014 Unit Economics",
-          url: "https://www.ycombinator.com/library/8K-a-guide-to-seed-fundraising#unit-economics",
-          desc: "Y Combinator\u2019s guide to thinking about per-customer costs"
-        }
-      ],
-      LTV: [
-        {
-          title: "What Is Customer Lifetime Value (CLV)?",
-          url: "https://hbr.org/2014/10/the-value-of-keeping-the-right-customers",
-          desc: "Harvard Business Review on retention and customer value"
-        },
-        {
-          title: "How to Calculate Lifetime Value",
-          url: "https://neilpatel.com/blog/how-to-calculate-lifetime-value/",
-          desc: "Step-by-step walkthrough with formulas and examples"
-        },
-        {
-          title: "Unit Economics for Beginners",
-          url: "https://www.forentrepreneurs.com/saas-metrics-2/",
-          desc: "SaaS-focused but the LTV thinking applies to any model"
-        }
-      ],
-      Both: [
-        {
-          title: "LTV:CAC Ratio Explained",
-          url: "https://www.forentrepreneurs.com/startup-killer/",
-          desc: "Why the ratio between these numbers decides viability"
-        },
-        {
-          title: "Startup Metrics for Pirates (AARRR)",
-          url: "https://www.slideshare.net/dmc500hats/startup-metrics-for-pirates-long-version",
-          desc: "Dave McClure\u2019s framework \u2014 where CAC and LTV fit in the funnel"
-        }
+    // ── COURSE REFERENCE FIGURES ──
+    // The same figures as COURSE_CONTEXT in venture-assessment.html.
+    // Change them here when the college's own budget figures arrive.
+    var REF = {
+      perStudent: 25500,          // average tuition one undergraduate pays a year after scholarships (2024-25)
+      portlandMinWage: "16.80",   // Oregon BOLI, Portland metro rate, 1 July 2026 to 30 June 2027
+      counts: [
+        ["About 1,970", "undergraduates in 2025-26"],
+        ["413", "new students in the Fall 2026 class"],
+        ["482", "first-years started in Fall 2024, and 400 of them came back for a second year"],
+        ["421", "varsity athletes, about one undergraduate in five"]
       ]
     };
 
-    const e = React.createElement;
-    const { useState } = React;
+    var STEPS = [
+      { key: "unit", name: "The unit" },
+      { key: "count", name: "How many" },
+      { key: "fork", name: "Each time?" },
+      { key: "costs", name: "The costs" },
+      { key: "number", name: "The number" },
+      { key: "results", name: "The answer" }
+    ];
 
-    async function callClaude(userMsg, sys) {
-      var payload = JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 4000,
-        system: sys,
-        messages: [{ role: "user", content: userMsg }],
-      });
-      var maxRetries = 3;
-      var delay = 2000;
-      for (var attempt = 0; attempt <= maxRetries; attempt++) {
-        const res = await fetch(API_PROXY_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: payload
-        });
-        if ((res.status === 529 || res.status === 524 || res.status === 502 || res.status === 503 || res.status === 504) && attempt < maxRetries) {
-          await new Promise(function(r) { setTimeout(r, delay); });
-          delay *= 2;
-          continue;
-        }
-        if (!res.ok) {
-          const errBody = await res.text();
-          throw new Error("API error: " + res.status + " " + errBody);
-        }
-        const data = await res.json();
-        var text = data.content[0].text;
-        text = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
-        var jsonStart = text.indexOf("{");
-        var jsonStartArr = text.indexOf("[");
-        if (jsonStart === -1 || (jsonStartArr !== -1 && jsonStartArr < jsonStart)) jsonStart = jsonStartArr;
-        if (jsonStart > 0) text = text.substring(jsonStart);
-        var lastBrace = text.lastIndexOf("}");
-        var lastBracket = text.lastIndexOf("]");
-        var jsonEnd = Math.max(lastBrace, lastBracket);
-        if (jsonEnd !== -1 && jsonEnd < text.length - 1) text = text.substring(0, jsonEnd + 1);
-        return text;
-      }
+    // The 5 Es (Doblin). Stage questions match the Wednesday 11 November slides.
+    var STAGES = [
+      { key: "entice", name: "Entice", q: "How do people first hear of it? What is the invitation?", eg: "Posters, tabling, emails, someone's time to spread the word." },
+      { key: "enter", name: "Enter", q: "What is the threshold moment when they are in?", eg: "Sign-up, matching, training, a first session." },
+      { key: "engage", name: "Engage", q: "What is the core experience? What are they doing?", eg: "People's time, a room, food, software, supplies." },
+      { key: "exit", name: "Exit", q: "How does it end, and does it end well?", eg: "A last session, a hand-over, asking how it went." },
+      { key: "extend", name: "Extend", q: "What brings them back, or makes them tell a friend?", eg: "Reminders, follow-up, keeping the information current." }
+    ];
+
+    // The Ps that cost money (Stillman's 6 Ps, minus Plusses & Deltas, plus a catch-all).
+    var PS = [
+      { key: "people", name: "People", ph: "Who, and how many hours" },
+      { key: "props", name: "Props", ph: "Which objects, software or supplies" },
+      { key: "processes", name: "Processes", ph: "What has to happen behind the scenes" },
+      { key: "place", name: "Place", ph: "Which space, and how often" },
+      { key: "partners", name: "Partners", ph: "Which organisation, and what they charge" },
+      { key: "other", name: "Other", ph: "What it is" }
+    ];
+
+    // The six college numbers, named as on the Monday 16 November slides and handout.
+    var NUMBERS = [
+      { key: "enrolled", name: "New students enrolled", body: "More students choose Lewis & Clark.", kind: "students", verb: ["enrols", "enrol"] },
+      { key: "stay", name: "Students who stay", body: "Fewer students leave before they finish.", kind: "students", verb: ["stays", "stay"] },
+      { key: "graduate", name: "Students who graduate", body: "More students finish their degree.", kind: "students", verb: ["graduates", "graduate"] },
+      { key: "jobs", name: "Jobs after graduation", body: "More graduates in work or further study.", kind: "dollars" },
+      { key: "gifts", name: "Gifts to the college", body: "More alumni and donors give.", kind: "dollars" },
+      { key: "saved", name: "Costs saved", body: "The college spends less to do the same thing.", kind: "dollars" }
+    ];
+
+    var HOWLONG = {
+      year: "for one year",
+      semester: "for one semester",
+      once: "one time"
+    };
+
+    var BLANK = {
+      step: "intro",
+      name: "", desc: "",
+      who: "", what: "", howLong: "year", howLongOther: "",
+      unitsLow: "", unitsHigh: "", unitsBasis: "",
+      fork: "",
+      lines: [], nextId: 1,
+      number: "",
+      studentsLow: "", studentsHigh: "", perStudent: String(REF.perStudent),
+      dollarsLow: "", dollarsHigh: "",
+      reasoning: "",
+      ownSentence: ""
+    };
+
+    // ── SAVED PROGRESS (this browser only, kept 14 days) ──
+    var UE_KEY = "ue-state-fall2026";
+    var UE_TTL = 14 * 24 * 60 * 60 * 1000;
+    function ueClear() { try { localStorage.removeItem(UE_KEY); localStorage.removeItem(UE_KEY + "-at"); } catch (err) { /* storage unavailable */ } }
+    function ueSave(state) { try { localStorage.setItem(UE_KEY, JSON.stringify(state)); localStorage.setItem(UE_KEY + "-at", String(Date.now())); } catch (err) { /* storage full or unavailable */ } }
+    function ueLoad() {
+      try {
+        var at = Number(localStorage.getItem(UE_KEY + "-at") || 0);
+        if (!at || Date.now() - at > UE_TTL) { ueClear(); return null; }
+        var parsed = JSON.parse(localStorage.getItem(UE_KEY));
+        if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.lines)) return null;
+        var merged = {};
+        Object.keys(BLANK).forEach(function(k) { merged[k] = parsed[k] !== undefined ? parsed[k] : BLANK[k]; });
+        return merged;
+      } catch (err) { return null; }
     }
+
+    // ── NUMBERS ──
+    function isBlank(v) { return v === null || v === undefined || String(v).trim() === ""; }
+    function num(v) {
+      if (isBlank(v)) return 0;
+      var s = String(v).replace(/[$,\s]/g, "");
+      var k = /^(\d*\.?\d+)k$/i.exec(s);
+      var n = k ? parseFloat(k[1]) * 1000 : parseFloat(s);
+      return isFinite(n) && n > 0 ? n : 0;
+    }
+    // A low guess and a high guess. One blank copies the other; reversed guesses are swapped.
+    function pair(lo, hi) {
+      if (isBlank(lo) && isBlank(hi)) return { low: 0, high: 0, empty: true };
+      var a = isBlank(lo) ? num(hi) : num(lo);
+      var b = isBlank(hi) ? num(lo) : num(hi);
+      return { low: Math.min(a, b), high: Math.max(a, b), empty: false };
+    }
+    function money(n) {
+      n = Number(n) || 0;
+      if (n > 0 && n < 100 && Math.round(n * 100) % 100 !== 0) return "$" + n.toFixed(2);
+      return "$" + Math.round(n).toLocaleString("en-US");
+    }
+    function moneyRange(lo, hi) { var a = money(lo), b = money(hi); return a === b ? a : a + " – " + b; }
+    function count(n) { return (Math.round(Number(n) * 10) / 10).toLocaleString("en-US"); }
+    function countRange(lo, hi) { var a = count(lo), b = count(hi); return a === b ? a : a + " – " + b; }
+    // The same ranges written for a sentence: "1 to 2", "$9,000 to $30,000".
+    function countTo(lo, hi) { var a = count(lo), b = count(hi); return a === b ? a : a + " to " + b; }
+    function moneyTo(lo, hi) { var a = money(lo), b = money(hi); return a === b ? a : a + " to " + b; }
+
+    // ── THE UNIT SENTENCE ──
+    function tidy(s) { return String(s || "").trim().replace(/\s+/g, " ").replace(/[.]+$/, ""); }
+    function unitParts(S) {
+      var who = tidy(S.who).replace(/^(one|a|an)\s+/i, "");
+      var what = tidy(S.what).replace(/^(who|that)\s+/i, "");
+      var howLong = S.howLong === "other" ? tidy(S.howLongOther) : HOWLONG[S.howLong];
+      return { who: who, what: what, howLong: howLong };
+    }
+    function unitSentence(S) {
+      var p = unitParts(S);
+      if (!p.who && !p.what) return "";
+      return "One " + (p.who || "…") + " who " + (p.what || "…") + (p.howLong ? ", " + p.howLong : "") + ".";
+    }
+    // The commonest mistake: naming the idea instead of a person using it.
+    function whoLooksLikeTheIdea(who) {
+      return /\b(app|apps|platform|website|site|program|programme|service|event|events|download|downloads|tool|system|club|fund)\b/i.test(who || "");
+    }
+
+    function numberInfo(key) {
+      for (var i = 0; i < NUMBERS.length; i++) { if (NUMBERS[i].key === key) return NUMBERS[i]; }
+      return null;
+    }
+
+    // ── THE ARITHMETIC ──
+    // each   = costs that repeat for every unit
+    // shared = costs for the whole year, however many units there are
+    function compute(S) {
+      var units = pair(S.unitsLow, S.unitsHigh);
+      var each = { low: 0, high: 0 }, shared = { low: 0, high: 0 };
+      var stages = STAGES.map(function(st) { return { key: st.key, name: st.name, lines: [] }; });
+      var lineCount = 0;
+      (S.lines || []).forEach(function(l) {
+        var p = pair(l.low, l.high);
+        if (p.empty && isBlank(l.what)) return;
+        var tgt = l.basis === "shared" ? shared : each;
+        tgt.low += p.low; tgt.high += p.high;
+        lineCount++;
+        stages.forEach(function(st) {
+          if (st.key === l.stage) st.lines.push({ p: l.p, what: tidy(l.what), low: p.low, high: p.high, basis: l.basis === "shared" ? "shared" : "each" });
+        });
+      });
+
+      // More units spread a shared cost thinner, so the low cost of one unit uses the high count.
+      var unitCost = {
+        low: each.low + (units.high > 0 ? shared.low / units.high : 0),
+        high: each.high + (units.low > 0 ? shared.high / units.low : 0)
+      };
+      var out = {
+        low: each.low * units.low + shared.low,
+        high: each.high * units.high + shared.high
+      };
+
+      var info = numberInfo(S.number);
+      var kind = info ? info.kind : "";
+      var students = pair(S.studentsLow, S.studentsHigh);
+      var per = num(S.perStudent);
+      var inn = { low: 0, high: 0 };
+      if (kind === "students") inn = { low: students.low * per, high: students.high * per };
+      if (kind === "dollars") { var d = pair(S.dollarsLow, S.dollarsHigh); inn = { low: d.low, high: d.high }; }
+
+      // Same three verdicts as the Venture Assessment.
+      var verdict = "Not yet";
+      if (inn.high > 0 && inn.low > out.high) verdict = "Yes";
+      else if (inn.high > 0 && inn.high > out.low) verdict = "Only at the high end";
+
+      // How many more students a year would cover the cost.
+      var breakEven = null;
+      if (kind === "students" && per > 0) {
+        breakEven = { low: Math.max(1, Math.ceil(out.low / per)), high: Math.max(1, Math.ceil(out.high / per)) };
+      }
+
+      return {
+        units: units, each: each, shared: shared, unitCost: unitCost, out: out,
+        stages: stages, lineCount: lineCount,
+        info: info, kind: kind, students: students, per: per, inn: inn,
+        verdict: verdict, breakEven: breakEven
+      };
+    }
+
+    function paysSentence(S, C) {
+      if (C.kind === "students" && C.breakEven) {
+        var b = C.breakEven;
+        var one = b.low === 1 && b.high === 1;
+        return "This pays for itself if " + countTo(b.low, b.high) + " more " + (one ? "student" : "students") +
+          " a year " + C.info.verb[one ? 0 : 1] + " because of it.";
+      }
+      var amount = moneyTo(C.out.low, C.out.high);
+      if (S.number === "saved") return "This pays for itself if it saves the college at least " + amount + " a year.";
+      if (S.number === "gifts") return "This pays for itself if it brings in at least " + amount + " a year in gifts.";
+      return "This pays for itself if it is worth at least " + amount + " a year to the college.";
+    }
+
+    function verdictNote(S, C) {
+      if (C.kind === "students") {
+        var mine = "Your own guess is " + countTo(C.students.low, C.students.high) + " more " +
+          (C.students.low === 1 && C.students.high === 1 ? "student" : "students") + " a year.";
+        return mine + " That is an estimate, not evidence yet.";
+      }
+      if (C.inn.high <= 0) return "There is no dollar figure for the money it brings in yet. Say what the college would have to believe to pay for it.";
+      return "Your own guess is " + moneyTo(C.inn.low, C.inn.high) + " a year. That is an estimate, not evidence yet.";
+    }
+
+    function ownWords(S) {
+      var t = tidy(S.ownSentence).replace(/^this pays for itself if\s*/i, "");
+      return t ? "This pays for itself if " + t + "." : "";
+    }
+
+    function forkLabel(S) {
+      if (S.fork === "each") return "Yes. Each extra student adds cost.";
+      if (S.fork === "shared") return "No. The cost is about the same however many students use it.";
+      return "";
+    }
+
+    function today() { return new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); }
+
+    // ── THE TEXT STUDENTS PASTE INTO THEIR JOURNAL ──
+    function buildPlainText(S) {
+      var C = compute(S);
+      var rule = "───────────────────────────────────────";
+      var heavy = "═══════════════════════════════════════";
+      var lines = [];
+      lines.push("ENDURE Unit Economics Analysis — " + tidy(S.name).toUpperCase());
+      lines.push("Generated " + today() + " with One Unit and What It Costs");
+      if (tidy(S.desc)) lines.push("The idea: " + tidy(S.desc) + ".");
+      lines.push("");
+      lines.push(heavy);
+      lines.push("DOES IT PAY FOR ITSELF? — " + C.verdict);
+      lines.push(paysSentence(S, C));
+      if (ownWords(S)) lines.push("In my words: " + ownWords(S));
+      lines.push(verdictNote(S, C));
+      lines.push("");
+      lines.push(rule);
+      lines.push("ONE UNIT: " + unitSentence(S));
+      lines.push("UNITS A YEAR AT LEWIS & CLARK: " + countRange(C.units.low, C.units.high));
+      if (tidy(S.unitsBasis)) lines.push("  — " + tidy(S.unitsBasis));
+      lines.push("DOES IT COST MORE EACH TIME ANOTHER STUDENT USES IT? " + forkLabel(S));
+      lines.push("");
+      lines.push("COST OF ONE UNIT: " + moneyRange(C.unitCost.low, C.unitCost.high));
+      C.stages.forEach(function(st) {
+        if (!st.lines.length) return;
+        lines.push("  " + st.name);
+        st.lines.forEach(function(l) {
+          var pName = "";
+          PS.forEach(function(p) { if (p.key === l.p) pName = p.name; });
+          lines.push("  — " + pName + (l.what ? ": " + l.what : "") + ": " + moneyRange(l.low, l.high) +
+            (l.basis === "shared" ? " (for the whole year)" : " (for each unit)"));
+        });
+      });
+      if (C.each.high > 0) lines.push("  Costs for each unit: " + moneyRange(C.each.low, C.each.high));
+      if (C.shared.high > 0) lines.push("  Costs for the whole year: " + moneyRange(C.shared.low, C.shared.high) + ", shared between " + countRange(C.units.low, C.units.high) + " units");
+      lines.push("MONEY OUT PER YEAR: " + moneyRange(C.out.low, C.out.high));
+      lines.push("  Running costs only. The cost of building it is not counted here.");
+      lines.push("");
+      lines.push(rule);
+      lines.push("THE COLLEGE NUMBER IT CHANGES: " + (C.info ? C.info.name : ""));
+      if (C.kind === "students") lines.push("  " + countRange(C.students.low, C.students.high) + " more students a year");
+      if (tidy(S.reasoning)) lines.push("  — " + tidy(S.reasoning));
+      lines.push("MONEY IN PER YEAR: " + (C.inn.high > 0 ? moneyRange(C.inn.low, C.inn.high) : "No dollar figure yet"));
+      if (C.kind === "students") lines.push("  — " + countRange(C.students.low, C.students.high) + " students × " + money(C.per) + " that one student pays the college in a year");
+      lines.push("");
+      lines.push(heavy);
+      return lines.join("\n");
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // SCREENS
+    // ════════════════════════════════════════════════════════════════
+    var e = React.createElement;
+    var useState = React.useState, useEffect = React.useEffect;
 
     function App() {
-      const [step, setStep] = useState("intro");
-      const [name, setName] = useState("");
-      const [desc, setDesc] = useState("");
-      const [questions, setQuestions] = useState([]);
-      const [qIndex, setQIndex] = useState(0);
-      const [answers, setAnswers] = useState([]);
-      const [currentAns, setCurrentAns] = useState("");
-      const [results, setResults] = useState(null);
-      const [error, setError] = useState("");
-      const [copied, setCopied] = useState(false);
-      const [showResources, setShowResources] = useState(false);
+      var s0 = useState(BLANK); var S = s0[0], setS = s0[1];
+      var s1 = useState(function() { var saved = ueLoad(); return saved && saved.step !== "intro" ? saved : null; });
+      var saved = s1[0], setSaved = s1[1];
+      var s2 = useState(""); var error = s2[0], setError = s2[1];
+      var s3 = useState(false); var copied = s3[0], setCopied = s3[1];
 
-      async function startInterview() {
-        setError("");
-        setStep("loading");
-        try {
-          const raw = await callClaude("Project: " + name + "\n\nDescription: " + desc, SYSTEM_QUESTIONS);
-          const parsed = JSON.parse(raw.trim());
-          setQuestions(parsed.questions);
-          setStep("interview");
-        } catch (err) {
-          setError("Something went wrong. Please try again. (" + err.message + ")");
-          setStep("intro");
-        }
+      useEffect(function() { if (S !== BLANK) ueSave(S); }, [S]);
+
+      function update(partial) {
+        setS(function(prev) { var next = {}; Object.keys(prev).forEach(function(k) { next[k] = prev[k]; }); Object.keys(partial).forEach(function(k) { next[k] = partial[k]; }); return next; });
+      }
+      function go(step) { setError(""); update({ step: step }); window.scrollTo(0, 0); }
+      function fail(msg) { setError(msg); }
+      function startFresh() { ueClear(); setSaved(null); setError(""); setCopied(false); setS(BLANK); window.scrollTo(0, 0); }
+
+      function addLine(stage, p) {
+        var line = { id: S.nextId, stage: stage, p: p, what: "", low: "", high: "", basis: S.fork === "shared" ? "shared" : "each" };
+        update({ lines: S.lines.concat([line]), nextId: S.nextId + 1 });
+      }
+      function updateLine(id, partial) {
+        update({ lines: S.lines.map(function(l) {
+          if (l.id !== id) return l;
+          var next = {}; Object.keys(l).forEach(function(k) { next[k] = l[k]; }); Object.keys(partial).forEach(function(k) { next[k] = partial[k]; });
+          return next;
+        }) });
+      }
+      function removeLine(id) { update({ lines: S.lines.filter(function(l) { return l.id !== id; }) }); }
+
+      // Choosing a different fork re-labels cost lines the student has not priced yet.
+      function chooseFork(fork) {
+        update({ fork: fork, lines: S.lines.map(function(l) {
+          if (!isBlank(l.low) || !isBlank(l.high)) return l;
+          var next = {}; Object.keys(l).forEach(function(k) { next[k] = l[k]; }); next.basis = fork === "shared" ? "shared" : "each";
+          return next;
+        }) });
       }
 
-      async function submitAnswer() {
-        const newAnswers = answers.concat([{
-          q: questions[qIndex].text,
-          a: currentAns,
-          focus: questions[qIndex].focus
-        }]);
-        setAnswers(newAnswers);
-        setCurrentAns("");
-        if (qIndex + 1 < questions.length) {
-          setQIndex(qIndex + 1);
-          setShowResources(false);
-        } else {
-          setStep("loading");
-          try {
-            const qa = newAnswers.map(function(x, i) {
-              return "Q" + (i + 1) + " [" + x.focus + "]: " + x.q + "\nA: " + x.a;
-            }).join("\n\n");
-            const raw = await callClaude(
-              "Project: " + name + "\nDescription: " + desc + "\n\nInterview:\n" + qa,
-              SYSTEM_ANALYSIS
+      function copyText() {
+        var text = buildPlainText(S);
+        function done() { setCopied(true); setTimeout(function() { setCopied(false); }, 2500); }
+        function fallback() {
+          var ta = document.createElement("textarea");
+          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand("copy"); done(); } catch (err) { /* nothing more to try */ }
+          document.body.removeChild(ta);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+        else fallback();
+      }
+
+      // ── shared pieces ──
+      function header() {
+        return e("header", { className: "header" },
+          e("a", { href: "index.html", className: "logo-mark", style: { textDecoration: "none" }, title: "Back to all tools" }, "ENDURE"),
+          e("span", { className: "header-sub" }, "One Unit and What It Costs")
+        );
+      }
+      function stepBar() {
+        var idx = -1;
+        STEPS.forEach(function(st, i) { if (st.key === S.step) idx = i; });
+        return e("div", { className: "steps no-print" },
+          STEPS.map(function(st, i) {
+            return e("div", { key: st.key, className: "step-seg" + (i === idx ? " active" : i < idx ? " done" : "") },
+              e("div", { className: "step-line" }),
+              e("div", { className: "step-name" }, (i + 1) + " · " + st.name)
             );
-            const parsed = JSON.parse(raw.trim());
-            setResults(parsed);
-            setStep("results");
-          } catch (err) {
-            setError("Something went wrong generating results. Please try again. (" + err.message + ")");
-            setStep("interview");
-          }
-        }
-      }
-
-      function reset() {
-        setStep("intro");
-        setName("");
-        setDesc("");
-        setQuestions([]);
-        setQIndex(0);
-        setAnswers([]);
-        setCurrentAns("");
-        setResults(null);
-        setError("");
-        setCopied(false);
-      }
-
-      function buildPlainText() {
-        if (!results) return "";
-        var r = results;
-        var lines = [];
-        lines.push("ENDURE Unit Economics Analysis — " + name.toUpperCase());
-        lines.push("Generated " + new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
-        lines.push("");
-        lines.push("═══════════════════════════════════════");
-        lines.push("LTV : CAC RATIO — " + Number(r.ratio.value).toFixed(1) + "x");
-        lines.push(r.ratio.interpretation);
-        lines.push(r.ratio.benchmark);
-        if (r.cogs) {
-          lines.push("");
-          lines.push("───────────────────────────────────────");
-          lines.push("COST OF GOODS SOLD: " + fmt(r.cogs.per_unit) + " per unit");
-          if (r.cogs.breakdown) {
-            r.cogs.breakdown.forEach(function(b) {
-              lines.push("  — " + b.item + ": " + fmt(b.cost) + (b.note ? " (" + b.note + ")" : ""));
-            });
-          }
-          if (r.cogs.assumptions) {
-            r.cogs.assumptions.forEach(function(a) { lines.push("  — " + a); });
-          }
-        }
-        if (r.gross_margin) {
-          lines.push("");
-          lines.push("GROSS MARGIN: " + fmt(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)");
-          lines.push("  Revenue " + fmt(r.gross_margin.revenue_per_unit) + " – COGS " + fmt(r.gross_margin.cogs_per_unit));
-          lines.push(r.gross_margin.interpretation);
-        }
-        lines.push("");
-        lines.push("───────────────────────────────────────");
-        lines.push("CUSTOMER ACQUISITION COST: " + fmt(r.cac.low) + " – " + fmt(r.cac.high));
-        r.cac.assumptions.forEach(function(a) { lines.push("  — " + a); });
-        lines.push("");
-        lines.push("LIFETIME VALUE: " + fmt(r.ltv.low) + " – " + fmt(r.ltv.high));
-        if (r.ltv.basis) { lines.push("  (" + r.ltv.basis + ")"); }
-        r.ltv.assumptions.forEach(function(a) { lines.push("  — " + a); });
-        lines.push("");
-        lines.push("───────────────────────────────────────");
-        lines.push("ENDURE FRAMEWORK COMMENTARY");
-        lines.push("");
-        r.endure.forEach(function(dim) {
-          lines.push("[" + dim.letter + "] " + dim.dimension + " (" + dim.impact + ")");
-          lines.push(dim.insight);
-          lines.push("");
-        });
-        lines.push("───────────────────────────────────────");
-        lines.push("STRATEGIC BRIEF");
-        lines.push("");
-        lines.push(r.brief);
-        lines.push("");
-        lines.push("═══════════════════════════════════════");
-        return lines.join("\n");
-      }
-
-      function copyToClipboard() {
-        navigator.clipboard.writeText(buildPlainText()).then(function() {
-          setCopied(true);
-          setTimeout(function() { setCopied(false); }, 2000);
-        });
-      }
-
-      function downloadDocx() {
-        if (!results) return;
-        var r = results;
-        var D = docx;
-        var dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-
-        function heading(text, level) {
-          return new D.Paragraph({
-            heading: level === 1 ? D.HeadingLevel.HEADING_1 : D.HeadingLevel.HEADING_2,
-            spacing: { before: level === 1 ? 0 : 300, after: 120 },
-            children: [new D.TextRun({ text: text, bold: true, font: "Arial", size: level === 1 ? 36 : 28 })]
-          });
-        }
-        function para(text, opts) {
-          opts = opts || {};
-          return new D.Paragraph({
-            spacing: { after: opts.after !== undefined ? opts.after : 120 },
-            children: [new D.TextRun({ text: text, font: "Arial", size: 22, italics: !!opts.italic, bold: !!opts.bold, color: opts.color })]
-          });
-        }
-        function bullet(text) {
-          return new D.Paragraph({
-            bullet: { level: 0 },
-            spacing: { after: 60 },
-            children: [new D.TextRun({ text: text, font: "Arial", size: 22 })]
-          });
-        }
-        function divider() {
-          return new D.Paragraph({
-            spacing: { before: 200, after: 200 },
-            border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: "999999" } },
-            children: []
-          });
-        }
-
-        var children = [];
-
-        // Title block
-        children.push(heading("ENDURE Unit Economics Analysis", 1));
-        children.push(para(name, { bold: true, after: 40 }));
-        children.push(para("Generated " + dateStr, { italic: true, color: "666666", after: 40 }));
-        children.push(divider());
-
-        // LTV:CAC Ratio
-        children.push(heading("LTV : CAC Ratio", 2));
-        children.push(para(Number(r.ratio.value).toFixed(1) + "\u00D7", { bold: true }));
-        children.push(para(r.ratio.interpretation));
-        children.push(para(r.ratio.benchmark, { italic: true, color: "666666" }));
-
-        // COGS
-        if (r.cogs) {
-          children.push(divider());
-          children.push(heading("Cost of Goods Sold", 2));
-          children.push(para(fmt(r.cogs.per_unit) + " per unit", { bold: true }));
-          if (r.cogs.breakdown) {
-            r.cogs.breakdown.forEach(function(b) {
-              children.push(bullet(b.item + ": " + fmt(b.cost) + (b.note ? " (" + b.note + ")" : "")));
-            });
-          }
-          if (r.cogs.assumptions) {
-            children.push(para("Assumptions:", { bold: true, after: 60 }));
-            r.cogs.assumptions.forEach(function(a) { children.push(bullet(a)); });
-          }
-        }
-
-        // Gross Margin
-        if (r.gross_margin) {
-          children.push(divider());
-          children.push(heading("Gross Margin", 2));
-          children.push(para(fmt(r.gross_margin.margin_per_unit) + " per unit (" + Math.round(r.gross_margin.margin_percent) + "%)", { bold: true }));
-          children.push(para("Revenue " + fmt(r.gross_margin.revenue_per_unit) + " \u2013 COGS " + fmt(r.gross_margin.cogs_per_unit)));
-          children.push(para(r.gross_margin.interpretation));
-        }
-
-        // CAC
-        children.push(divider());
-        children.push(heading("Customer Acquisition Cost", 2));
-        children.push(para(fmt(r.cac.low) + " \u2013 " + fmt(r.cac.high), { bold: true }));
-        children.push(para("Assumptions:", { bold: true, after: 60 }));
-        r.cac.assumptions.forEach(function(a) { children.push(bullet(a)); });
-
-        // LTV
-        children.push(divider());
-        children.push(heading("Lifetime Value", 2));
-        children.push(para(fmt(r.ltv.low) + " \u2013 " + fmt(r.ltv.high), { bold: true }));
-        if (r.ltv.basis) { children.push(para(r.ltv.basis, { italic: true, color: "666666" })); }
-        children.push(para("Assumptions:", { bold: true, after: 60 }));
-        r.ltv.assumptions.forEach(function(a) { children.push(bullet(a)); });
-
-        // ENDURE
-        children.push(divider());
-        children.push(heading("ENDURE Framework Commentary", 2));
-        r.endure.forEach(function(dim) {
-          children.push(new D.Paragraph({
-            spacing: { before: 160, after: 60 },
-            children: [
-              new D.TextRun({ text: "[" + dim.letter + "] " + dim.dimension, bold: true, font: "Arial", size: 22 }),
-              new D.TextRun({ text: " \u2014 Impact: " + dim.impact, font: "Arial", size: 22, color: "666666" })
-            ]
-          }));
-          children.push(para(dim.insight));
-        });
-
-        // Brief
-        children.push(divider());
-        children.push(heading("Strategic Brief", 2));
-        children.push(para(r.brief));
-
-        // Footer
-        children.push(divider());
-        children.push(para("Generated with ENDURE Unit Economics \u00B7 " + dateStr, { italic: true, color: "999999" }));
-
-        var doc = new D.Document({
-          sections: [{
-            properties: {
-              page: {
-                margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 }
-              }
-            },
-            children: children
-          }]
-        });
-
-        D.Packer.toBlob(doc).then(function(blob) {
-          var slug = name.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
-          var a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "unit-economics-" + slug + ".docx";
-          a.click();
-          URL.revokeObjectURL(a.href);
-        });
-      }
-
-      // ── RENDER ──
-
-      if (step === "loading") {
-        return e("div", null,
-          renderHeader(),
-          e("main", { className: "main" },
-            e("div", { className: "loading-wrap" },
-              e("div", { className: "spinner" }),
-              e("div", { className: "loading-text" }, "Building your model\u2026")
-            )
-          )
+          })
         );
       }
-
-      if (step === "interview" && questions[qIndex]) {
-        return e("div", null,
-          renderHeader(),
-          e("main", { className: "main" },
-            e("div", { className: "progress-track no-print" },
-              questions.map(function(_, i) {
-                var cls = "progress-seg";
-                if (i < qIndex) cls += " done";
-                else if (i === qIndex) cls += " active";
-                return e("div", { key: i, className: cls });
-              })
-            ),
-            e("div", { className: "focus-badge" }, questions[qIndex].focus + " Driver"),
-            e("div", { className: "q-text" }, questions[qIndex].text),
-            e("div", { className: "q-hint" }, questions[qIndex].hint),
-            e("button", {
-              className: "resources-toggle",
-              onClick: function() { setShowResources(!showResources); }
-            },
-              e("span", { className: "arrow" + (showResources ? " open" : "") }, "\u25B6"),
-              "Need help thinking this through?"
-            ),
-            showResources ? e("ul", { className: "resources-list" },
-              (RESOURCES[questions[qIndex].focus] || RESOURCES.Both).map(function(r, i) {
-                return e("li", { key: i },
-                  e("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.title),
-                  e("span", { className: "res-desc" }, r.desc)
-                );
-              })
-            ) : null,
-            e("textarea", {
-              className: "form-input",
-              rows: 4,
-              value: currentAns,
-              onChange: function(ev) { setCurrentAns(ev.target.value); },
-              placeholder: "Your answer \u2014 estimates and ranges are fine\u2026",
-              style: { marginBottom: 22 }
-            }),
-            e("div", { className: "actions" },
-              e("button", {
-                className: "btn",
-                onClick: submitAnswer,
-                disabled: !currentAns.trim()
-              }, qIndex + 1 < questions.length ? "Next \u2192" : "Generate Model \u2192"),
-              e("span", { className: "q-counter" }, (qIndex + 1) + " of " + questions.length)
-            )
-          )
+      function text(key, placeholder, extra) {
+        var props = { className: "form-input", value: S[key], placeholder: placeholder || "", onChange: function(ev) { var p = {}; p[key] = ev.target.value; update(p); } };
+        if (extra) Object.keys(extra).forEach(function(k) { props[k] = extra[k]; });
+        return e(props.rows ? "textarea" : "input", props);
+      }
+      function numberInput(key, placeholder) { return text(key, placeholder, { inputMode: "decimal" }); }
+      function group(label, hint, control, after) {
+        return e("div", { className: "form-group" },
+          e("label", { className: "form-label" }, label),
+          hint ? e("div", { className: "form-hint" }, hint) : null,
+          control,
+          after || null
         );
       }
-
-      if (step === "results" && results) {
+      function nav(backStep, nextLabel, onNext) {
         return e("div", null,
-          renderHeader(),
-          e("main", { className: "main" },
-            e("div", { className: "eyebrow" }, name),
-            e("div", { className: "results-title" }, "Unit Economics Analysis"),
-            e("div", { className: "results-sub" },
-              "Generated for class discussion \u00B7 " +
-              new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-            ),
-
-            // Ratio card
-            e("div", { className: "ratio-card" },
-              e("div", { className: "ratio-label" }, "LTV : CAC Ratio"),
-              e("div", { className: "ratio-value", style: { color: ratioColor(results.ratio.value) } },
-                Number(results.ratio.value).toFixed(1) + "\u00D7"
-              ),
-              e("div", { className: "ratio-interp" }, results.ratio.interpretation),
-              e("div", { className: "ratio-bench" }, results.ratio.benchmark)
-            ),
-
-            // COGS + Gross Margin
-            results.cogs ? e("div", null,
-              e("div", { className: "section-label" }, "Production & Distribution Costs"),
-              e("div", { className: "metrics-grid" },
-                e("div", { className: "metric-card" },
-                  e("div", { className: "metric-type type-cogs" }, "Cost of Goods Sold (per unit)"),
-                  e("div", { className: "metric-range" }, fmt(results.cogs.per_unit)),
-                  e("ul", { className: "cogs-breakdown" },
-                    (results.cogs.breakdown || []).map(function(b, i) {
-                      return e("li", { key: i, className: "cogs-item" },
-                        e("span", null,
-                          e("span", { className: "cogs-item-name" }, b.item),
-                          b.note ? e("span", { className: "cogs-item-note" }, b.note) : null
-                        ),
-                        e("span", { className: "cogs-item-cost" }, fmt(b.cost))
-                      );
-                    })
-                  ),
-                  results.cogs.assumptions ? e("ul", { className: "assumptions", style: { marginTop: 12 } },
-                    results.cogs.assumptions.map(function(a, i) {
-                      return e("li", { key: i, className: "assumption" }, a);
-                    })
-                  ) : null
-                ),
-                results.gross_margin ? e("div", { className: "metric-card" },
-                  e("div", { className: "metric-type type-margin" }, "Gross Margin"),
-                  e("div", { className: "metric-range" },
-                    fmt(results.gross_margin.margin_per_unit) + " / unit (" + Math.round(results.gross_margin.margin_percent) + "%)"
-                  ),
-                  e("div", { style: { fontSize: 12, color: "rgba(232,227,216,0.38)", marginBottom: 4 } },
-                    "Revenue " + fmt(results.gross_margin.revenue_per_unit) + " \u2013 COGS " + fmt(results.gross_margin.cogs_per_unit)
-                  ),
-                  e("div", { className: "margin-bar" },
-                    e("div", {
-                      className: "margin-bar-fill",
-                      style: { width: Math.min(100, Math.max(5, results.gross_margin.margin_percent)) + "%" }
-                    })
-                  ),
-                  e("div", { className: "margin-interp" }, results.gross_margin.interpretation)
-                ) : null
-              )
-            ) : null,
-
-            // CAC + LTV
-            e("div", { className: "section-label" }, "Customer Acquisition & Lifetime Value"),
-            e("div", { className: "metrics-grid" },
-              e("div", { className: "metric-card" },
-                e("div", { className: "metric-type type-cac" }, "Customer Acquisition Cost"),
-                e("div", { className: "metric-range" }, fmt(results.cac.low) + " \u2013 " + fmt(results.cac.high)),
-                e("ul", { className: "assumptions" },
-                  results.cac.assumptions.map(function(a, i) {
-                    return e("li", { key: i, className: "assumption" }, a);
-                  })
-                )
-              ),
-              e("div", { className: "metric-card" },
-                e("div", { className: "metric-type type-ltv" }, "Lifetime Value"),
-                e("div", { className: "metric-range" }, fmt(results.ltv.low) + " \u2013 " + fmt(results.ltv.high)),
-                results.ltv.basis ? e("div", { style: { fontSize: 11, color: "rgba(212,168,83,0.5)", marginBottom: 10, fontStyle: "italic" } },
-                  results.ltv.basis
-                ) : null,
-                e("ul", { className: "assumptions" },
-                  results.ltv.assumptions.map(function(a, i) {
-                    return e("li", { key: i, className: "assumption" }, a);
-                  })
-                )
-              )
-            ),
-
-            // ENDURE
-            e("div", { className: "section-label" }, "ENDURE Framework Commentary"),
-            e("div", { className: "endure-list" },
-              results.endure.map(function(dim, i) {
-                return e("div", { key: i, className: "endure-card" },
-                  e("div", { className: "e-letter" }, dim.letter),
-                  e("div", null,
-                    e("div", { className: "e-dim" }, dim.dimension),
-                    e("div", { className: "e-insight" }, dim.insight)
-                  ),
-                  e("div", { className: "impact-pill" }, dim.impact)
-                );
-              })
-            ),
-
-            // Brief
-            e("div", { className: "section-label" }, "Strategic Brief"),
-            e("div", { className: "brief-card" },
-              e("div", { className: "brief-text" }, results.brief)
-            ),
-
-            // Actions
-            e("div", { className: "actions no-print" },
-              e("button", { className: "btn", onClick: function() { window.print(); } }, "Print / Save PDF"),
-              e("button", { className: "btn", onClick: downloadDocx }, "Download Word Doc"),
-              e("button", {
-                className: "btn btn-ghost btn-copy" + (copied ? " copied" : ""),
-                onClick: copyToClipboard
-              }, copied ? "Copied!" : "Copy Text"),
-              e("button", { className: "btn btn-ghost", onClick: reset }, "New Analysis")
-            )
-          )
-        );
-      }
-
-      // ── INTRO (default) ──
-      return e("div", null,
-        renderHeader(),
-        e("main", { className: "main" },
-          e("div", { className: "eyebrow" }, "Design Thinking \u00B7 Unit Economics"),
-          e("h1", { className: "intro-heading" },
-            "What does one customer", e("br"), e("em", null, "actually"), " cost \u2014 and earn?"
-          ),
-          e("p", { className: "intro-body" },
-            "This tool walks you through the full unit economics of your venture \u2014 " +
-            "from production and distribution costs (COGS) to gross margin, customer acquisition (CAC), " +
-            "and lifetime value (LTV). Your model will be reviewed through the ENDURE framework, " +
-            "showing how strategic choices shape whether the math actually works."
-          ),
-          e("div", { className: "card" },
-            e("div", { className: "form-group" },
-              e("label", { className: "form-label" }, "Project Name"),
-              e("input", {
-                className: "form-input",
-                value: name,
-                onChange: function(ev) { setName(ev.target.value); },
-                placeholder: "e.g. GreenDelivery, TutorLink\u2026"
-              })
-            ),
-            e("div", { className: "form-group" },
-              e("label", { className: "form-label" }, "Describe your startup idea"),
-              e("div", { className: "form-hint" }, "Who is your customer? What do you sell? How do they find you?"),
-              e("textarea", {
-                className: "form-input",
-                rows: 5,
-                value: desc,
-                onChange: function(ev) { setDesc(ev.target.value); },
-                placeholder: "We help [who] do [what] by [how]. Our customers find us through [channel] and pay [roughly how much] for [what]\u2026"
-              })
-            )
-          ),
           error ? e("div", { className: "error-msg" }, error) : null,
-          e("button", {
-            className: "btn",
-            onClick: startInterview,
-            disabled: !name.trim() || !desc.trim()
-          }, "Begin Analysis \u2192")
-        )
+          e("div", { className: "actions no-print" },
+            e("button", { className: "btn", onClick: onNext }, nextLabel),
+            backStep ? e("button", { className: "btn btn-ghost", onClick: function() { go(backStep); } }, "← Back") : null
+          )
+        );
+      }
+      function page() {
+        var kids = Array.prototype.slice.call(arguments);
+        return e("div", null, header(), e("main", { className: "main" }, S.step === "intro" ? null : stepBar(), kids));
+      }
+      function unitCard() {
+        var sentence = unitSentence(S);
+        return e("div", { key: "unitcard" },
+          e("div", { className: "sentence-label" }, "Your unit"),
+          e("div", { className: "sentence" + (sentence ? "" : " empty") }, sentence || "One … who …, for one year.")
+        );
+      }
+
+      // ── INTRO ──
+      if (S.step === "intro") {
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "ELI 102 · Viability"),
+          e("h1", { key: "b", className: "intro-heading" }, "One unit, and ", e("em", null, "what it costs.")),
+          e("p", { key: "c", className: "intro-body" },
+            "This walks you from your journey map to the five viability answers and your “This pays for itself if” sentence. " +
+            "It takes 10 to 15 minutes. Have your journey map open: the 5 Es, and the Ps under each stage."),
+          e("p", { key: "d", className: "intro-body", style: { marginBottom: 32 } },
+            "Guesses are expected. Give each number as a low guess and a high guess. Nothing you type is sent anywhere; it stays in this browser."),
+          saved ? e("div", { key: "resume", className: "card" },
+            e("div", { className: "form-label" }, "You have saved answers" + (tidy(saved.name) ? " for " + tidy(saved.name) : "")),
+            e("div", { className: "form-hint", style: { marginBottom: 16 } }, "They are kept on this computer for 14 days."),
+            e("div", { className: "actions" },
+              e("button", { className: "btn", onClick: function() { setError(""); setS(saved); setSaved(null); window.scrollTo(0, 0); } }, "Carry on →"),
+              e("button", { className: "btn btn-ghost", onClick: startFresh }, "Start fresh")
+            )
+          ) : null,
+          saved ? null : e("div", { key: "e", className: "card" },
+            group("The name of your idea", null, text("name", "What you call it")),
+            group("Your idea in one sentence", "Who it is for and what it does.", text("desc", "It helps … by …", { rows: 2 }))
+          ),
+          saved ? null : e("div", { key: "f" }, nav(null, "Begin →", function() {
+            if (!tidy(S.name)) return fail("Give your idea a name first.");
+            go("unit");
+          }))
+        );
+      }
+
+      // ── 1 · THE UNIT ──
+      if (S.step === "unit") {
+        var whoWarn = whoLooksLikeTheIdea(S.who);
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "Question 1 of 5"),
+          e("div", { key: "b", className: "step-heading" }, "What is one unit?"),
+          e("div", { key: "c", className: "step-body" },
+            "A unit is one use of your idea by one person. It is the thing you would count. Build it from three parts: one person, what they get, and for how long."),
+          unitCard(),
+          e("div", { key: "d", className: "card" },
+            group("One …", "The person. Be specific: not “students”, one of them.",
+              text("who", "first-year student"),
+              whoWarn ? e("div", { className: "nudge" }, "That sounds like your idea, not a person. The unit is someone using it. Who is that person?") : null),
+            group("Who …", "What they get or do.", text("what", "meets a peer mentor every two weeks")),
+            group("For how long", "If it is hard to choose, use one year.",
+              e("select", { className: "form-input", value: S.howLong, onChange: function(ev) { update({ howLong: ev.target.value }); } },
+                e("option", { value: "year" }, "For one year"),
+                e("option", { value: "semester" }, "For one semester"),
+                e("option", { value: "once" }, "One time (an event, a session, a visit)"),
+                e("option", { value: "other" }, "Something else")
+              ),
+              S.howLong === "other" ? e("div", { style: { marginTop: 10 } }, text("howLongOther", "for four weeks")) : null)
+          ),
+          e("div", { key: "e", className: "card quiet" },
+            e("div", { className: "form-label" }, "Three kinds of idea, three units"),
+            e("ul", { className: "examples" },
+              e("li", null, e("b", null, "A mentoring idea: "), "One first-year student who meets a peer mentor every two weeks, for one year."),
+              e("li", null, e("b", null, "An events idea: "), "One student who comes to a welcome dinner, one time."),
+              e("li", null, e("b", null, "An app: "), "One student who opens it at least once a week, for one year. The unit is not the app, and it is not a download.")
+            )
+          ),
+          e("div", { key: "f" }, nav("intro", "Next →", function() {
+            var p = unitParts(S);
+            if (!p.who || !p.what) return fail("Fill in the person and what they get.");
+            if (S.howLong === "other" && !p.howLong) return fail("Say for how long.");
+            go("count");
+          }))
+        );
+      }
+
+      // ── 2 · HOW MANY ──
+      if (S.step === "count") {
+        var countHint = "How many of these would there really be in a year?";
+        if (S.howLong === "once") countHint = "Count every time. Five dinners with 40 students each is 200 units.";
+        if (S.howLong === "semester") countHint = "A student who uses it in both semesters counts twice.";
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "Question 2 of 5"),
+          e("div", { key: "b", className: "step-heading" }, "How many units in one year at Lewis & Clark?"),
+          e("div", { key: "c", className: "step-body" },
+            "Start from a real count, then say what share you would reach. Count the people who would really use it, not everyone who could."),
+          unitCard(),
+          e("div", { key: "d", className: "card" },
+            group("Units in one year", countHint,
+              e("div", { className: "pair" }, numberInput("unitsLow", "Low guess"), numberInput("unitsHigh", "High guess"))),
+            group("Where does that count come from?", "One sentence. For example: about one in six of the 413 new students.",
+              text("unitsBasis", "", { rows: 2 }))
+          ),
+          e("div", { key: "e", className: "card quiet" },
+            e("div", { className: "form-label" }, "Real counts to start from"),
+            e("table", { className: "ref-table" }, e("tbody", null,
+              REF.counts.map(function(r, i) { return e("tr", { key: i }, e("td", null, r[0]), e("td", null, r[1])); })
+            )),
+            e("div", { className: "fine" }, "Course reference figures, not this year's audited numbers.")
+          ),
+          e("div", { key: "f" }, nav("unit", "Next →", function() {
+            var u = pair(S.unitsLow, S.unitsHigh);
+            if (u.empty || u.low <= 0) return fail("Give a low guess and a high guess, both above zero.");
+            go("fork");
+          }))
+        );
+      }
+
+      // ── 3 · THE FORK ──
+      if (S.step === "fork") {
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "Before question 3"),
+          e("div", { key: "b", className: "step-heading" }, "Does it cost more each time another student uses it?"),
+          e("div", { key: "c", className: "step-body" }, "This decides how you work out the cost of one unit."),
+          e("div", { key: "d", className: "choices" },
+            e("button", { className: "choice" + (S.fork === "each" ? " on" : ""), onClick: function() { chooseFork("each"); } },
+              e("div", { className: "choice-title" }, "Yes. Each student adds cost."),
+              e("div", { className: "choice-body" }, "Every extra student needs more of something: an hour of a mentor's time, a seat at an event, a meal, money from a fund. Twice the students costs about twice as much."),
+              e("div", { className: "choice-then" }, "→ Add up what one student costs.")
+            ),
+            e("button", { className: "choice" + (S.fork === "shared" ? " on" : ""), onClick: function() { chooseFork("shared"); } },
+              e("div", { className: "choice-title" }, "No. The cost is about the same."),
+              e("div", { className: "choice-body" }, "It costs about the same whether 50 students use it or 1,500: an app, a website, a guide, a shared calendar. The cost follows what you keep running, not who shows up."),
+              e("div", { className: "choice-then" }, "→ Add up a year's running cost, then divide by the students who use it.")
+            )
+          ),
+          e("div", { key: "e", className: "step-body" }, "Many ideas have some of both. Pick the one that fits most of your costs. On the next screen you can mark each cost either way."),
+          e("div", { key: "f" }, nav("count", "Next →", function() {
+            if (!S.fork) return fail("Pick one of the two.");
+            go("costs");
+          }))
+        );
+      }
+
+      // ── 4 · THE COSTS ──
+      if (S.step === "costs") {
+        var Cc = compute(S);
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "Question 3 of 5"),
+          e("div", { key: "b", className: "step-heading" }, "What does one unit cost to run?"),
+          e("div", { key: "c", className: "step-body" },
+            "Walk your journey map. At each stage, look at the Ps you wrote under it and ask: which of these costs money or someone's time? Add a line for each one. " +
+            "Count running costs only, not what it costs to build."),
+          e("div", { key: "c2", className: "card quiet", style: { padding: "18px 22px" } },
+            e("ul", { className: "examples" },
+              e("li", null, e("b", null, "Each unit or whole year? "),
+                "Mark a cost “each unit” if it repeats for every unit, and “whole year” if it is about the same however many there are."),
+              e("li", null, e("b", null, "People's time: "), "hours × pay per hour. Minimum wage in Portland is $" + REF.portlandMinWage + " an hour. For staff, divide the yearly salary by 2,000."),
+              e("li", null, e("b", null, "Free help: "), "if someone gives their time for free, add the line and write 0. Your idea still depends on them."),
+              e("li", null, e("b", null, "Plusses & Deltas "), "is the one P that is not a cost. A delta, something broken, usually needs a cost line to fix it.")
+            )
+          ),
+          unitCard(),
+          STAGES.map(function(st, si) {
+            var mine = S.lines.filter(function(l) { return l.stage === st.key; });
+            var tot = { low: 0, high: 0 };
+            mine.forEach(function(l) { var p = pair(l.low, l.high); tot.low += p.low; tot.high += p.high; });
+            return e("div", { key: st.key, className: "stage" },
+              e("div", { className: "stage-head" },
+                e("span", { className: "stage-num" }, "STAGE " + (si + 1)),
+                e("span", { className: "stage-name" }, st.name),
+                tot.high > 0 ? e("span", { className: "stage-total" }, moneyRange(tot.low, tot.high)) : null
+              ),
+              e("div", { className: "stage-q" }, st.q),
+              e("div", { className: "stage-eg" }, st.eg),
+              mine.length ? e("div", { className: "col-heads" },
+                e("span", null, "Which P"), e("span", null, "What it is"), e("span", null, "Low $"), e("span", null, "High $"), e("span", null, "")
+              ) : null,
+              mine.map(function(l) {
+                var ph = "";
+                PS.forEach(function(p) { if (p.key === l.p) ph = p.ph; });
+                return e("div", { key: l.id, className: "line-wrap" },
+                  e("div", { className: "line" },
+                    e("select", { className: "form-input line-p", value: l.p, "aria-label": "Which P", onChange: function(ev) { updateLine(l.id, { p: ev.target.value }); } },
+                      PS.map(function(p) { return e("option", { key: p.key, value: p.key }, p.name); })),
+                    e("input", { className: "form-input line-what", value: l.what, placeholder: ph, "aria-label": "What it is", onChange: function(ev) { updateLine(l.id, { what: ev.target.value }); } }),
+                    e("input", { className: "form-input line-low", value: l.low, placeholder: "Low", inputMode: "decimal", "aria-label": "Low guess in dollars", onChange: function(ev) { updateLine(l.id, { low: ev.target.value }); } }),
+                    e("input", { className: "form-input line-high", value: l.high, placeholder: "High", inputMode: "decimal", "aria-label": "High guess in dollars", onChange: function(ev) { updateLine(l.id, { high: ev.target.value }); } }),
+                    e("button", { className: "x-btn", title: "Remove this line", "aria-label": "Remove this line", onClick: function() { removeLine(l.id); } }, "×")
+                  ),
+                  e("div", { className: "line-foot" },
+                    e("span", { className: "line-foot-label" }, "This cost is for"),
+                    e("span", { className: "seg" },
+                      e("button", { className: l.basis === "each" ? "on" : "", onClick: function() { updateLine(l.id, { basis: "each" }); } }, "each unit"),
+                      e("button", { className: l.basis === "shared" ? "on" : "", onClick: function() { updateLine(l.id, { basis: "shared" }); } }, "the whole year")
+                    )
+                  )
+                );
+              }),
+              e("div", { className: "chips no-print" },
+                PS.map(function(p) {
+                  return e("button", { key: p.key, className: "chip", onClick: function() { addLine(st.key, p.key); } }, "+ " + p.name);
+                })
+              )
+            );
+          }),
+          e("div", { key: "tally", className: "tally" },
+            e("div", null, e("div", { className: "tally-label" }, "For each unit"), e("div", { className: "tally-val" }, moneyRange(Cc.each.low, Cc.each.high))),
+            e("div", null, e("div", { className: "tally-label" }, "For the whole year"), e("div", { className: "tally-val" }, moneyRange(Cc.shared.low, Cc.shared.high))),
+            e("div", null, e("div", { className: "tally-label" }, "Cost of one unit"), e("div", { className: "tally-val" }, moneyRange(Cc.unitCost.low, Cc.unitCost.high))),
+            e("div", null, e("div", { className: "tally-label" }, "Money out a year"), e("div", { className: "tally-val" }, moneyRange(Cc.out.low, Cc.out.high)))
+          ),
+          e("div", { key: "f" }, nav("fork", "Next →", function() {
+            var C = compute(S);
+            if (C.lineCount === 0) return fail("Add at least one cost line. Click a P under any stage.");
+            if (C.out.high <= 0) return fail("Put a dollar guess on at least one line.");
+            go("number");
+          }))
+        );
+      }
+
+      // ── 5 · THE NUMBER ──
+      if (S.step === "number") {
+        var info = numberInfo(S.number);
+        var Cn = compute(S);
+        var followUp = null;
+        if (info && info.kind === "students") {
+          followUp = e("div", { key: "fu", className: "card" },
+            group("How many more students a year " + info.verb[1] + " because of it?", "Students who otherwise would not. Be sceptical: this is the hardest number to defend.",
+              e("div", { className: "pair" }, numberInput("studentsLow", "Low guess"), numberInput("studentsHigh", "High guess"))),
+            group("What makes you think so?", "One or two sentences.", text("reasoning", "", { rows: 2 })),
+            group("What one student pays the college in a year",
+              "$" + REF.perStudent.toLocaleString("en-US") + " is the average tuition one undergraduate pays in a year, after scholarships. Change it if your students pay less, for example students on full-tuition scholarships.",
+              numberInput("perStudent", String(REF.perStudent)))
+          );
+        } else if (info) {
+          var q = "Is there a dollar figure for the college?";
+          var hint = "If there is, give a low guess and a high guess for one year. If there is not, leave these empty.";
+          if (info.key === "gifts") { q = "How much more would be given in a year?"; hint = "A low guess and a high guess, in dollars."; }
+          if (info.key === "saved") { q = "How much would the college save in a year?"; hint = "Staff hours no longer needed × pay per hour, or things the college could stop paying for."; }
+          followUp = e("div", { key: "fu", className: "card" },
+            group(q, hint, e("div", { className: "pair" }, numberInput("dollarsLow", "Low guess $"), numberInput("dollarsHigh", "High guess $"))),
+            group(info.key === "jobs" ? "What would the college have to believe to pay for this?" : "Where does that figure come from?", "One or two sentences.", text("reasoning", "", { rows: 2 }))
+          );
+        }
+        return page(
+          e("div", { key: "a", className: "eyebrow" }, "Questions 4 and 5 of 5"),
+          e("div", { key: "b", className: "step-heading" }, "Which college number does it change, and what is that worth?"),
+          e("div", { key: "c", className: "step-body" },
+            "So far it costs " + moneyTo(Cn.out.low, Cn.out.high) + " a year to run. Pick the one number your idea changes most."),
+          e("div", { key: "d", className: "choices six" },
+            NUMBERS.map(function(n) {
+              return e("button", { key: n.key, className: "choice" + (S.number === n.key ? " on" : ""), onClick: function() { update({ number: n.key }); } },
+                e("div", { className: "choice-title" }, n.name),
+                e("div", { className: "choice-body" }, n.body)
+              );
+            })
+          ),
+          followUp,
+          e("div", { key: "f" }, nav("costs", "Show the answer →", function() {
+            if (!info) return fail("Pick one of the six numbers.");
+            if (info.kind === "students") {
+              if (pair(S.studentsLow, S.studentsHigh).empty) return fail("Give a low guess and a high guess. Zero is allowed.");
+              if (num(S.perStudent) <= 0) return fail("Say what one student pays the college in a year.");
+            } else if (pair(S.dollarsLow, S.dollarsHigh).empty && !tidy(S.reasoning)) {
+              return fail(info.key === "jobs" ? "Give a dollar figure, or say what the college would have to believe." : "Give a low guess and a high guess.");
+            }
+            go("results");
+          }))
+        );
+      }
+
+      // ── 6 · THE ANSWER ──
+      var C = compute(S);
+      var verdictColor = C.verdict === "Yes" ? "#5CB88A" : C.verdict === "Only at the high end" ? "#D4A853" : "#E07558";
+      var sharedSpread = C.shared.high > 0 && C.units.low !== C.units.high;
+      function answer(n, q, a, how) {
+        return e("div", { key: "ans" + n, className: "answer" },
+          e("div", { className: "answer-num" }, n),
+          e("div", null,
+            e("div", { className: "answer-q" }, q),
+            e("div", { className: "answer-a" }, a),
+            how ? e("div", { className: "answer-how" }, how) : null
+          )
+        );
+      }
+      var costHow;
+      var unitsTo = countTo(C.units.low, C.units.high), outTo = moneyTo(C.out.low, C.out.high);
+      if (C.shared.high > 0 && C.each.high > 0) {
+        costHow = moneyTo(C.each.low, C.each.high) + " for each unit, plus " + moneyTo(C.shared.low, C.shared.high) + " for the whole year shared between " + unitsTo + " units. Money out a year: " + outTo + ".";
+      } else if (C.shared.high > 0) {
+        costHow = moneyTo(C.shared.low, C.shared.high) + " for the whole year, shared between " + unitsTo + " units. Money out a year: " + outTo + ".";
+      } else {
+        costHow = "Money out a year: " + unitsTo + " units × " + moneyTo(C.each.low, C.each.high) + " = " + outTo + ".";
+      }
+      var numberAnswer = C.info ? C.info.name : "";
+      if (C.kind === "students") numberAnswer += ": " + countRange(C.students.low, C.students.high) + " more a year";
+      var worthAnswer = C.inn.high > 0 ? moneyRange(C.inn.low, C.inn.high) + " a year" : "No dollar figure yet";
+      var worthHow = C.kind === "students"
+        ? countTo(C.students.low, C.students.high) + " students × " + money(C.per) + " that one student pays the college in a year."
+        : tidy(S.reasoning);
+
+      return page(
+        e("div", { key: "a", className: "eyebrow" }, tidy(S.name)),
+        e("div", { key: "b", className: "results-title" }, "One Unit and What It Costs"),
+        e("div", { key: "c", className: "results-sub" }, today()),
+
+        e("div", { key: "v", className: "verdict-card" },
+          e("div", { className: "verdict-label" }, "Does it pay for itself?"),
+          e("div", { className: "verdict-value", style: { color: verdictColor } }, C.verdict),
+          e("div", { className: "verdict-sentence" }, paysSentence(S, C)),
+          e("div", { className: "verdict-note" }, verdictNote(S, C)),
+          C.verdict === "Not yet" ? e("div", { className: "verdict-note", style: { marginTop: 8 } }, "If the numbers do not add up, that is a finding, not a failure. Say what would have to change.") : null
+        ),
+
+        e("div", { key: "sl1", className: "section-label" }, "Your five answers"),
+        answer(1, "One unit", unitSentence(S), forkLabel(S)),
+        answer(2, "Units a year at Lewis & Clark", countRange(C.units.low, C.units.high), tidy(S.unitsBasis)),
+        answer(3, "The cost of one unit", moneyRange(C.unitCost.low, C.unitCost.high), costHow),
+        answer(4, "The college number it changes", numberAnswer, C.kind === "students" ? tidy(S.reasoning) : ""),
+        answer(5, "What that is worth to the college", worthAnswer, worthHow),
+
+        sharedSpread ? e("div", { key: "spread" },
+          e("div", { className: "section-label" }, "How many use it changes the cost of one"),
+          e("div", { className: "card" },
+            e("ul", { className: "breakdown" },
+              e("li", null, e("span", null, "If " + count(C.units.low) + " use it, the shared costs come to"), e("span", { className: "amt" }, moneyRange(C.shared.low / C.units.low, C.shared.high / C.units.low) + " each")),
+              e("li", null, e("span", null, "If " + count(C.units.high) + " use it, the shared costs come to"), e("span", { className: "amt" }, moneyRange(C.shared.low / C.units.high, C.shared.high / C.units.high) + " each"))
+            ),
+            e("div", { className: "fine" }, "When the cost is shared, your count of users decides most of the answer. It is the number to check first.")
+          )
+        ) : null,
+
+        e("div", { key: "sl2", className: "section-label" }, "Where the money goes on your journey map"),
+        e("div", { key: "bd", className: "card" },
+          e("ul", { className: "breakdown" },
+            C.stages.map(function(st) {
+              if (!st.lines.length) return e("li", { key: st.key, className: "stage-row" }, e("span", null, st.name), e("span", { className: "tag", style: { textTransform: "none", letterSpacing: 0 } }, "no costs listed"));
+              return [e("li", { key: st.key, className: "stage-row" }, e("span", null, st.name))].concat(
+                st.lines.map(function(l, i) {
+                  var pName = "";
+                  PS.forEach(function(p) { if (p.key === l.p) pName = p.name; });
+                  return e("li", { key: st.key + i },
+                    e("span", null, pName + (l.what ? ": " + l.what : ""), " ", e("span", { className: "tag" }, l.basis === "shared" ? "(whole year)" : "(each unit)")),
+                    e("span", { className: "amt" }, moneyRange(l.low, l.high))
+                  );
+                })
+              );
+            })
+          ),
+          e("div", { className: "fine" }, "Running costs only. The cost of building it comes later.")
+        ),
+
+        e("div", { key: "sl3", className: "section-label" }, "Now say it in your own words"),
+        e("div", { key: "own", className: "card" },
+          e("div", { className: "own-prefix" }, "This pays for itself if …"),
+          text("ownSentence", "finish the sentence", { rows: 2 })
+        ),
+
+        e("div", { key: "act", className: "actions no-print" },
+          e("button", { className: "btn", onClick: copyText }, copied ? "Copied" : "Copy for my journal"),
+          e("button", { className: "btn btn-ghost", onClick: function() { window.print(); } }, "Print / Save PDF"),
+          e("button", { className: "btn btn-ghost", onClick: function() { go("number"); } }, "← Change my answers"),
+          e("button", { className: "btn btn-ghost", onClick: startFresh }, "Start fresh")
+        ),
+        e("p", { key: "pn", className: "paste-note no-print" },
+          "Paste the copied text into your journal. Keep the first line as it is: the Venture Assessment looks for it, and will use these answers so you don't type them again.")
       );
     }
 
-    function renderHeader() {
-      return e("header", { className: "header" },
-        e("a", { href: "index.html", className: "logo-mark", style: { textDecoration: "none", color: "inherit" }, title: "Back to all tools" }, "ENDURE"),
-        e("span", { className: "header-sub" }, "Unit Economics")
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById("app"));
+    var root = ReactDOM.createRoot(document.getElementById("app"));
     root.render(e(App));
   </script>
 </body>
