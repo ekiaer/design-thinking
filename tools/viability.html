@@ -324,6 +324,44 @@
       margin-bottom: 6px;
     }
 
+    .map-chunk {
+      background: rgba(212,168,83,0.04);
+      border-left: 2px solid rgba(212,168,83,0.4);
+      border-radius: 0 4px 4px 0;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(232,227,216,0.72);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .map-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(212,168,83,0.7);
+      margin-bottom: 5px;
+      white-space: normal;
+    }
+    .map-none { font-size: 12px; color: rgba(232,227,216,0.3); margin-bottom: 12px; }
+    .link-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: rgba(212,168,83,0.85);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .link-btn:hover { color: #D4A853; }
+
     .tally {
       position: sticky;
       bottom: 0;
@@ -574,6 +612,7 @@
       unitsLow: "", unitsHigh: "", unitsBasis: "",
       fork: "",
       lines: [], nextId: 1,
+      mapText: "",
       number: "",
       studentsLow: "", studentsHigh: "", perStudent: String(REF.perStudent),
       dollarsLow: "", dollarsHigh: "",
@@ -647,6 +686,88 @@
     function numberInfo(key) {
       for (var i = 0; i < NUMBERS.length; i++) { if (NUMBERS[i].key === key) return NUMBERS[i]; }
       return null;
+    }
+
+    // ── THE PASTED JOURNEY MAP ──
+    // Students can paste the typed journey map from their journal. This cuts it at the
+    // stage names so each stage's own words can sit beside its cost lines. No AI: it only
+    // looks for the five words. Anything it cannot place stays readable in the whole map.
+    var MAP_MAX = 20000;
+    function splitMap(raw) {
+      var text = String(raw || "").replace(/\r\n?/g, "\n").replace(/\u00a0/g, " ");
+      var keys = STAGES.map(function(st) { return st.key; });
+      var by = {};
+      function add(key, chunk) {
+        chunk = String(chunk || "").replace(/^[\s:\-–—|]+/, "").replace(/\s+$/, "").replace(/[ ]*\t+[ ]*/g, " · ");
+        if (!chunk) return;
+        by[key] = by[key] ? by[key] + "\n" + chunk : chunk;
+      }
+      function result(mode) {
+        var found = [], missing = [];
+        STAGES.forEach(function(st) { (by[st.key] ? found : missing).push(st.name); });
+        return { mode: mode, by: by, found: found, missing: missing };
+      }
+      if (!text.trim()) return result("empty");
+
+      // 1. A table copied from the journal: one row holds the stage names, cells split by tabs.
+      var rows = text.split("\n");
+      for (var r = 0; r < rows.length; r++) {
+        var head = rows[r].split("\t");
+        if (head.length < 3) continue;
+        var cols = {}, n = 0;
+        head.forEach(function(cell, j) {
+          var c = cell.replace(/^[\s\d.)#*•-]+/, "").replace(/[\s:*]+$/, "").toLowerCase().replace(/\s+(stage|phase)$/, "");
+          if (keys.indexOf(c) !== -1) { cols[j] = c; n++; }
+        });
+        if (n < 3) continue;
+        var labelled = cols[0] === undefined;
+        for (var q = r + 1; q < rows.length; q++) {
+          var cells = rows[q].split("\t");
+          var label = labelled ? cells[0].trim().replace(/[:\s]+$/, "") : "";
+          cells.forEach(function(cell, j) {
+            if (cols[j] !== undefined && cell.trim()) add(cols[j], (label ? label + ": " : "") + cell.trim());
+          });
+        }
+        if (Object.keys(by).length >= 2) return result("table");
+        by = {};
+        break;
+      }
+
+      // 2. Headings: a stage name that starts a line or a sentence.
+      function scan(re) {
+        var marks = [], m;
+        while ((m = re.exec(text)) !== null) {
+          marks.push({ key: m[2].toLowerCase(), headAt: m.index + (m[1] === "\n" ? 0 : m[1].length), from: re.lastIndex });
+        }
+        return marks;
+      }
+      function distinct(marks) { var seen = {}; marks.forEach(function(k) { seen[k.key] = true; }); return Object.keys(seen).length; }
+      function inOrder(marks) {
+        var first = [], seen = {};
+        marks.forEach(function(k) { if (!seen[k.key]) { seen[k.key] = true; first.push(keys.indexOf(k.key)); } });
+        for (var i = 1; i < first.length; i++) { if (first[i] < first[i - 1]) return false; }
+        return true;
+      }
+      var lead = "(^|\\n|[.;!?][ \\t]+)[ \\t]*(?:[-*•#>]+[ \\t]*)?(?:\\d+[.)][ \\t]*)?(?:the[ \\t]+)?\\**";
+      var word = "(entice|enter|engage|exit|extend)\\**";
+      // strict: the name is followed by a colon, dash, bracket, tab or the end of the line
+      var strict = scan(new RegExp(lead + word + "(?:[ \\t]+(?:stage|phase))?\\**[ \\t]*(?=[:\\-–—(|\\t\\n]|$)", "gi"));
+      // loose: the name just starts a line. Only trusted if three or more turn up in order.
+      var loose = scan(new RegExp("(^|\\n)[ \\t]*(?:[-*•#>]+[ \\t]*)?(?:\\d+[.)][ \\t]*)?\\**" + word + "(?=[ \\t:\\-–—(|]|\\n|$)", "gi"));
+      var marks = null;
+      if (distinct(strict) >= 3) marks = strict;
+      else if (distinct(loose) >= 3 && inOrder(loose)) marks = loose;
+      else if (distinct(strict) >= 2) marks = strict;
+      if (!marks) return result("whole");
+      marks.forEach(function(k, i) {
+        add(k.key, text.substring(k.from, i + 1 < marks.length ? marks[i + 1].headAt : text.length));
+      });
+      return Object.keys(by).length >= 2 ? result("headings") : (by = {}, result("whole"));
+    }
+    function mapStatus(M) {
+      if (M.mode === "empty") return "";
+      if (M.mode === "whole") return "The stage names (Entice, Enter, Engage, Exit, Extend) were not found in what you pasted, so your whole map is there to open under each stage.";
+      return "Found " + M.found.join(", ") + "." + (M.missing.length ? " Not found: " + M.missing.join(", ") + ". Open the whole map to check nothing is missing." : "");
     }
 
     // ── THE ARITHMETIC ──
@@ -802,6 +923,8 @@
       var saved = s1[0], setSaved = s1[1];
       var s2 = useState(""); var error = s2[0], setError = s2[1];
       var s3 = useState(false); var copied = s3[0], setCopied = s3[1];
+      var s4 = useState(false); var mapEdit = s4[0], setMapEdit = s4[1];       // the paste box is open
+      var s5 = useState(""); var mapOpen = s5[0], setMapOpen = s5[1];          // "all", a stage key, or ""
 
       useEffect(function() { if (S !== BLANK) ueSave(S); }, [S]);
 
@@ -810,7 +933,7 @@
       }
       function go(step) { setError(""); update({ step: step }); window.scrollTo(0, 0); }
       function fail(msg) { setError(msg); }
-      function startFresh() { ueClear(); setSaved(null); setError(""); setCopied(false); setS(BLANK); window.scrollTo(0, 0); }
+      function startFresh() { ueClear(); setSaved(null); setError(""); setCopied(false); setMapEdit(false); setMapOpen(""); setS(BLANK); window.scrollTo(0, 0); }
 
       function addLine(stage, p) {
         var line = { id: S.nextId, stage: stage, p: p, what: "", low: "", high: "", basis: S.fork === "shared" ? "shared" : "each" };
@@ -909,7 +1032,7 @@
           e("h1", { key: "b", className: "intro-heading" }, "One unit, and ", e("em", null, "what it costs.")),
           e("p", { key: "c", className: "intro-body" },
             "This walks you from your journey map to the five viability answers and your “This pays for itself if” sentence. " +
-            "It takes 10 to 15 minutes. Have your journey map open: the 5 Es, and the Ps under each stage."),
+            "It takes 10 to 15 minutes. Have your journey map open: the 5 Es, and the Ps under each stage. If it is typed in your journal, you can paste it in when you reach the costs."),
           e("p", { key: "d", className: "intro-body", style: { marginBottom: 32 } },
             "Guesses are expected. Give each number as a low guess and a high guess. Nothing you type is sent anywhere; it stays in this browser."),
           saved ? e("div", { key: "resume", className: "card" },
@@ -1032,6 +1155,29 @@
       // ── 4 · THE COSTS ──
       if (S.step === "costs") {
         var Cc = compute(S);
+        var M = splitMap(S.mapText);
+        var hasMap = M.mode !== "empty";
+        var boxOpen = mapEdit || !hasMap;
+        function mapChunk(label, body) {
+          return e("div", { className: "map-chunk" }, e("div", { className: "map-label" }, label), body);
+        }
+        var mapCard = e("div", { key: "map", className: "card quiet no-print", style: { padding: "20px 22px" } },
+          e("div", { className: "form-label" }, hasMap && !boxOpen ? "Your journey map is pasted in" : "Paste your journey map (optional)"),
+          boxOpen ? e("div", { className: "form-hint" },
+            "If your map is typed in your journal, copy it and paste it here. Your own words then appear under each stage below, so you can go through them and price what costs money. It stays in this browser.") : null,
+          boxOpen ? e("textarea", { className: "form-input", rows: 6, value: S.mapText, placeholder: "Paste your 5 Es and the Ps under each stage",
+            "aria-label": "Your journey map",
+            onFocus: function() { setMapEdit(true); },
+            onChange: function(ev) { update({ mapText: ev.target.value.slice(0, MAP_MAX) }); } }) : null,
+          hasMap ? e("div", { className: "form-hint", style: { margin: boxOpen ? "10px 0 0" : "0 0 0" } }, mapStatus(M)) : null,
+          hasMap && S.mapText.length > 8000 ? e("div", { className: "nudge" }, "That is a lot of text. Paste only your journey map, not your whole journal.") : null,
+          hasMap ? e("div", { className: "actions", style: { marginTop: 12 } },
+            boxOpen ? e("button", { className: "link-btn", onClick: function() { setMapEdit(false); } }, "Done") : e("button", { className: "link-btn", onClick: function() { setMapEdit(true); } }, "Edit"),
+            e("button", { className: "link-btn", onClick: function() { setMapOpen(mapOpen === "all" ? "" : "all"); } }, mapOpen === "all" ? "Hide the whole map" : "Show the whole map"),
+            e("button", { className: "link-btn", onClick: function() { update({ mapText: "" }); setMapEdit(false); setMapOpen(""); } }, "Remove")
+          ) : null,
+          hasMap && mapOpen === "all" ? e("div", { style: { marginTop: 12 } }, mapChunk("Your whole map", S.mapText)) : null
+        );
         return page(
           e("div", { key: "a", className: "eyebrow" }, "Question 3 of 5"),
           e("div", { key: "b", className: "step-heading" }, "What does one unit cost to run?"),
@@ -1048,6 +1194,7 @@
             )
           ),
           unitCard(),
+          mapCard,
           STAGES.map(function(st, si) {
             var mine = S.lines.filter(function(l) { return l.stage === st.key; });
             var tot = { low: 0, high: 0 };
@@ -1060,6 +1207,13 @@
               ),
               e("div", { className: "stage-q" }, st.q),
               e("div", { className: "stage-eg" }, st.eg),
+              M.mode !== "empty" && M.mode !== "whole" ? (M.by[st.key]
+                ? mapChunk("From your journey map", M.by[st.key])
+                : e("div", { className: "map-none" }, "Nothing found for " + st.name + " in your map.")) : null,
+              M.mode === "whole" ? e("div", { style: { marginBottom: 12 } },
+                e("button", { className: "link-btn", onClick: function() { setMapOpen(mapOpen === st.key ? "" : st.key); } }, mapOpen === st.key ? "Hide my journey map" : "Show my journey map"),
+                mapOpen === st.key ? e("div", { style: { marginTop: 10 } }, mapChunk("Your whole map", S.mapText)) : null
+              ) : null,
               mine.length ? e("div", { className: "col-heads" },
                 e("span", null, "Which P"), e("span", null, "What it is"), e("span", null, "Low $"), e("span", null, "High $"), e("span", null, "")
               ) : null,
