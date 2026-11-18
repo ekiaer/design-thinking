@@ -668,6 +668,30 @@
         return localStorage.getItem(VA_KEY);
       } catch (err) { return null; }
     }
+
+    // Tool output found in a journal or in pasted notes.
+    // Keep one tool's text only: from its header to its closing rule. Every tool
+    // (Unit Economics, Market Sizing, Financial Model) ends its text with a second
+    // line of \u2550, so whatever the student wrote after it is left out. If the
+    // closing rule is missing, stop at the next tool's header or the end of the text.
+    var TOOL_HEADERS = ["ENDURE Unit Economics Analysis", "ENDURE Market Sizing Analysis", "ENDURE Financial Model"];
+    function trimToolContent(content, startHeader) {
+      if (!content) return null;
+      var cutoff = content.length;
+      TOOL_HEADERS.forEach(function(h) {
+        if (h === startHeader) return;
+        var idx = content.indexOf(h);
+        if (idx > 0 && idx < cutoff) cutoff = idx;
+      });
+      var body = content.substring(0, cutoff);
+      var rule = /\u2550{10,}/g, match, seen = 0;
+      while ((match = rule.exec(body)) !== null) {
+        seen++;
+        if (seen === 2) { body = body.substring(0, match.index + match[0].length); break; }
+      }
+      return body.trim();
+    }
+
     var e = React.createElement;
     var useState = React.useState;
     var useEffect = React.useEffect;
@@ -1199,18 +1223,7 @@
             if (tamIdx !== -1) { tamFound = true; tamContent = journalText.substring(tamIdx); }
             var fmIdx = journalText.indexOf("ENDURE Financial Model");
             if (fmIdx !== -1) { fmFound = true; fmContent = journalText.substring(fmIdx); }
-            // Trim extracted content: stop at the next tool header or end of text
-            function trimToolContent(content, startHeader) {
-              if (!content) return null;
-              var headers = ["ENDURE Unit Economics Analysis", "ENDURE Market Sizing Analysis", "ENDURE Financial Model"];
-              var cutoff = content.length;
-              headers.forEach(function(h) {
-                if (h === startHeader) return;
-                var idx = content.indexOf(h);
-                if (idx > 0 && idx < cutoff) cutoff = idx;
-              });
-              return content.substring(0, cutoff).trim();
-            }
+            // Keep each tool's own text only (see trimToolContent)
             ueContent = trimToolContent(ueContent, "ENDURE Unit Economics Analysis");
             tamContent = trimToolContent(tamContent, "ENDURE Market Sizing Analysis");
             fmContent = trimToolContent(fmContent, "ENDURE Financial Model");
@@ -1257,15 +1270,15 @@
         // If detected via paste but not via journal, store the content
         if (!S.unitEconomicsDetected && pasteText.indexOf("ENDURE Unit Economics Analysis") !== -1) {
           var ueStart = pasteText.indexOf("ENDURE Unit Economics Analysis");
-          update({ unitEconomicsDetected: true, unitEconomicsContent: pasteText.substring(ueStart) });
+          update({ unitEconomicsDetected: true, unitEconomicsContent: trimToolContent(pasteText.substring(ueStart), "ENDURE Unit Economics Analysis") });
         }
         if (!S.tamSamDetected && pasteText.indexOf("ENDURE Market Sizing Analysis") !== -1) {
           var tamStart = pasteText.indexOf("ENDURE Market Sizing Analysis");
-          update({ tamSamDetected: true, tamSamContent: pasteText.substring(tamStart) });
+          update({ tamSamDetected: true, tamSamContent: trimToolContent(pasteText.substring(tamStart), "ENDURE Market Sizing Analysis") });
         }
         if (!S.financialModelDetected && pasteText.indexOf("ENDURE Financial Model") !== -1) {
           var fmStart = pasteText.indexOf("ENDURE Financial Model");
-          update({ financialModelDetected: true, financialModelContent: pasteText.substring(fmStart) });
+          update({ financialModelDetected: true, financialModelContent: trimToolContent(pasteText.substring(fmStart), "ENDURE Financial Model") });
         }
 
         pushHistory();
