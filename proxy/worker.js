@@ -10,7 +10,6 @@ const ALLOWED_ORIGINS = [
   "https://www.chock.llc",
   "http://localhost:8000",           // Local dev
   "http://127.0.0.1:8000",
-  "null",                            // file:// origin for local testing
 ];
 
 export default {
